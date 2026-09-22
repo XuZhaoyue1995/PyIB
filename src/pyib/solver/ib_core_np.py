@@ -1,10 +1,10 @@
-"""ib_core_np.py — new IB solver core (serial NumPy reference).
+"""Single-domain immersed-boundary solver operators on NumPy or CuPy.
 
-Every operator here is a faithful NumPy port of pure_v0.1's Fortran, each
-VALIDATED bit-exact against the Fortran oracle (parallel run, reassembled by
-position) in work/_geom_validate.py.  This module just lifts that validated code
-into a clean, reusable class so the new solver can be built on it and then
-accelerated (CuPy/GPU, multigrid, block-structured, distributed IB).
+Mesh geometry is assembled on the CPU, then operator arrays are transferred to
+the selected backend. Geometry and operator comparisons against the Fortran
+reference are recorded separately; reduction order and precision can affect
+roundoff, so backend results are compared with tolerances rather than assumed
+to be bit-identical.
 
 Conventions (match the validated port):
   - global (single-domain) mesh from make_euler_mesh; no MPI partition here.
@@ -125,7 +125,7 @@ class IBCore:
                      "vol_ci", "AoL", "Af", "nf", "matr", "cpos", "epos", "te"):
             setattr(self, name, asreal(getattr(self, name)))   # floats -> working dtype (FP32/FP64), ints/bool unchanged
 
-    # ---- operators (all bit-exact validated; np.bincount instead of slow np.add.at) ----
+    # ---- operators (backend bincount reductions over the mesh incidence arrays) ----
     def rot(self, face):                 # face -> edge ; ROT[e] += sum_links fe_sign*face[lf_face]
         # bincount always returns float64; cast back to the working dtype to keep FP32 pure
         return xp.bincount(self.lf_edge, self.fe_sign_link * face[self.lf_face], minlength=self.nedge).astype(real, copy=False)
@@ -175,9 +175,9 @@ class IBCore:
         return self.rot(self.integr_c2f(vcq))   # + DirBC_s applied by the driver
 
     def cgrad_cellscalar(self, cell):
-        # cgrad on a volume-cell scalar; ghost value == 0 (vcq=interp_f2c(...) has vcq[ghost]=0
-        # because vol_ci[ghost]=0), so boundary face jump = 0 - cell[c1] = -cell[c1]
-        out = xp.zeros(self.nface); m1 = self.m1
+        # The homogeneous elliptic correction uses zero boundary ghost values;
+        # only volume cells are stored, so boundary face jumps are -cell[c1].
+        out = xp.empty(self.nface, dtype=cell.dtype); m1 = self.m1
         out[m1] = cell[self.F2C[m1, 1]] - cell[self.F2C[m1, 0]]
         out[~m1] = -cell[self.F2C[~m1, 0]]
         return out
@@ -185,9 +185,7 @@ class IBCore:
 
 if __name__ == "__main__":
     import sys
-    from pathlib import Path
-    project_root = Path(__file__).resolve().parents[1]
-    sys.path.insert(0, str(project_root))
+    sys.path.insert(0, r"e:\ImmerseBoundaryProject\IBZhaoyue")
     sys.argv.append("--nometis")
     import make_euler_mesh as M
     mesh = M.make_nested_mesh(0.25, [M._build_box(("center+size", (0, 0, 0), (2, 2, 2)))],

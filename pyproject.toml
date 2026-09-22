@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyib"
+version = "0.1.0rc1"
+description = "A Python Immersed Boundary Solver for CPUs and GPUs"
+authors = [{ name = "Zhaoyue Xu" }]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=2.0,<3",
+    "scipy>=1.13,<2",
+    "h5py>=3.11,<4",
+    "meshio>=5.3,<6",
+]
+
+[project.optional-dependencies]
+gpu = ["cupy-cuda12x>=13,<14"]
+
+[project.urls]
+Repository = "https://github.com/XuZhaoyue1995/gpu-ib-code-paper-2026-08-snapshot"
+
+[project.scripts]
+pyib-run = "pyib.cli:run"
+pyib-postprocess = "pyib.cli:postprocess"
+pyib-validate = "pyib.cli:validate"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

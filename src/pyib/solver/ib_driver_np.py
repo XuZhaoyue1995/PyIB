@@ -1,15 +1,11 @@
-"""ib_driver_np.py — new IB solver driver (CG elliptic solve, BC, time loop).
+"""NumPy/CuPy driver for boundary conditions, CG solves and IB time integration.
 
-Built on the oracle-validated IBCore (ib_core_np.py).  Mirrors pure_v0.1's
-Helmholtz.f90 (Helm_s/CG_m/flow_mat/DirBC_s) and NS_solver_exp.f90 (FlowSolve_exp).
-
-This file is being grown incrementally, each piece validated:
-  [1] CG elliptic solver on flow_mat  <- manufactured-solution test (this commit)
-  [2] stream-function BC (BC_s/BC_vc) + ghost cells
-  [3] Crank-Nicolson time loop + convection/diffusion RHS
-  [4] full-run compare vs Fortran oracle trajectory
+The stream-function formulation, time discretization and force lifecycle are
+covered by operator, manufactured-solution and trajectory regression checks.
 """
 import numpy as np
+import os
+
 from backend import xp, GPU, FP32, asreal, real, asnumpy   # numpy/cupy; FP32; real = working dtype
 from ib_core_np import IBCore
 
@@ -96,12 +92,20 @@ def diag_preconditioner(core, dir_mask):
 # [2][3] full FlowSolve_exp_3 driver: ghost cells + stream-function BC + CN time loop
 # ---------------------------------------------------------------------------
 class Driver:
-    """Crank-Nicolson stream-function/vorticity stepper (pure_v0.1 FlowSolve_exp_3,
-    IB_key=0).  Ghost cell per boundary face; BC families 1..6 = INLET/OUTLET/TOP/BOT/
+    """Crank-Nicolson stream-function/vorticity stepper with optional immersed
+    forcing. Ghost cell per boundary face; BC families 1..6 = INLET/OUTLET/TOP/BOT/
     FRONT/BACK (matches make_euler _outer_box_boundary_faces + BC_IC.txt)."""
 
-    def __init__(self, core, mesh, visc, rou=1.0, ac=0.5, ad=0.5):
+    # Class defaults also support small injected research/test drivers that do
+    # not construct a mesh through __init__.
+    cg_max_iterations = 1000
+    fail_on_cg_nonconvergence = False
+
+    def __init__(self, core, mesh, visc, rou=1.0, ac=0.5, ad=0.5, *,
+                 cg_max_iterations=1000, fail_on_cg_nonconvergence=False):
         self.core = core
+        # Momentum is dimensional: rou is density and visc is dynamic
+        # viscosity (mu = rho * nu), not kinematic viscosity.
         self.visc = visc; self.rou = rou; self.ac = ac; self.ad = ad
         self.bc_edge = xp.asarray(mesh.bc_edge)
         self.bc_face = xp.asarray(mesh.bc_face)
@@ -127,6 +131,26 @@ class Driver:
         self.cavity = False                             # lid-driven cavity BC (no-slip walls + moving lid) instead of inlet/outlet
         self.motion = None                              # optional prescribed kinematics (ib_kinematics), updates markers each step
         self.time = 0.0                                 # physical time, advanced by each step()
+        self.last_helm_m = 0                            # iterations in the most recent Helmholtz solve
+        self.helmholtz_iterations_last_step = 0         # maximum over all inner solves in one physical step
+        self.cg_max_iterations = self._positive_cg_limit(cg_max_iterations)
+        if not isinstance(fail_on_cg_nonconvergence, (bool, np.bool_)):
+            raise ValueError("fail_on_cg_nonconvergence must be a boolean")
+        self.fail_on_cg_nonconvergence = bool(fail_on_cg_nonconvergence)
+        self.last_helm_rel_residual = 0.0
+        self.last_helm_tolerance_ratio = 0.0
+        self.last_helm_converged = True
+        self.helmholtz_relative_residual_last_step = 0.0
+        self.helmholtz_tolerance_ratio_last_step = 0.0
+        self.helmholtz_converged_last_step = True
+        self.last_face_flux = None                     # final accepted velocity flux, no extra reconstruction
+        self.last_momentum_residual = None             # final inner residual before the curl-curl correction
+        self.last_step_dt = None                       # residual / dt has pressure-gradient units
+        self.cg_check_interval = int(
+            os.environ.get("IB_CG_CHECK_INTERVAL", "20" if GPU else "1")
+        )
+        if self.cg_check_interval <= 0:
+            raise ValueError("IB_CG_CHECK_INTERVAL must be a positive integer")
 
     def set_cavity(self, U_lid=1.0, spanwise_zerograd=True):
         """Lid-driven cavity: psi=0 (Dirichlet) on ALL boundary edges (walls are
@@ -154,9 +178,14 @@ class Driver:
 
     def set_ib(self, ib, markers, ds, vel_desired, force_mode='replacement'):
         """Attach an immersed body (ib_immersed.ImmersedBoundary).  markers (M,3),
-        ds (M,) marker spacing, vel_desired (M,3) prescribed marker velocity.
+        ds (M,) cube root of marker integration volume, vel_desired (M,3)
+        prescribed marker velocity. Surface spacing and ds need not coincide.
         For a moving body, update markers/vel_desired before each step()."""
-        if force_mode not in {'replacement', 'fortran_accumulated'}:
+        # ``fortran_accumulated`` is retained only as a compatibility alias for
+        # archived runs.  New Python-facing code uses the method-based name.
+        if force_mode not in {
+            'replacement', 'accumulated_explicit', 'fortran_accumulated'
+        }:
             raise ValueError(f'unsupported IB force_mode: {force_mode!r}')
         self.ib = ib
         self.ib_markers = asreal(markers)
@@ -273,47 +302,140 @@ class Driver:
             conv[:, j] = core.vol_ci * core.cdiv(vf)
         return conv, diff
 
-    def helm_solve(self, res_e, s, dt, tol1=1e-10, tol2=1e-9, cg_max=1000):
-        """Helm_s: CG on A x = b, warm-start x=s, r=res_e is the current residual b-A x."""
+    @staticmethod
+    def _positive_cg_limit(value):
+        if isinstance(value, (bool, np.bool_)) or not isinstance(value, (int, np.integer)) or value <= 0:
+            raise ValueError("cg_max_iterations must be a positive integer")
+        return int(value)
+
+    def helm_solve(self, res_e, s, dt, tol1=1e-10, tol2=1e-9, cg_max=None):
+        """CG correction from warm start ``s`` and supplied residual ``b-A s``.
+
+        The accepted iterate uses the historical mixed preconditioned stopping
+        criterion and check cadence. A final, independently recomputed residual
+        records whether it really meets that criterion. ``last_helm_rel_residual``
+        is the Euclidean final/initial residual ratio; it is not itself the mixed
+        stopping criterion. ``last_helm_tolerance_ratio <= 1`` means that the true
+        residual meets the existing mixed tolerance. Strict mode raises on a
+        failed true residual, not merely on reaching the iteration limit.
+        """
+        cg_max = self._positive_cg_limit(
+            self.cg_max_iterations if cg_max is None else cg_max
+        )
+        if not isinstance(self.fail_on_cg_nonconvergence, (bool, np.bool_)):
+            raise ValueError("fail_on_cg_nonconvergence must be a boolean")
         if FP32:                                          # float32 CG floor ~1e-6; 1e-9 unreachable
             tol1 = max(tol1, 3e-5); tol2 = max(tol2, 3e-5)
         core = self.core
         kw = dict(alpd=self.ad, visc=self.visc, rou=self.rou, dt=dt)
         r = res_e.copy(); r[self.dir_mask] = 0.0
+        initial_l2_squared = r.dot(r)
         x = s.copy()
         pp = r * self.prec
         eta = pp.dot(r); rho0 = eta
         xnorm = x.dot(x) + 1e-16
         err_tot = xnorm * (tol1 ** 2) + (tol2 ** 2) * rho0
+        def finish(iterations, true_residual):
+            # One batched device-to-host transfer; no per-edge host copy.
+            true_eta = (true_residual * self.prec).dot(true_residual)
+            values = np.asarray(asnumpy(xp.stack([
+                true_eta, true_residual.dot(true_residual), initial_l2_squared,
+                err_tot,
+            ])), dtype=float)
+            eta_final, l2_final, l2_initial, threshold = values
+            finite = bool(np.all(np.isfinite(values)) and np.all(values >= 0.0))
+            self.last_helm_m = int(iterations)
+            self.last_helm_rel_residual = (
+                float(np.sqrt(l2_final / l2_initial)) if finite and l2_initial > 0.0
+                else (0.0 if finite and l2_final == 0.0 else float("inf"))
+            )
+            self.last_helm_tolerance_ratio = (
+                float(np.sqrt(eta_final / threshold)) if finite and threshold > 0.0
+                else (0.0 if finite and eta_final == 0.0 else float("inf"))
+            )
+            self.last_helm_converged = bool(finite and eta_final <= threshold)
+            if self.fail_on_cg_nonconvergence and not self.last_helm_converged:
+                # Preserve useful diagnostics even if step() cannot complete.
+                self.helmholtz_iterations_last_step = max(
+                    getattr(self, "helmholtz_iterations_last_step", 0), int(iterations)
+                )
+                self.helmholtz_relative_residual_last_step = max(
+                    getattr(self, "helmholtz_relative_residual_last_step", 0.0),
+                    self.last_helm_rel_residual,
+                )
+                self.helmholtz_tolerance_ratio_last_step = max(
+                    getattr(self, "helmholtz_tolerance_ratio_last_step", 0.0),
+                    self.last_helm_tolerance_ratio,
+                )
+                self.helmholtz_converged_last_step = False
+                raise RuntimeError(
+                    "Helmholtz CG did not converge: "
+                    f"iterations={iterations}/{cg_max}, "
+                    f"true_relative_residual={self.last_helm_rel_residual:.6e}, "
+                    f"mixed_tolerance_ratio={self.last_helm_tolerance_ratio:.6e}"
+                )
+            return x, int(iterations)
+
         if float(eta) < err_tot:                         # already converged (Helm_s: goto 100)
-            return x, 0
-        check = 20 if GPU else 1                          # GPU: check convergence every K iters (avoid per-iter device sync)
+            return finish(0, r)
+        # Convergence cadence is a numerical contract, not merely a device
+        # optimization: changing it changes the accepted iterate and therefore
+        # the subsequent trajectory.  Publication CPU parity runs set it to 20.
+        check = self.cg_check_interval
+        infinity = xp.asarray(xp.inf, dtype=r.dtype)
         for m in range(1, cg_max + 1):
             w = (self.Asp @ pp) if self.Asp is not None else core.flow_mat(pp, **kw)
             w[self.dir_mask] = 0.0
-            alf = eta / pp.dot(w)
+            denominator = pp.dot(w)
+            # Exact convergence can precede the next scheduled device check.
+            # Keep the converged iterate instead of producing 0/0 and NaNs.
+            alf = eta / xp.where(denominator != 0.0, denominator, infinity)
             x += alf * pp
             r -= alf * w
             z = r * self.prec
             eta_new = z.dot(r)
-            if m % check == 0 and float(eta_new) < err_tot:
-                break
-            pp = z + (eta_new / eta) * pp
+            if m % check == 0:
+                checked_eta = float(eta_new)
+                if not np.isfinite(checked_eta) or checked_eta < err_tot:
+                    break
+            beta = eta_new / xp.where(eta != 0.0, eta, infinity)
+            pp = z + beta * pp
             eta = eta_new
-        self.last_helm_m = m
-        return x, m
+        # res_e is b-A(s_initial), not b. This form avoids subtracting two
+        # separately reconstructed large b/Ax vectors for a warm start.
+        correction = x - s
+        correction_image = (self.Asp @ correction) if self.Asp is not None else core.flow_mat(correction, **kw)
+        true_residual = res_e - correction_image
+        true_residual[self.dir_mask] = 0.0
+        return finish(m, true_residual)
 
     def step(self, s, s_old, dt, dt_old, inner=3):
-        """One FlowSolve_exp_3 (IB_key=0) step.  Returns (s_new, vc_new, s_old_new)."""
+        """One fluid step with optional immersed forcing and prescribed motion.
+
+        Returns ``(s_new, vc_new, s_old_new)``. Helmholtz diagnostics aggregate
+        all fluid inner solves, independently of history/field output cadence.
+        """
         core = self.core; rou = self.rou; ac = self.ac; ad = self.ad
         accumulated = (
             self.ib is not None
-            and self.ib_force_mode == 'fortran_accumulated'
+            and self.ib_force_mode in {
+                'accumulated_explicit', 'fortran_accumulated'
+            }
         )
         if accumulated and inner < 2:
-            raise ValueError('fortran_accumulated requires at least 2 fluid inner iterations')
+            raise ValueError('accumulated_explicit requires at least 2 fluid inner iterations')
         self._step_count += 1
         self.time += dt
+        self.helmholtz_iterations_last_step = 0
+        self.helmholtz_relative_residual_last_step = 0.0
+        self.helmholtz_tolerance_ratio_last_step = 0.0
+        self.helmholtz_converged_last_step = True
+        self.last_helm_rel_residual = 0.0
+        self.last_helm_tolerance_ratio = 0.0
+        self.last_helm_converged = True
+        self.last_face_flux = None
+        self.last_momentum_residual = None
+        self.last_step_dt = None
         if self.ib is not None:
             self.ib_force_updates_last_step = 0
         if self.ib is not None and self.motion is not None:
@@ -327,7 +449,9 @@ class Driver:
                 self.ib_force_E = self.ib.spread(
                     self.ib_force_L, self.ib_markers, self.ib_ds
                 )
-        cg = min(self.cold_cg, 1000) if (self.cold_cg and self._step_count <= 3) else 1000
+        cg = self._positive_cg_limit(self.cg_max_iterations)
+        if self.cold_cg and self._step_count <= 3:
+            cg = min(self._positive_cg_limit(self.cold_cg), cg)
         # state from current s
         _, U, vc = self.calc_vel(s)
         conv0, diff0 = self.conv_diff(U, vc)
@@ -354,20 +478,39 @@ class Driver:
                         fE, fL = self.ib.direct_force(
                             vc[:core.ncell], self.ib_markers, self.ib_vel, dt, self.ib_ds
                         )
-                    self.ib_force_E = self.ib_alpha * fE
-                    self.ib_force_L = self.ib_alpha * fL
+                    # IB interpolation/spreading returns acceleration; the
+                    # momentum equation and reported loads require rho * a.
+                    self.ib_force_E = (self.rou * self.ib_alpha) * fE
+                    self.ib_force_L = (self.rou * self.ib_alpha) * fL
                     self.ib_force_increment_E = self.ib_force_E
                     self.ib_force_increment_L = self.ib_force_L
                     self.ib_force_update_count += 1
                     self.ib_force_updates_last_step += 1
                     res_c = res_c + dt * self.ib_force_E
+            if i == inner:
+                # Retain the exact final residual, including dt * IB force.
+                # Pressure recovery uses residual / dt, as in the IBFast
+                # momentum reconstruction. Assignment keeps only a reference.
+                self.last_momentum_residual = res_c
             res_f = core.integr_c2f(res_c)
             res_e = core.rot(res_f)
-            s, _ = self.helm_solve(res_e, s, dt, cg_max=cg)
+            s, helm_m = self.helm_solve(res_e, s, dt, cg_max=cg)
+            self.helmholtz_iterations_last_step = max(
+                self.helmholtz_iterations_last_step, int(helm_m)
+            )
+            self.helmholtz_relative_residual_last_step = max(
+                self.helmholtz_relative_residual_last_step, self.last_helm_rel_residual
+            )
+            self.helmholtz_tolerance_ratio_last_step = max(
+                self.helmholtz_tolerance_ratio_last_step, self.last_helm_tolerance_ratio
+            )
+            self.helmholtz_converged_last_step = (
+                self.helmholtz_converged_last_step and self.last_helm_converged
+            )
             s, U, vc = self.calc_vel(s)
             if accumulated and i == 1:
-                # Active Fortran get_IB_force_exp_inc: evaluate once from the
-                # post-predictor velocity, then add to persistent force_*_OLD.
+                # Evaluate one explicit increment from the post-predictor
+                # velocity, then add it to the persistent force state.
                 if self.ib_implicit:
                     delta_E, delta_L = self.ib.implicit_force(
                         vc[:core.ncell], self.ib_markers, self.ib_vel, dt, self.ib_ds
@@ -376,12 +519,14 @@ class Driver:
                     delta_E, delta_L = self.ib.direct_force(
                         vc[:core.ncell], self.ib_markers, self.ib_vel, dt, self.ib_ds
                     )
-                self.ib_force_increment_E = self.ib_alpha * delta_E
-                self.ib_force_increment_L = self.ib_alpha * delta_L
+                self.ib_force_increment_E = (self.rou * self.ib_alpha) * delta_E
+                self.ib_force_increment_L = (self.rou * self.ib_alpha) * delta_L
                 self.ib_force_E = self.ib_force_E + self.ib_force_increment_E
                 self.ib_force_L = self.ib_force_L + self.ib_force_increment_L
                 self.ib_force_update_count += 1
                 self.ib_force_updates_last_step += 1
+        self.last_face_flux = U
+        self.last_step_dt = float(dt)
         if self.free_each_step:
             free_gpu_pool()                             # release pool between steps (fine-mesh memory cap)
         return s, vc, s_old
@@ -389,10 +534,8 @@ class Driver:
 
 if __name__ == "__main__":
     import sys
-    from pathlib import Path
-    solver_dir = Path(__file__).resolve().parent
-    sys.path.insert(0, str(solver_dir.parent))
-    sys.path.insert(0, str(solver_dir))
+    sys.path.insert(0, r"e:\ImmerseBoundaryProject\IBZhaoyue")
+    sys.path.insert(0, r"e:\ImmerseBoundaryProject\IBZhaoyue\solver")
     sys.argv.append("--nometis")
     import make_euler_mesh as M
     mesh = M.make_nested_mesh(0.25, [M._build_box(("center+size", (0, 0, 0), (2, 2, 2)))],

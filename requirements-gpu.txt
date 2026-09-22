@@ -1,5 +1,3 @@
--r requirements.txt
+-r requirements-cpu.txt
+cupy-cuda12x>=13,<14
 
-# Choose a CuPy package compatible with the installed CUDA toolkit.
-# The August 2026 development environment used the CUDA 12 package family.
-cupy-cuda12x>=13.0

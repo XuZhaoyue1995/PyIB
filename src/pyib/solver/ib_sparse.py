@@ -1,6 +1,9 @@
-"""ib_sparse.py — assemble the (constant) viscous elliptic operator flow_mat as a
-scipy sparse matrix, so it can be LU-factored ONCE and solved directly each step
-(no CG iterations -> O(N) per step instead of O(N^{4/3})).
+"""Assemble the constant viscous elliptic operator for sparse CG matvecs.
+
+Assembly takes place with SciPy on the CPU. The canonical CSR matrix can then
+be uploaded to CuPy. The production driver uses iterative CG because the
+stream-function operator has a gauge null space; a generic sparse LU solve is
+not a guaranteed replacement and has no universal linear-time complexity.
 
 A = R @ Imat @ Vblock @ P @ C   (= rot . integr_c2f . [viscous] . interp_f2c . curl)
 Self-validated: A @ s must equal the matrix-free core.flow_mat(s) (the oracle).
@@ -83,6 +86,10 @@ def build_A(core, alpd=0.0, visc=0.0, rou=1.0, dt=0.0, to_backend=True):
         A = (R @ I @ P @ C).tocsr()
     if FP32:
         A = A.astype(np.float32)
+    # Sparse products can leave indices unsorted or duplicate column entries.
+    # Canonicalize once on the host so CPU and GPU use the same representation.
+    A.sum_duplicates()
+    A.sort_indices()
     if to_backend and GPU:
         import cupyx.scipy.sparse as csp
         return csp.csr_matrix(A)
@@ -90,8 +97,11 @@ def build_A(core, alpd=0.0, visc=0.0, rou=1.0, dt=0.0, to_backend=True):
 
 
 class DirectHelm:
-    """Replaces the CG Helm_s with a one-time LU factorization + back-substitution.
-    Solves on the interior (non-Dirichlet) edge subspace; A is constant across steps."""
+    """Experimental LU helper for a nonsingular, gauge-constrained subspace.
+
+    This is not used by the production driver. Removing Dirichlet edges alone
+    may leave a gauge null space, in which case SciPy's factorization can fail.
+    """
     def __init__(self, core, dir_mask, alpd, visc, rou, dt):
         A = build_A(core, alpd, visc, rou, dt)
         self.free = np.where(~dir_mask)[0]
@@ -109,10 +119,8 @@ class DirectHelm:
 
 if __name__ == "__main__":
     import sys
-    from pathlib import Path
-    solver_dir = Path(__file__).resolve().parent
-    sys.path.insert(0, str(solver_dir.parent))
-    sys.path.insert(0, str(solver_dir))
+    sys.path.insert(0, r"e:\ImmerseBoundaryProject\IBZhaoyue")
+    sys.path.insert(0, r"e:\ImmerseBoundaryProject\IBZhaoyue\solver")
     sys.argv.append("--nometis")
     import make_euler_mesh as M
     from ib_core_np import IBCore

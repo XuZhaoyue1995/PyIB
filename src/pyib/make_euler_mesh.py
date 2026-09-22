@@ -24,6 +24,9 @@ Deps:
                             clear failure. To opt in to the slow path despite
                             this, run as:  python make_euler_mesh.py --nometis
 
+Contact:
+    Questions, bug reports, or suggestions — feel free to reach out:
+        Zhaoyue Xu <zhaoyue.xu@outlook.com>
 """
 from __future__ import annotations   # required by Python syntax to be first
 

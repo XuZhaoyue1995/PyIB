@@ -1,6 +1,4 @@
-"""ib_immersed.py — immersed-boundary spread/interp (Uhlmann direct forcing),
-single-device (CPU/GPU) vectorized port of pure_v0.1's Eul_2_Lag_new_s /
-Lag_2_Eul_new_s_var_exp + Index_cell + delta_h3.
+"""Immersed-boundary interpolation and spreading on NumPy or CuPy.
 
 On a single device the whole Eulerian field and all Lagrangian markers live
 together, so there is NO rank-0 master/gather/scatter (that bottleneck is a
@@ -37,15 +35,35 @@ class ImmersedBoundary:
         self.pos_ref = asreal(pos_ref)              # float32/float64 working dtype
         self.index_cell = xp.asarray(idx)
         self._imp = None                            # implicit coef-matrix cache (prepare_implicit)
+        offsets = xp.arange(-2, 3, dtype=xp.int64)
+        self._offsets = tuple(
+            axis.ravel() for axis in xp.meshgrid(offsets, offsets, offsets, indexing="ij")
+        )
+        self._stencil = None
+        self._stencil_markers = None
+        self._stencil_spacing = None
 
     def _cells_weights(self, markers):
         """For each marker return its 5^3 support cell ids (M,125) and delta weights (M,125)."""
         m = xp.asarray(markers)
+        spacing = (self.dx, self.hh)
+        # Keep a value snapshot: object identity alone misses in-place motion.
+        # Only the small marker array is compared, never an Eulerian field.
+        if (self._stencil is not None and self._stencil_spacing == spacing
+                and m.shape == self._stencil_markers.shape
+                and m.dtype == self._stencil_markers.dtype
+                and bool(xp.array_equal(m, self._stencil_markers))):
+            return self._stencil
+        self._stencil = self._build_cells_weights(m)
+        self._stencil_markers = m.copy()
+        self._stencil_spacing = spacing
+        self._imp = None
+        return self._stencil
+
+    def _build_cells_weights(self, m):
+        """Build one stencil for the current marker positions and kernel spacing."""
         l = xp.rint((m - self.pos_ref) / self.dx).astype(xp.int64)   # (M,3) nearest cell 0-based
-        offs = xp.arange(-2, 3)
-        # build (M,5,5,5) index grids
-        di, dj, dk = xp.meshgrid(offs, offs, offs, indexing="ij")
-        di = di.ravel(); dj = dj.ravel(); dk = dk.ravel()            # (125,)
+        di, dj, dk = self._offsets                                  # (125,) reusable offsets
         ii = l[:, 0:1] + di[None, :]                                 # (M,125)
         jj = l[:, 1:2] + dj[None, :]
         kk = l[:, 2:3] + dk[None, :]
@@ -64,7 +82,10 @@ class ImmersedBoundary:
 
     def interp(self, vc, markers):
         """Eulerian -> Lagrangian: vel[i] = sum_cells vc[cell]*delta*hh^3."""
-        cell, w = self._cells_weights(markers)                       # (M,125)
+        return self._interp_stencil(vc, self._cells_weights(markers))
+
+    def _interp_stencil(self, vc, stencil):
+        cell, w = stencil                                          # (M,125)
         w = w * self.hh ** 3
         out = xp.zeros((cell.shape[0], vc.shape[1]), dtype=vc.dtype)
         for c in range(vc.shape[1]):
@@ -72,8 +93,15 @@ class ImmersedBoundary:
         return out
 
     def spread(self, flag, markers, ds):
-        """Lagrangian -> Eulerian: F[cell] += sum_markers flag[i]*delta*ds^3."""
-        cell, w = self._cells_weights(markers)                       # (M,125)
+        """Spread Lagrangian force ``flag`` with marker volume weight ``ds**3``.
+
+        ``ds`` is the cube root of the marker's integration volume; it need not
+        equal the distance between neighboring surface markers.
+        """
+        return self._spread_stencil(flag, self._cells_weights(markers), ds)
+
+    def _spread_stencil(self, flag, stencil, ds):
+        cell, w = stencil                                          # (M,125)
         ds = asreal(ds)
         w = w * (ds ** 3)[:, None]
         out = xp.zeros((self.ncell, flag.shape[1]), dtype=flag.dtype)
@@ -84,9 +112,12 @@ class ImmersedBoundary:
 
     def direct_force(self, vc, markers, vel_desired, dt, ds):
         """Uhlmann direct forcing: f_L = (u_desired - interp(vc))/dt ; F_E = spread(f_L)."""
-        vel_ib = self.interp(vc, markers)
+        stencil = self._cells_weights(markers)
+        vel_ib = self._interp_stencil(vc, stencil)
         f_lag = (vel_desired - vel_ib) / dt
-        return self.spread(f_lag, markers, ds), f_lag
+        # Both operations use the same positions; avoid a second cache check
+        # (and the corresponding device synchronization on CUDA).
+        return self._spread_stencil(f_lag, stencil, ds), f_lag
 
     def prepare_implicit(self, markers, ds, reg=1e-8):
         """Build the (small) marker-coupling coef matrix M = D @ S (Fortran's `coef`)
@@ -110,7 +141,7 @@ class ImmersedBoundary:
         Minv = np.linalg.inv(Mmat)
         # cache on the backend (Minv built in float64 for accuracy, cast to working dtype)
         self._imp = dict(cell=cell, w_int=w_int, w_spr=w_spr,
-                         Minv=asreal(Minv), nmk=nmk)
+                         Minv=asreal(Minv), nmk=nmk, ds=ds.copy())
         return self
 
     def invalidate_implicit(self):
@@ -124,7 +155,10 @@ class ImmersedBoundary:
         F_E = spread(f).  Corrects the M != I delta overlap the explicit single-shot
         direct_force ignores -> drives no-slip to ~0.  prepare_implicit() must have
         been called (auto-called here on first use / if marker count changed)."""
-        if getattr(self, "_imp", None) is None or self._imp["nmk"] != markers.shape[0]:
+        self._cells_weights(markers)  # validates mutable marker positions and kernel spacing
+        marker_ds = asreal(ds)
+        if (self._imp is None or self._imp["nmk"] != markers.shape[0]
+                or not bool(xp.array_equal(marker_ds, self._imp["ds"]))):
             self.prepare_implicit(markers, ds)
         c = self._imp; cell = c["cell"]; w_int = c["w_int"]; w_spr = c["w_spr"]; Minv = c["Minv"]
         nd = vc.shape[1]
@@ -142,10 +176,8 @@ class ImmersedBoundary:
 
 if __name__ == "__main__":
     import sys
-    from pathlib import Path
-    solver_dir = Path(__file__).resolve().parent
-    sys.path.insert(0, str(solver_dir.parent))
-    sys.path.insert(0, str(solver_dir))
+    sys.path.insert(0, r"e:\ImmerseBoundaryProject\IBZhaoyue")
+    sys.path.insert(0, r"e:\ImmerseBoundaryProject\IBZhaoyue\solver")
     sys.argv.append("--nometis")
     import make_euler_mesh as M
     from ib_core_np import IBCore
