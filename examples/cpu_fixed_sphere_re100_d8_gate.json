@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "name": "cpu_fixed_sphere_re100_d8_gate",
+  "case": {
+    "kind": "fixed_sphere"
+  },
+  "runtime": {
+    "device": "cpu",
+    "precision": "float64"
+  },
+  "mesh": {
+    "kind": "sphere_wake",
+    "cells_per_diameter": 8,
+    "verbose": false
+  },
+  "physics": {
+    "reynolds": 100.0,
+    "density": 1.0,
+    "inflow_speed": 1.0
+  },
+  "time": {
+    "dt": 0.025,
+    "steps": 3,
+    "inner_iterations": 4
+  },
+  "ib": {
+    "radius": 0.25,
+    "center": [0.0, 0.0, 0.0],
+    "marker_spacing": 0.0625,
+    "force_mode": "accumulated_explicit",
+    "implicit": false,
+    "alpha": 1.0,
+    "motion": {
+      "kind": "none",
+      "axis": [0.0, 1.0, 0.0],
+      "amplitude": 0.0,
+      "frequency": 1.0,
+      "phase": 0.0
+    }
+  },
+  "solver": {
+    "sparse": true
+  },
+  "output": {
+    "sample_every": 1,
+    "checkpoint_every": 1,
+    "save_field": true
+  }
+}

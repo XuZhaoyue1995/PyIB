@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "name": "cpu_oscillating_sphere_smoke",
+  "case": {
+    "kind": "oscillating_sphere"
+  },
+  "runtime": {
+    "device": "cpu",
+    "precision": "float64"
+  },
+  "mesh": {
+    "kind": "uniform_box",
+    "dx": 0.25,
+    "bounds": [
+      [-1.0, 1.0],
+      [-1.0, 1.0],
+      [-1.0, 1.0]
+    ],
+    "verbose": false
+  },
+  "physics": {
+    "reynolds": 100.0,
+    "density": 1.0,
+    "inflow_speed": 1.0
+  },
+  "time": {
+    "dt": 0.01,
+    "steps": 4,
+    "inner_iterations": 4
+  },
+  "ib": {
+    "radius": 0.25,
+    "center": [0.0, 0.0, 0.0],
+    "marker_spacing": 0.25,
+    "force_mode": "accumulated_explicit",
+    "implicit": false,
+    "alpha": 1.0,
+    "motion": {
+      "kind": "oscillation",
+      "axis": [0.0, 1.0, 0.0],
+      "amplitude": 0.05,
+      "frequency": 0.5,
+      "phase": 0.0
+    }
+  },
+  "solver": {
+    "sparse": true
+  },
+  "output": {
+    "sample_every": 1,
+    "checkpoint_every": 2,
+    "save_field": true
+  }
+}
