@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "release_candidate": "0.1.0rc1",
+  "captured_utc": "2026-09-22T14:04:56.344780+00:00",
+  "source_origin": "Author-provided local IBZhaoyue tree; public repository/revision pending confirmation",
+  "preservation": "All listed source files are byte-for-byte identical to the original source at capture time.",
+  "files": [
+    {
+      "source_relative_path": "make_euler_mesh.py",
+      "package_path": "src/pyib/make_euler_mesh.py",
+      "sha256": "64d241f3a826b908151e54dad9de355698dbf31b3a3613e5fd5a36740f4e0f50",
+      "bytes": 84313
+    },
+    {
+      "source_relative_path": "solver/backend.py",
+      "package_path": "src/pyib/solver/backend.py",
+      "sha256": "37324b86b9841f1cba0fd9b051f11c60e0c48ad11b50514c8be04a5f589667fa",
+      "bytes": 1607
+    },
+    {
+      "source_relative_path": "solver/cfdagent_ib.py",
+      "package_path": "src/pyib/solver/cfdagent_ib.py",
+      "sha256": "31aa82f7be148c3f5a8f527e1b8b9490eed7345c0e6c4cc31c9503353bdbb81f",
+      "bytes": 2981
+    },
+    {
+      "source_relative_path": "solver/ib_case.py",
+      "package_path": "src/pyib/solver/ib_case.py",
+      "sha256": "09f0657f7ed1c3f453604e3b4e74170dbc4804c14a0938aa3675b60f315ab240",
+      "bytes": 71161
+    },
+    {
+      "source_relative_path": "solver/ib_core_np.py",
+      "package_path": "src/pyib/solver/ib_core_np.py",
+      "sha256": "a42eaed6ebb9c62780aed4d6941e5e84b6c741c6b6e439f802a3a099e5e16e6f",
+      "bytes": 11928
+    },
+    {
+      "source_relative_path": "solver/ib_driver_np.py",
+      "package_path": "src/pyib/solver/ib_driver_np.py",
+      "sha256": "0f39341f7e2120a08c5e8ee923eea7f49cdf6475e7e6a663ee1c96fede8bb85b",
+      "bytes": 29032
+    },
+    {
+      "source_relative_path": "solver/ib_immersed.py",
+      "package_path": "src/pyib/solver/ib_immersed.py",
+      "sha256": "fcb2f71e838dac5f6dc607d3ada74406e9f738b4b1aba4d2e91c40653c905415",
+      "bytes": 11038
+    },
+    {
+      "source_relative_path": "solver/ib_interior.py",
+      "package_path": "src/pyib/solver/ib_interior.py",
+      "sha256": "367ec59a0826150fff6b58efaee466cfb216865eb58400843f0a450430089b77",
+      "bytes": 12721
+    },
+    {
+      "source_relative_path": "solver/ib_kinematics.py",
+      "package_path": "src/pyib/solver/ib_kinematics.py",
+      "sha256": "5e7fbf094f5b07d31254280a421892dd38c6b1a19c66fe019284ade064f469f9",
+      "bytes": 5905
+    },
+    {
+      "source_relative_path": "solver/ib_postprocess.py",
+      "package_path": "src/pyib/solver/ib_postprocess.py",
+      "sha256": "3d7f5f476db8cc126d6695f6f88aa387ae53833916307b1ebaf033078c6dfbfd",
+      "bytes": 35695
+    },
+    {
+      "source_relative_path": "solver/ib_sparse.py",
+      "package_path": "src/pyib/solver/ib_sparse.py",
+      "sha256": "77a040719e4262a2fda85253582023a388297c318be637174a272bc7f6017083",
+      "bytes": 6206
+    },
+    {
+      "source_relative_path": "solver/sphere_quiescent_mesh.py",
+      "package_path": "src/pyib/solver/sphere_quiescent_mesh.py",
+      "sha256": "3796cc8c4294141ab462f3af1f940dc970cf7da3554fb0c48530a711ceb627b3",
+      "bytes": 3685
+    },
+    {
+      "source_relative_path": "solver/sphere_wake_mesh.py",
+      "package_path": "src/pyib/solver/sphere_wake_mesh.py",
+      "sha256": "bdb4178df0c10c44a8bc73a06fc8b5dd6b381b5e06231dcb3a332b84a2401e87",
+      "bytes": 4495
+    },
+    {
+      "source_relative_path": "solver/validate_ib_result.py",
+      "package_path": "src/pyib/solver/validate_ib_result.py",
+      "sha256": "22790438a354d868b2b32ba0d911d3071a31f47214235830799b23b2a62dc8fb",
+      "bytes": 79693
+    }
+  ],
+  "packaging_name": "PyIB",
+  "packaging_namespace": "pyib",
+  "packaging_note": "Renamed from the temporary cfdagent-ib candidate; original source paths, capture timestamp, byte counts and SHA-256 hashes are unchanged."
+}

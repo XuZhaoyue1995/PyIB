@@ -1,5 +1,5 @@
-* text=auto
-*.py text eol=lf
-*.md text eol=lf
-*.txt text eol=lf
-*.pdf binary
+src/pyib/make_euler_mesh.py -text
+src/pyib/solver/*.py -text
+tests/test_ib_postprocess.py -text
+examples/*.json -text
+requirements-*.txt -text
