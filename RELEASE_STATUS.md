@@ -5,7 +5,7 @@ numerical snapshot and its documented checks. It is not a package-registry
 release or a statement of completed scientific acceptance.
 
 The project repository is
-`https://github.com/XuZhaoyue1995/gpu-ib-code-paper-2026-08-snapshot`.
+`https://github.com/XuZhaoyue1995/PyIB`.
 The existing `paper/IB_GPU_Solver_Paper_CN_JCP.pdf` manuscript is retained
 unchanged when replacing the repository's code with this PyIB prerelease.
 

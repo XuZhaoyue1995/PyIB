@@ -6,4 +6,4 @@ authors:
   - family-names: Xu
     given-names: Zhaoyue
 version: "0.1.0rc1"
-repository-code: "https://github.com/XuZhaoyue1995/gpu-ib-code-paper-2026-08-snapshot"
+repository-code: "https://github.com/XuZhaoyue1995/PyIB"
