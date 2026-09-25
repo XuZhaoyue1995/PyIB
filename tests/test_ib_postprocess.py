@@ -1,4 +1,4 @@
-"""Manufactured-field tests of offline pressure and surface-stress recovery."""
+"""Manufactured-field and output-contract tests for offline pressure recovery."""
 
 import json
 from pathlib import Path
@@ -9,8 +9,8 @@ from xml.etree.ElementTree import parse
 import numpy as np
 
 from ib_postprocess import (
-    UniformLattice, extract_wall_shear, integrate_surface_pressure, main, process_snapshot, recover_pressure,
-    repair_pressure_band, rigid_velocity_function, spread_marker_force,
+    UniformLattice, integrate_surface_pressure, main, process_snapshot, recover_pressure,
+    repair_pressure_band, spread_marker_force,
     surface_pressure_fit,
 )
 
@@ -51,6 +51,17 @@ def polynomial_gradient(points):
 
 
 class PressureTests(unittest.TestCase):
+    def test_linear_pressure_integral_matches_analytic_sphere_force(self):
+        # The six cardinal directions integrate n_i*n_j exactly on a sphere.
+        # For p = p0 + g dot x, the divergence theorem gives Fp = -V*g.
+        radius = 0.6
+        normals = np.concatenate((np.eye(3), -np.eye(3)))
+        gradient = np.array([0.2, -0.5, 0.7])
+        area = np.full(6, 4*np.pi*radius**2/6)
+        pressure = 17.0 + radius*normals @ gradient
+        force, _ = integrate_surface_pressure(pressure, normals, area)
+        np.testing.assert_allclose(force, -(4*np.pi*radius**3/3)*gradient, atol=2e-15)
+
     def test_pressure_force_is_gauge_invariant_even_for_coarse_markers(self):
         markers = sphere_markers(13)
         normals = markers/0.6
@@ -104,30 +115,7 @@ class PressureTests(unittest.TestCase):
                              np.array([[0, 1], [2, -1]]), np.ones(2), np.zeros((3, 3)))
 
 
-class ShearTests(unittest.TestCase):
-    def test_wall_pinned_quadratic_recovers_nonzero_shear(self):
-        lattice, positions, _, _ = uniform_grid(17)
-        # Samples at z=h,2h land exactly on lattice planes: no interpolation
-        # error is folded into the test of the wall derivative.
-        velocity = np.zeros_like(positions)
-        velocity[:, 0] = 2.3*positions[:, 2] + 0.4*positions[:, 2]**2
-        markers = np.array([[0., 0., 0.], [0.2, -0.1, 0.]])
-        normals = np.tile([0., 0., 1.], (len(markers), 1))
-        shear = extract_wall_shear(lattice, velocity.reshape(lattice.shape+(3,)), markers, normals,
-                                   lambda p: np.zeros_like(p), 0., 1.7)
-        np.testing.assert_allclose(shear, np.tile([1.7*2.3, 0, 0], (len(markers), 1)), atol=2e-14)
-
-    def test_rigid_rotation_has_zero_shear(self):
-        lattice, positions, _, _ = uniform_grid()
-        markers = sphere_markers()
-        omega = np.array([0.4, -0.7, 0.2])
-        translation = np.array([0.1, 0.3, -0.2])
-        marker_velocity = translation + np.cross(omega, markers)
-        wall = rigid_velocity_function(markers, marker_velocity, np.zeros(3))
-        velocity = (translation + np.cross(omega, positions)).reshape(lattice.shape+(3,))
-        shear = extract_wall_shear(lattice, velocity, markers, markers/0.6, wall, 0.3*lattice.spacing, 2.)
-        np.testing.assert_allclose(shear, 0., atol=2e-14)
-
+class ForceSpreadingTests(unittest.TestCase):
     def test_spread_conserves_force(self):
         lattice, _, _, _ = uniform_grid()
         markers = sphere_markers(50)
@@ -160,26 +148,76 @@ class SnapshotTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             source = Path(directory)/"final_field.npz"
             np.savez(source, **snapshot)
-            self.assertEqual(main([str(source), "--offset", "0.35", "--vtk"]), 0)
+            self.assertEqual(main([str(source), "--vtk"]), 0)
             output = source.with_name("final_field_postprocess")
-            with np.load(output/"pressure_and_stress.npz") as result:
-                np.testing.assert_allclose(result["surface_shear_repaired"], 0, atol=2e-14)
+            with np.load(output/"pressure.npz") as result:
+                self.assertFalse(any("shear" in key for key in result.files))
+                self.assertNotIn("surface_force", result.files)
+                self.assertEqual(result["pressure_force"].shape, (3,))
                 boundary = np.unique(snapshot["face_cells"][snapshot["face_cells"][:, 1] < 0, 0])
                 gauge = polynomial(snapshot["cpos"])[boundary].mean()
                 np.testing.assert_allclose(result["surface_pressure_lfc"], polynomial(snapshot["markers"])-gauge,
                                            atol=2e-8, rtol=1e-8)
             diagnostic = json.loads((output/"postprocess.json").read_text())
             self.assertEqual(diagnostic["spread_replay_relative_error"], 0.)
-            self.assertTrue((output/"surface_stress.csv").is_file())
+            self.assertFalse(any("shear" in key for key in diagnostic))
+            self.assertNotIn("surface_force", diagnostic)
+            self.assertIn("pressure contribution only", diagnostic["pressure_force_definition"])
+            self.assertTrue((output/"surface_pressure.csv").is_file())
+            self.assertEqual((output/"surface_pressure.csv").read_text().splitlines()[0],
+                             "x,y,z,nx,ny,nz,area,pressure_raw,pressure_lfc")
             self.assertEqual(len(diagnostic["source_snapshot_sha256"]), 64)
             piece = parse(output/"pressure_field.vtu").find("./UnstructuredGrid/Piece")
             self.assertEqual(int(piece.attrib["NumberOfPoints"]), len(snapshot["cpos"]))
+            surface = parse(output/"surface_pressure.vtu").find("./UnstructuredGrid/Piece")
+            self.assertEqual(int(surface.attrib["NumberOfPoints"]), len(snapshot["markers"]))
             with self.assertRaises(FileExistsError):
                 main([str(source), "--field-only"])
             self.assertEqual(main([str(source), "--field-only", "--overwrite"]), 0)
-            self.assertFalse((output/"surface_stress.csv").exists())
-            self.assertFalse((output/"surface_stress.vtu").exists())
-            self.assertEqual(len(list((output/"archive").glob("*/surface_stress.csv"))), 1)
+            self.assertFalse((output/"surface_pressure.csv").exists())
+            self.assertFalse((output/"surface_pressure.vtu").exists())
+            self.assertEqual(len(list((output/"archive").glob("*/surface_pressure.csv"))), 1)
+
+    def test_pressure_recovery_needs_no_wall_motion_or_viscosity(self):
+        snapshot = self.snapshot()
+        for key in ("marker_velocity", "density", "kinematic_viscosity"):
+            del snapshot[key]
+        arrays, _ = process_snapshot(snapshot)
+        boundary = np.unique(snapshot["face_cells"][snapshot["face_cells"][:, 1] < 0, 0])
+        gauge = polynomial(snapshot["cpos"])[boundary].mean()
+        np.testing.assert_allclose(arrays["surface_pressure_lfc"], polynomial(snapshot["markers"])-gauge,
+                                   atol=2e-8, rtol=1e-8)
+
+    def test_field_only_recovers_pressure_without_surface_metadata(self):
+        snapshot = self.snapshot()
+        minimal = {key: snapshot[key] for key in
+                   ("cpos", "vc", "momentum_residual", "dt", "face_cells", "face_area")}
+        arrays, _ = process_snapshot(minimal, field_only=True)
+        boundary = np.unique(snapshot["face_cells"][snapshot["face_cells"][:, 1] < 0, 0])
+        expected = polynomial(snapshot["cpos"])
+        expected -= expected[boundary].mean()
+        np.testing.assert_allclose(arrays["pressure_raw"], expected, atol=2e-8, rtol=1e-8)
+        self.assertNotIn("markers", arrays)
+        self.assertNotIn("pressure_force", arrays)
+
+    def test_overwrite_archives_previous_release_products(self):
+        snapshot = self.snapshot()
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory)/"final_field.npz"
+            np.savez(source, **snapshot)
+            output = source.with_name("final_field_postprocess")
+            output.mkdir()
+            previous = ("pressure_and_stress.npz", "surface_stress.csv", "surface_stress.vtu")
+            for name in previous:
+                (output/name).write_bytes(b"previous-release-artifact")
+            with self.assertRaises(FileExistsError):
+                main([str(source), "--field-only"])
+            self.assertEqual(main([str(source), "--field-only", "--overwrite"]), 0)
+            for name in previous:
+                self.assertFalse((output/name).exists())
+                copies = list((output/"archive").glob("*/"+name))
+                self.assertEqual(len(copies), 1)
+                self.assertEqual(copies[0].read_bytes(), b"previous-release-artifact")
 
     def test_old_snapshot_does_not_silently_invent_pressure(self):
         with self.assertRaisesRegex(ValueError, "momentum_residual"):
