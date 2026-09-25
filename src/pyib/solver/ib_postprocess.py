@@ -1,18 +1,14 @@
-"""Offline pressure and surface stress from canonical CPU/CUDA field snapshots.
+"""Offline pressure reconstruction and correction from CPU/CUDA snapshots.
 
 The curl-curl solver eliminates pressure.  A saved final-inner momentum residual
 provides its gradient, ``momentum_residual / dt``.  The whole-mesh pressure is
 the area/distance weighted graph projection used by IBFast pressure_field.py.
 Surface pressure then uses its normal-force LFC, same-phase anchored band
-repair.  Shear uses the tangential-force Shortley-Weller band repair and the
-wall-pinned quadratic extraction in IBFast wall_shear_band.py.
+repair, with the canonical sphere geometry and Roma-Peskin h3 kernel.
 
-Only the canonical closed, rigid spheres and their Roma-Peskin h3 kernel are
-supported.  Analytic sphere distances replace IBFast's triangulated distance.
-The velocity repair is a leading-order thin-band Stokes approximation, not an
-exact reconstruction for arbitrary Reynolds number or coarse grids.  Raw and
-repaired values are retained separately; stress-integral closure is reported,
-never imposed.  Pressure has a boundary-adjacent zero-mean gauge.
+Pressure has a boundary-adjacent zero-mean gauge.  The surface integral reports
+the pressure component of fluid-on-body force; it is not the total body force.
+The solver's independently recorded body force remains in its run outputs.
 
 All expensive recovery is offline on NumPy/SciPy, even for CUDA snapshots::
 
@@ -37,7 +33,7 @@ from xml.etree.ElementTree import Element, SubElement, ElementTree
 import numpy as np
 from scipy.sparse import coo_matrix, diags
 from scipy.sparse.csgraph import connected_components
-from scipy.sparse.linalg import cg, lsqr, splu
+from scipy.sparse.linalg import cg, lsqr
 from scipy.spatial import cKDTree
 
 
@@ -278,123 +274,6 @@ def surface_pressure_fit(cell_positions, signed_distance, pressure, markers, spa
     return result
 
 
-def effective_wall_offset(normals, resolution=24):
-    """IBFast kernel I2 normal projection; returns offset in units of h.
-
-    This preserves the IBFast midpoint quadrature and symmetry cache.  The
-    offset is a kernel-dependent approximation, explicitly adjustable by CLI.
-    """
-    support = 1.5
-    grid = (np.arange(resolution) + 0.5) / resolution * 2 * support - support
-    coordinates = np.stack(np.meshgrid(grid, grid, grid, indexing="ij"), axis=-1).reshape(-1, 3)
-    weights = np.prod(delta_h3(coordinates), axis=1) * (2 * support / resolution)**3
-    edges = np.linspace(-support, support, 121)
-    width = edges[1] - edges[0]
-    result, cache = np.empty(len(normals)), {}
-    for i, normal in enumerate(normals):
-        key = tuple(np.round(np.sort(np.abs(normal)), 2))
-        if key not in cache:
-            density, _ = np.histogram(coordinates @ normal, bins=edges, weights=weights)
-            density /= width
-            twice_integrated = np.cumsum(np.cumsum(density) * width) * width
-            cache[key] = np.sum(density * twice_integrated) * width
-        result[i] = cache[key]
-    return result
-
-
-def rigid_velocity_function(markers, marker_velocity, center):
-    """Fit a rigid velocity extension, also removing rigid rotation from shear."""
-    relative = markers - center
-    # v = translation + Omega cross r; fit all six rigid-body components.
-    rotation = np.zeros((len(markers), 3, 3))
-    rotation[:, 0, 1], rotation[:, 0, 2] = relative[:, 2], -relative[:, 1]
-    rotation[:, 1, 0], rotation[:, 1, 2] = -relative[:, 2], relative[:, 0]
-    rotation[:, 2, 0], rotation[:, 2, 1] = relative[:, 1], -relative[:, 0]
-    design = np.concatenate((np.broadcast_to(np.eye(3), rotation.shape), rotation), axis=2)
-    coefficients, _, rank, _ = np.linalg.lstsq(design.reshape(-1, 6), marker_velocity.ravel(), rcond=None)
-    if rank < 6 or not np.allclose((design @ coefficients), marker_velocity, atol=1e-9, rtol=1e-7):
-        raise ValueError("surface stress currently requires a rigid sphere velocity")
-    def velocity_at(points):
-        return coefficients[:3] + np.cross(coefficients[3:], points - center)
-    return velocity_at
-
-
-def repair_velocity_band(lattice, velocity, signed_distance, wall_offset, width, source, wall_velocity):
-    """Shortley-Weller solve -lap(delta_u)=source with sharp moving-wall data.
-
-    Source is -spread(tangential_force)/mu.  The wall offset and signed distance
-    are physical lengths.  Outer delta_u=0 anchors preserve the original field.
-    """
-    h, shape = lattice.spacing, np.asarray(lattice.shape)
-    band = (signed_distance > wall_offset) & (signed_distance <= width * h)
-    if not np.any(band):
-        raise ValueError("velocity repair band is empty")
-    cells = np.argwhere(band)
-    if np.any(cells == 0) or np.any(cells == shape - 1):
-        raise ValueError("velocity repair touches finest-region edge; enlarge the refined region")
-    ids = np.full(lattice.shape, -1, dtype=int)
-    ids[band] = np.arange(len(cells))
-    count = len(cells)
-    rhs = source[band].copy()
-    center_phi = signed_distance[band]
-    positions = lattice.origin + cells * h
-    rows, columns, entries = [], [], []
-    for axis in range(3):
-        direction = np.eye(3, dtype=int)[axis]
-        sides = []
-        for sign in (1, -1):
-            neighbour = cells + sign * direction
-            neighbour_phi = signed_distance[tuple(neighbour.T)]
-            if not np.isfinite(neighbour_phi).all():
-                raise ValueError("velocity band touches missing fine cells")
-            cut = neighbour_phi <= wall_offset
-            fraction = np.ones(count)
-            fraction[cut] = (center_phi[cut] - wall_offset) / (center_phi[cut] - neighbour_phi[cut])
-            fraction = np.clip(fraction, 0.05, 1.0)
-            neighbour_ids = ids[tuple(neighbour.T)]
-            regular = (~cut) & (neighbour_ids >= 0)
-            sides.append((sign, fraction, cut, regular, neighbour_ids))
-        scale = 2.0 / (h*h*(sides[0][1] + sides[1][1]))
-        diagonal = scale * (1.0 / sides[0][1] + 1.0 / sides[1][1])
-        rows.append(np.arange(count)); columns.append(np.arange(count)); entries.append(diagonal)
-        for sign, fraction, cut, regular, neighbour_ids in sides:
-            rows.append(np.flatnonzero(regular)); columns.append(neighbour_ids[regular])
-            entries.append(-(scale / fraction)[regular])
-            if np.any(cut):
-                points = positions[cut] + (sign * fraction[cut] * h)[:, None] * direction
-                mismatch = wall_velocity(points) - lattice.interpolate(velocity, points)
-                rhs[cut] += (scale[cut] / fraction[cut])[:, None] * mismatch
-    matrix = coo_matrix((np.concatenate(entries), (np.concatenate(rows), np.concatenate(columns))),
-                        shape=(count, count)).tocsc()
-    # One factorization for the three velocity components.
-    correction = splu(matrix).solve(rhs)
-    if not np.isfinite(correction).all():
-        raise RuntimeError("velocity band solve produced non-finite values")
-    repaired = velocity.copy()
-    repaired[band] += correction
-    return repaired, band
-
-
-def extract_wall_shear(lattice, velocity, markers, normals, wall_velocity, wall_offset, viscosity, probes=(1.0, 2.0)):
-    """mu times wall-pinned quadratic derivative of relative tangential velocity.
-
-    Subtract the rigid velocity at each probe (including rotation).  Then the
-    tangential normal derivative is the viscous traction for a rigid no-slip
-    wall; pure solid-body rotation correctly has zero strain and zero shear.
-    """
-    distances = np.asarray(probes, dtype=float) * lattice.spacing
-    if len(distances) < 2 or np.any(distances <= 0) or len(np.unique(distances)) < 2:
-        raise ValueError("shear requires at least two distinct positive probe distances")
-    samples = []
-    for distance in distances:
-        points = markers + (wall_offset + distance) * normals
-        relative = lattice.interpolate(velocity, points) - wall_velocity(points)
-        samples.append(relative - np.sum(relative * normals, axis=1)[:, None] * normals)
-    design = np.column_stack((distances, distances**2))
-    coefficients = np.linalg.lstsq(design, np.asarray(samples).reshape(len(distances), -1), rcond=None)[0]
-    return viscosity * coefficients[0].reshape(len(markers), 3)
-
-
 def integrate_surface_pressure(pressure, normals, area):
     """Gauge-invariant pressure force for finite equal-area sphere quadrature.
 
@@ -414,7 +293,7 @@ def integrate_surface_pressure(pressure, normals, area):
     return force, diagnostics
 
 
-def process_snapshot(snapshot, *, field_only=False, skip_shear=False, pressure_width=1.5, velocity_width=3.0, offset="auto"):
+def process_snapshot(snapshot, *, field_only=False, pressure_width=1.5):
     """Recover one selected snapshot.  Returns arrays plus JSON-safe diagnostics."""
     required = ("cpos", "vc", "momentum_residual", "dt", "face_cells", "face_area")
     missing = [key for key in required if key not in snapshot]
@@ -434,10 +313,10 @@ def process_snapshot(snapshot, *, field_only=False, skip_shear=False, pressure_w
     if field_only:
         return arrays, diagnostics
     required_surface = ("index_cell", "lattice_origin", "lattice_spacing", "sphere_center", "sphere_radius",
-                        "markers", "marker_velocity", "ib_force_L", "marker_volume_weight", "density", "kinematic_viscosity")
+                        "markers", "ib_force_L", "marker_volume_weight")
     missing = [key for key in required_surface if key not in snapshot]
     if missing:
-        raise ValueError("snapshot lacks sphere stress data: " + ", ".join(missing))
+        raise ValueError("snapshot lacks sphere pressure data: " + ", ".join(missing))
     center = _finite("sphere_center", snapshot["sphere_center"], (3,))
     radius = float(snapshot["sphere_radius"])
     markers = _finite("markers", snapshot["markers"])
@@ -474,35 +353,8 @@ def process_snapshot(snapshot, *, field_only=False, skip_shear=False, pressure_w
                   pressure_force=pressure_force)
     diagnostics.update(pressure_band_cells=int(pressure_band.sum()), pressure_band_iterations=iterations,
                        geometry="analytic rigid sphere", surface_quadrature="equal area Fibonacci markers",
-                       pressure_force=pressure_force.tolist(), pressure_band_width_h=float(pressure_width))
-    if not skip_shear:
-        density, nu = float(snapshot["density"]), float(snapshot["kinematic_viscosity"])
-        if not np.isfinite(density * nu) or density <= 0 or nu <= 0:
-            raise ValueError("density and kinematic viscosity must be positive")
-        mu = density * nu
-        offset_h = float(np.mean(effective_wall_offset(normals))) if offset == "auto" else float(offset)
-        if not np.isfinite(offset_h) or not np.isfinite(velocity_width) or offset_h < 0 or velocity_width <= offset_h:
-            raise ValueError("velocity band must exceed a finite non-negative wall offset")
-        wall_velocity = rigid_velocity_function(markers, _finite("marker_velocity", snapshot["marker_velocity"], markers.shape), center)
-        raw_velocity = lattice.field(velocity)
-        source = -spread_marker_force(lattice, markers, force - normal_force, snapshot["marker_volume_weight"]) / mu
-        repaired_velocity, velocity_band = repair_velocity_band(
-            lattice, raw_velocity, signed_distance, offset_h*lattice.spacing, velocity_width, source, wall_velocity)
-        raw_shear = extract_wall_shear(lattice, raw_velocity, markers, normals, wall_velocity, offset_h*lattice.spacing, mu)
-        shear = extract_wall_shear(lattice, repaired_velocity, markers, normals, wall_velocity, offset_h*lattice.spacing, mu)
-        shear_force = np.sum(shear * area[:, None], axis=0)
-        surface_force = pressure_force + shear_force
-        arrays.update(surface_shear_raw=raw_shear, surface_shear_repaired=shear, shear_force=shear_force, surface_force=surface_force)
-        diagnostics.update(velocity_band_cells=int(velocity_band.sum()), effective_wall_offset_h=offset_h,
-                           velocity_band_width_h=float(velocity_width), shear_force=shear_force.tolist(),
-                           surface_force=surface_force.tolist(), shear_method="IBFast thin-band Stokes repair; rigid-frame quadratic read-off")
-        if "body_force" in snapshot:
-            body_force = _finite("body_force", snapshot["body_force"], (3,))
-            difference = surface_force - body_force
-            diagnostics.update(body_force=body_force.tolist(), surface_force_difference=difference.tolist(),
-                               surface_force_difference_norm=float(np.linalg.norm(difference)),
-                               surface_force_relative_difference=(float(np.linalg.norm(difference)/np.linalg.norm(body_force))
-                                                                  if np.linalg.norm(body_force) > 1e-14 else None))
+                       pressure_force=pressure_force.tolist(), pressure_band_width_h=float(pressure_width),
+                       pressure_force_definition="fluid-on-body pressure contribution only; not total body force")
     if "ib_force_E" in snapshot:
         spread_all = spread_marker_force(lattice, markers, force, snapshot["marker_volume_weight"])
         saved = lattice.field(_finite("ib_force_E", snapshot["ib_force_E"], positions.shape))
@@ -554,15 +406,16 @@ def main(argv=None):
     parser.add_argument("snapshot", type=Path, help="final_field.npz or one selected field snapshot")
     parser.add_argument("--output", type=Path, help="output directory (default: snapshot stem + _postprocess)")
     parser.add_argument("--field-only", action="store_true", help="recover raw whole-field pressure only")
-    parser.add_argument("--skip-shear", action="store_true", help="recover pressure/LFC surface pressure without shear")
     parser.add_argument("--pressure-width", type=float, default=1.5, help="pressure repair band width in grid spacings")
-    parser.add_argument("--velocity-width", type=float, default=3.0, help="shear repair band width in grid spacings")
-    parser.add_argument("--offset", default="auto", help="effective wall offset in grid spacings, or auto")
     parser.add_argument("--vtk", action="store_true", help="also write ParaView VTU point samples; no mesh topology is inferred")
     parser.add_argument("--overwrite", action="store_true", help="archive existing postprocessing products before replacement")
     arguments = parser.parse_args(argv)
     output = arguments.output or arguments.snapshot.with_name(arguments.snapshot.stem + "_postprocess")
-    known = ("pressure_and_stress.npz", "surface_stress.csv", "postprocess.json", "pressure_field.vtu", "surface_stress.vtu")
+    known = ("pressure.npz", "surface_pressure.csv", "postprocess.json", "pressure_field.vtu", "surface_pressure.vtu")
+    # Archive products from earlier releases as well, so stale results cannot
+    # be mistaken for outputs from this pressure-only invocation.
+    legacy_products = ("pressure_and_stress.npz", "surface_stress.csv", "surface_stress.vtu")
+    known += legacy_products
     existing = [output/name for name in known if (output/name).exists()]
     if existing and not arguments.overwrite:
         raise FileExistsError(f"postprocessing output already exists in {output}; use --overwrite to archive it first")
@@ -575,9 +428,8 @@ def main(argv=None):
         source_hash = _stream_sha256(source)
         source.seek(0)
         with np.load(source, allow_pickle=False) as saved:
-            arrays, diagnostics = process_snapshot(saved, field_only=arguments.field_only, skip_shear=arguments.skip_shear,
-                                                   pressure_width=arguments.pressure_width, velocity_width=arguments.velocity_width,
-                                                   offset=arguments.offset)
+            arrays, diagnostics = process_snapshot(saved, field_only=arguments.field_only,
+                                                   pressure_width=arguments.pressure_width)
             for key in ("run_id", "config_fingerprint", "layout_fingerprint"):
                 if key in saved:
                     diagnostics[key] = str(saved[key].item())
@@ -588,29 +440,26 @@ def main(argv=None):
         for path in existing:
             path.replace(archive/path.name)
         diagnostics["previous_output_archive"] = str(archive.resolve())
-    np.savez_compressed(output / "pressure_and_stress.npz", **arrays)
+    np.savez_compressed(output / "pressure.npz", **arrays)
     if "markers" in arrays:
         columns = [arrays["markers"], arrays["normals"], arrays["marker_area"], arrays["surface_pressure_raw"], arrays["surface_pressure_lfc"]]
         header = "x,y,z,nx,ny,nz,area,pressure_raw,pressure_lfc"
-        if "surface_shear_repaired" in arrays:
-            columns.extend((arrays["surface_shear_raw"], arrays["surface_shear_repaired"]))
-            header += ",shear_raw_x,shear_raw_y,shear_raw_z,shear_repaired_x,shear_repaired_y,shear_repaired_z"
-        np.savetxt(output / "surface_stress.csv", np.column_stack(columns), delimiter=",", header=header, comments="")
+        np.savetxt(output / "surface_pressure.csv", np.column_stack(columns), delimiter=",", header=header, comments="")
     if arguments.vtk:
         fields = {"velocity": arrays["vc"], "pressure_raw": arrays["pressure_raw"]}
         if "pressure_lfc" in arrays:
             fields["pressure_lfc"] = arrays["pressure_lfc"]
         _write_point_cloud_vtu(output/"pressure_field.vtu", arrays["cpos"], fields)
         if "markers" in arrays:
-            surface_fields = {key: arrays[key] for key in ("normals", "surface_pressure_raw", "surface_pressure_lfc", "surface_shear_raw", "surface_shear_repaired") if key in arrays}
-            _write_point_cloud_vtu(output/"surface_stress.vtu", arrays["markers"], surface_fields)
+            surface_fields = {key: arrays[key] for key in ("normals", "surface_pressure_raw", "surface_pressure_lfc") if key in arrays}
+            _write_point_cloud_vtu(output/"surface_pressure.vtu", arrays["markers"], surface_fields)
         diagnostics["vtk_representation"] = "VTK_VERTEX sample points at cell centers / markers; not volume or surface cells"
     diagnostics["source_snapshot"] = str(arguments.snapshot.resolve())
     diagnostics["source_snapshot_sha256"] = source_hash
     diagnostics["postprocess_source_sha256"] = _file_sha256(__file__)
-    diagnostics["parameters"] = {key: getattr(arguments, key) for key in ("field_only", "skip_shear", "pressure_width", "velocity_width", "offset", "vtk")}
+    diagnostics["parameters"] = {key: getattr(arguments, key) for key in ("field_only", "pressure_width", "vtk")}
     (output / "postprocess.json").write_text(json.dumps(diagnostics, indent=2, allow_nan=False) + "\n", encoding="utf-8")
-    print(f"Pressure/stress written to {output}")
+    print(f"Pressure written to {output}")
     return 0
 
 
