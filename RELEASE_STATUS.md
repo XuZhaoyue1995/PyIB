@@ -1,53 +1,40 @@
-# PyIB research prerelease: 0.1.0rc1
+# PyIB 0.1.0rc2
 
-PyIB `0.1.0rc1` is a research prerelease. This version identifies the packaged
-numerical snapshot and its documented checks. It is not a package-registry
-release or a statement of completed scientific acceptance.
+PyIB is a Python immersed-boundary solver with CPU and CUDA backends.
+Repository: <https://github.com/XuZhaoyue1995/PyIB>.
+Sole software author: **Zhaoyue Xu**.
 
-The project repository is
-`https://github.com/XuZhaoyue1995/PyIB`.
-The existing `paper/IB_GPU_Solver_Paper_CN_JCP.pdf` manuscript is retained
-unchanged when replacing the repository's code with this PyIB prerelease.
+**Release scope: the CPU/CUDA solver, pressure-field reconstruction and
+surface-pressure correction.** Solver and pressure numerical validation
+has been completed on the D32/D40 oscillating-sphere benchmark (Re₀ = 0.2).
+The release includes the measured errors and their supporting evidence.
 
-**Sole software author: Zhaoyue Xu.** `AUTHORS.md`, `CITATION.cff` and package
-metadata record that author only. Existing papers and retained manuscript
-drafts keep their original authorship; software metadata do not rewrite them.
+## Current postprocessing — 2026-09-25
 
-The author selected **PyIB — A Python Immersed Boundary Solver for CPUs and
-GPUs**. The independent solver can be called by CFDAgent. Its distribution and
-namespace are `pyib`, with `pyib-run`, `pyib-postprocess` and `pyib-validate`
-console commands. The earlier `cfdagent-ib` name was internal and temporary;
-historical checks retain their actual tested command names. The preserved
-internal `solver/cfdagent_ib.py` filename and its legacy error-message prefix
-remain unchanged for source provenance.
+Pressure reconstruction and surface-pressure correction retain their
+validated numerical implementation. Surface integration reports pressure
+force only. Wall-shear recovery and surface-total-force output are excluded
+from this release. See [postprocessing](docs/POSTPROCESSING.md).
 
-## Licensing and ongoing work
+D32/D40 simulations completed six periods using CUDA and float64. Runtime
+force harmonic-vector errors are 5.2690% / 4.1190%; corrected surface-pressure
+relative area/time L2 errors are 2.5300% / 2.2224%. Periodic convergence,
+joint grid/time refinement and source identities are documented in
+[VALIDATION.md](docs/VALIDATION.md). The
+[validation summary](checks/pressure-validation-20260925.json) and
+[evidence archive](checks/pressure-validation-20260925.zip) accompany the release.
 
-The software license is pending. No open-source license is granted by this
-prerelease.
+## Distribution and attribution
 
-Scientific validation continues, including review of the ongoing D32/D40
-calculations. Manufactured-field tests and coarse smoke runs demonstrate the
-limited properties described in the test reports; they are not a replacement
-for physical accuracy and convergence evidence.
+`SOURCE_MANIFEST.json` verifies the current numerical files. Thirteen files
+retain their captured source bytes; the pressure-only postprocessor has a
+new hash and an explicit record of its original source hash. The CPU/CUDA
+numerical time integrator is unchanged. Installation and commands are described in
+[README.md](README.md).
 
-The inherited local paths listed in `docs/DEPENDENCIES.md` are in inactive
-diagnostic blocks; standard packaged entry points do not use them. Numerical
-files remain byte-for-byte identical to the original snapshot. Any subsequent
-cleanup should be reviewed separately and update the provenance manifest.
+The original manuscript in `paper/IB_GPU_Solver_Paper_CN_JCP.pdf` remains
+unchanged, including its original author information. Software attribution is
+recorded in `AUTHORS.md` and `CITATION.cff`.
 
-The package does not contain cluster credentials, host addresses, Fortran
-source/binaries/golden outputs, WUR datasets, production results, or historical
-logs. It includes only the explicit source allowlist, existing sphere JSON
-examples, the offline manufactured-field tests, and new packaging material.
-
-The bundled JSON examples and recorded packaging checks use sphere cases.
-Their scope does not imply that the immersed-boundary method is limited to
-closed spheres. The author describes a thin-wall treatment using a one-sided,
-locally infinite-thickness interpretation; this packaging update did not
-verify a thin-wall adapter. CPU and CUDA backends are retained, while GPU
-cross-validation and distributed execution have their own evidence needs.
-
-Old generated build files are retained in the ignored `.packaging-history/`
-directory. They are outside the source/build paths used for PyIB and are
-excluded from release archives.
+The software license remains pending the author's selection. No open-source
+license has been granted by this distribution.

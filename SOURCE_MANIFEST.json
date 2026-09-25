@@ -1,9 +1,9 @@
 {
-  "schema_version": 1,
-  "release_candidate": "0.1.0rc1",
+  "schema_version": 2,
+  "release_candidate": "0.1.0rc2",
   "captured_utc": "2026-09-22T14:04:56.344780+00:00",
-  "source_origin": "Author-provided local IBZhaoyue tree; public repository/revision pending confirmation",
-  "preservation": "All listed source files are byte-for-byte identical to the original source at capture time.",
+  "source_origin": "Author-provided local IBZhaoyue tree; maintained distribution at https://github.com/XuZhaoyue1995/PyIB",
+  "preservation": "Thirteen listed numerical source files retain their captured bytes. The postprocessor now provides pressure-only processing; pressure numerical functions remain unchanged.",
   "files": [
     {
       "source_relative_path": "make_euler_mesh.py",
@@ -62,8 +62,11 @@
     {
       "source_relative_path": "solver/ib_postprocess.py",
       "package_path": "src/pyib/solver/ib_postprocess.py",
-      "sha256": "3d7f5f476db8cc126d6695f6f88aa387ae53833916307b1ebaf033078c6dfbfd",
-      "bytes": 35695
+      "sha256": "3049e148a875250734d2917eb2fac61d9d4abefdcfab4fafbc0ac1a826be19a9",
+      "bytes": 25913,
+      "original_source_sha256": "3d7f5f476db8cc126d6695f6f88aa387ae53833916307b1ebaf033078c6dfbfd",
+      "original_source_bytes": 35695,
+      "change_note": "Remove wall-shear processing and its options/outputs. Pressure numerical functions unchanged; pressure force labelled as pressure contribution only."
     },
     {
       "source_relative_path": "solver/ib_sparse.py",
@@ -92,5 +95,6 @@
   ],
   "packaging_name": "PyIB",
   "packaging_namespace": "pyib",
-  "packaging_note": "Renamed from the temporary cfdagent-ib candidate; original source paths, capture timestamp, byte counts and SHA-256 hashes are unchanged."
+  "packaging_note": "Public package and namespace are PyIB/pyib. Original capture metadata is retained; current file hashes verify the maintained distribution.",
+  "updated_utc_date": "2026-09-25"
 }

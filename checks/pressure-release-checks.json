@@ -1,0 +1,94 @@
+{
+  "version": "0.1.0rc2",
+  "checked_date": "2026-09-25",
+  "build": "Fresh build tree, non-editable wheel installed with unchanged runtime dependencies.",
+  "installed_source_files_verified": 14,
+  "preserved_numerical_source_files": 13,
+  "pressure_regression_tests_passed": 14,
+  "benchmark_evidence_checks_passed": 288,
+  "benchmark_evidence_checks_total": 288,
+  "cpu_execution_check": {
+    "steps": 5,
+    "validator": "VALID",
+    "force_balance_max": 6.077416e-16,
+    "purpose": "Execution and artifact consistency, not physical accuracy."
+  },
+  "complete_pressure_cli_check": {
+    "cells": 4096,
+    "markers": 13,
+    "finite_pressure_outputs": true,
+    "source_snapshot_sha256": "57a89699b9551efbf7facc1d71172d44e6a75f3f49862b145b69acc30be818eb",
+    "postprocess_source_sha256": "3049e148a875250734d2917eb2fac61d9d4abefdcfab4fafbc0ac1a826be19a9",
+    "spread_replay_relative_error": 9.909321373632152e-16,
+    "purpose": "End-to-end pressure artifact integration, not a physical validation benchmark."
+  },
+  "retained_manuscript_sha256": "87ecd238e149ee1ff5738f7ddb263dddc482447182f1d5b23a13253f61190354",
+  "physical_validation": "See pressure-validation-20260925.json and ../docs/VALIDATION.md for D32/D40 Re0=0.2 results.",
+  "pressure_implementation_equivalence": {
+    "status": "PASS",
+    "scope": "Software regression of pressure-only extraction; not additional physical validation.",
+    "baseline_source_sha256": "b12415f9fda2baa88a3131e11221228dd72059af4717b3615f3642b8d0dd2f42",
+    "release_source_sha256": "3049e148a875250734d2917eb2fac61d9d4abefdcfab4fafbc0ac1a826be19a9",
+    "function_count": 9,
+    "function_comparisons": [
+      {
+        "name": "_finite",
+        "source_exactly_equal": true,
+        "ast_equal": true,
+        "function_source_sha256": "1dceaed8382a2dbb04883f254ad90578bdad531463b79fcec82a8e4963d4693d"
+      },
+      {
+        "name": "recover_pressure",
+        "source_exactly_equal": true,
+        "ast_equal": true,
+        "function_source_sha256": "7f21124c19a47fe6cbac75863efec35be4d727f76d03a4b332337bf8d9aec684"
+      },
+      {
+        "name": "UniformLattice",
+        "source_exactly_equal": true,
+        "ast_equal": true,
+        "function_source_sha256": "fd26a37bfdaea2c74ef8332664d91eb0751497f4aed47436fae2e373cd47f0e3"
+      },
+      {
+        "name": "delta_h3",
+        "source_exactly_equal": true,
+        "ast_equal": true,
+        "function_source_sha256": "195576a66ab72192e726801d5eb8ee366cb47dc61841a870f8623955dae10bc9"
+      },
+      {
+        "name": "spread_marker_force",
+        "source_exactly_equal": true,
+        "ast_equal": true,
+        "function_source_sha256": "d3727a67425b52b944281b1d208ec36f2a4efc7f472acf7d0cf68172809dd5ec"
+      },
+      {
+        "name": "_lattice_edges",
+        "source_exactly_equal": true,
+        "ast_equal": true,
+        "function_source_sha256": "620920f325f14f2fbd4b773a2cebf99c0846d3744924f19dcc2c159bd39a85ed"
+      },
+      {
+        "name": "repair_pressure_band",
+        "source_exactly_equal": true,
+        "ast_equal": true,
+        "function_source_sha256": "b1dafe9420cc6bb9f81b8a5a40b33454f99280d98fe32497a16339a9208785c6"
+      },
+      {
+        "name": "surface_pressure_fit",
+        "source_exactly_equal": true,
+        "ast_equal": true,
+        "function_source_sha256": "803c826b14b95d89f1b76dd74a0ee2bcf45be1d29de5579263ccb4a265f25a14"
+      },
+      {
+        "name": "integrate_surface_pressure",
+        "source_exactly_equal": true,
+        "ast_equal": true,
+        "function_source_sha256": "a146f60dee1114ed52b6710c4533d46b4f003bd185662cab8104be6022a97a03"
+      }
+    ],
+    "output_arrays_bitwise_identical": 12,
+    "existing_diagnostics_identical": 15,
+    "regression_report_sha256": "8dcdf9d8492bed0f6690c80cbfb8427aecc4d585a9611a0e71fd785f6f2687bb",
+    "fixture": "Deterministic 17^3 grid with 96 sphere markers and nonzero immersed-boundary forcing."
+  }
+}

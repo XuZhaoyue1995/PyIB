@@ -1,3 +1,3 @@
-"""PyIB packaging layer; numerical sources are preserved unchanged."""
+"""PyIB CPU/GPU solver package with offline pressure reconstruction and correction."""
 
-__version__ = "0.1.0rc1"
+__version__ = "0.1.0rc2"
