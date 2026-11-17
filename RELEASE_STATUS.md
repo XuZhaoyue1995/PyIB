@@ -50,5 +50,7 @@ The original manuscript in `paper/IB_GPU_Solver_Paper_CN_JCP.pdf` remains
 unchanged, including its original author information. Software attribution is
 recorded in `AUTHORS.md` and `CITATION.cff`.
 
-The software license remains pending the author's selection. No open-source
-license has been granted by this distribution.
+The source tree is licensed under the BSD 3-Clause License ([LICENSE](LICENSE))
+since 2026-11-17. The `0.1.0rc2` release was published before the license was
+chosen and carried none. The license covers the software only; the manuscript in
+`paper/` is excluded ([note](paper/README.md)).

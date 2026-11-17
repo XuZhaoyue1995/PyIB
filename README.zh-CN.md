@@ -15,7 +15,9 @@ L₂ 误差为 **2.2224%**。核验包括解析解对照、周期收敛、网格
 [软件引用信息](CITATION.cff)。Python 分发包和导入名为 `pyib`；
 当前研究预发布版本为 `0.1.0rc2`。
 
-软件许可证仍待定，本次预发布未授予开源许可。详见 [发布状态](RELEASE_STATUS.md)。
+PyIB 以 [BSD 3-Clause 许可证](LICENSE) 发布。`paper/` 中保留的论文稿不在该许可证
+范围内（[说明](paper/README.md)）。在发表的工作中使用 PyIB 时，请按
+[CITATION.cff](CITATION.cff) 引用。另见 [发布状态](RELEASE_STATUS.md)。
 
 **`0.1.0rc2` 之后的工作区改动（2026-11-17，尚未发布）：** Helmholtz 算子提速
 （D16 基准算例实测 CUDA 2.2 倍、CPU 3.6 倍）；从 IBFast 移植了可选的 K 矩阵

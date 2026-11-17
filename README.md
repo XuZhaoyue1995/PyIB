@@ -19,8 +19,10 @@ provenance. See the [complete validation record](docs/VALIDATION.md).
 [AUTHORS.md](AUTHORS.md) and [CITATION.cff](CITATION.cff). The Python distribution
 and import namespace are `pyib`; this research prerelease is `0.1.0rc2`.
 
-The software license is pending; this prerelease does not grant an open-source
-license. See [release status](RELEASE_STATUS.md).
+PyIB is licensed under the [BSD 3-Clause License](LICENSE). The retained
+manuscript in `paper/` is not covered by that license
+([note](paper/README.md)). If you use PyIB in published work, please cite it
+using [CITATION.cff](CITATION.cff). See also [release status](RELEASE_STATUS.md).
 
 **Working tree after `0.1.0rc2` (2026-11-17, not released):** a faster
 Helmholtz operator (2.2 times on CUDA and 3.6 times on CPU on the D16 benchmark
