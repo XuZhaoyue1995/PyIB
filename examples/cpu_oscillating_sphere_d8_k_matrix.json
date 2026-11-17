@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "name": "cpu_oscillating_sphere_d8_k_matrix",
+  "case": {
+    "kind": "oscillating_sphere"
+  },
+  "runtime": {
+    "device": "cpu",
+    "precision": "float64"
+  },
+  "mesh": {
+    "kind": "sphere_concentric",
+    "cells_per_diameter": 8,
+    "verbose": false
+  },
+  "physics": {
+    "reynolds": 0.2,
+    "density": 1.0,
+    "inflow_speed": 0.0
+  },
+  "time": {
+    "dt": 0.0062333187571226049,
+    "steps": 8,
+    "inner_iterations": 4
+  },
+  "ib": {
+    "radius": 0.25,
+    "center": [0.0, 0.0, 0.0],
+    "marker_spacing": 0.0625,
+    "force_mode": "accumulated_explicit",
+    "implicit": false,
+    "alpha": 1.0,
+    "k_matrix": {
+      "enabled": true,
+      "tolerance": 1e-06,
+      "max_iterations": 5000,
+      "xnorm_min": 0.0,
+      "patch_size": 1,
+      "k_solver": "auto"
+    },
+    "motion": {
+      "kind": "oscillation",
+      "axis": [1.0, 0.0, 0.0],
+      "amplitude": 0.0055555555555555558,
+      "frequency": 0.57295779513082334,
+      "phase": -1.5707963267948966
+    }
+  },
+  "solver": {
+    "sparse": true,
+    "operator": "factored",
+    "cg_check_interval": 1,
+    "cg_max_iterations": 1000,
+    "cg_reference_speed": 0.0
+  },
+  "output": {
+    "sample_every": 1,
+    "checkpoint_every": 4,
+    "save_field": true,
+    "residual_state": "auto"
+  }
+}

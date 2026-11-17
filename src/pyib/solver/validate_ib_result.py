@@ -35,8 +35,8 @@ import zipfile
 import numpy as np
 
 
-RESULT_SCHEMA_VERSION = 5
-CHECKPOINT_SCHEMA_VERSION = 3
+RESULT_SCHEMA_VERSION = 7
+CHECKPOINT_SCHEMA_VERSION = 5
 
 HISTORY_COLUMNS = (
     "step",
@@ -117,6 +117,7 @@ METADATA_FIELDS = {
     "resumed_from",
     "output_directory",
     "source_sha256",
+    "sparse_execution",
     "closed_body_load",
     "resume_count",
     "setup_seconds",
@@ -124,7 +125,7 @@ METADATA_FIELDS = {
     "completed_step",
     "complete",
 }
-METADATA_OPTIONAL_FIELDS = {"last_resume_utc"}
+METADATA_OPTIONAL_FIELDS = {"last_resume_utc", "k_matrix"}
 
 CHECKPOINT_FIELDS = {
     "checkpoint_schema",
@@ -139,6 +140,7 @@ CHECKPOINT_FIELDS = {
     "precision",
     "device",
     "source_hashes_json",
+    "sparse_execution_json",
     "s",
     "s_old",
     "markers",
@@ -192,6 +194,7 @@ FINAL_FIELD_FIELDS = {
     "config_fingerprint",
     "layout_fingerprint",
     "source_hashes_json",
+    "sparse_execution_json",
     "device",
     "precision",
 }
@@ -218,6 +221,10 @@ SOURCE_FILES = {
     "interior_load": "ib_interior.py",
     "kinematics": "ib_kinematics.py",
     "sparse_operator": "ib_sparse.py",
+    "cpu_sparse": "ib_cpu_sparse.py",
+    "cpu_sparse_kernel": "_csr_openmp.c",
+    "constraint": "ib_constraint.py",
+    "constraint_patches": "ib_patches.py",
     "mesh_builder": "../make_euler_mesh.py",
     "sphere_wake_mesh": "sphere_wake_mesh.py",
     "sphere_quiescent_mesh": "sphere_quiescent_mesh.py",
@@ -490,9 +497,20 @@ def _validate_config(config_value: Any) -> dict[str, Any]:
     ib = _as_mapping(config["ib"], "config.ib")
     _exact_keys(
         ib,
-        {"radius", "center", "marker_spacing", "force_mode", "implicit", "alpha", "motion"},
+        {"radius", "center", "marker_spacing", "force_mode", "implicit", "alpha", "k_matrix", "motion"},
         "config.ib",
     )
+    k_matrix = _as_mapping(ib["k_matrix"], "config.ib.k_matrix")
+    _exact_keys(k_matrix, {"enabled", "tolerance", "max_iterations", "xnorm_min", "patch_size", "k_solver"}, "config.ib.k_matrix")
+    _require(isinstance(k_matrix["enabled"], bool), "config.ib.k_matrix.enabled must be boolean")
+    _json_number(k_matrix["tolerance"], "config.ib.k_matrix.tolerance", positive=True)
+    _json_int(k_matrix["max_iterations"], "config.ib.k_matrix.max_iterations", minimum=1)
+    _require(_json_number(k_matrix["xnorm_min"], "config.ib.k_matrix.xnorm_min") >= 0.0,
+             "config.ib.k_matrix.xnorm_min must be non-negative")
+    _require(_json_int(k_matrix["patch_size"], "config.ib.k_matrix.patch_size", minimum=1) in (1, 2, 4),
+             "config.ib.k_matrix.patch_size must be 1, 2 or 4")
+    _require(_json_string(k_matrix["k_solver"], "config.ib.k_matrix.k_solver") in ("auto", "inverse", "cholesky"),
+             "unsupported config.ib.k_matrix.k_solver")
     _json_number(ib["radius"], "config.ib.radius", positive=True)
     try:
         centre = np.asarray(ib["center"], dtype=float)
@@ -511,6 +529,10 @@ def _validate_config(config_value: Any) -> dict[str, Any]:
     inner_iterations = int(time_cfg["inner_iterations"])
     if ib["implicit"]:
         _require(alpha <= 0.7, "implicit IB requires config.ib.alpha <= 0.7")
+    if k_matrix["enabled"]:
+        _require(force_mode == "accumulated_explicit" and not ib["implicit"],
+                 "k_matrix requires the explicit accumulated force mode")
+        _require(precision == "float64", "k_matrix requires float64")
     if force_mode == "accumulated_explicit":
         _require(not ib["implicit"], "accumulated_explicit must be explicit")
         _require(alpha == 1.0, "accumulated_explicit requires config.ib.alpha=1.0")
@@ -579,13 +601,25 @@ def _validate_config(config_value: Any) -> dict[str, Any]:
         )
 
     solver = _as_mapping(config["solver"], "config.solver")
-    _exact_keys(solver, {"sparse", "cg_check_interval", "cg_max_iterations", "fail_on_cg_nonconvergence"}, "config.solver")
+    _exact_keys(solver, {"sparse", "operator", "cpu_sparse_backend", "cpu_sparse_threads", "cg_check_interval", "cg_max_iterations", "fail_on_cg_nonconvergence", "cg_reference_speed"}, "config.solver")
+    _require(_json_number(solver["cg_reference_speed"], "config.solver.cg_reference_speed") >= 0.0,
+             "config.solver.cg_reference_speed must be non-negative")
+    _require(_json_string(solver["operator"], "config.solver.operator") in ("assembled", "factored"),
+             "config.solver.operator must be assembled or factored")
+    from ib_cpu_sparse import validate_options
+    try:
+        validate_options(solver["cpu_sparse_backend"], solver["cpu_sparse_threads"],
+                         device=device, precision=precision, sparse=solver["sparse"])
+    except (ValueError, TypeError) as exc:
+        raise ValidationError(str(exc)) from exc
     _require(isinstance(solver["sparse"], bool), "config.solver.sparse must be boolean")
     _json_int(solver["cg_check_interval"], "config.solver.cg_check_interval", minimum=1)
     _json_int(solver["cg_max_iterations"], "config.solver.cg_max_iterations", minimum=1)
     _require(isinstance(solver["fail_on_cg_nonconvergence"], bool), "config.solver.fail_on_cg_nonconvergence must be boolean")
     output = _as_mapping(config["output"], "config.output")
-    _exact_keys(output, {"sample_every", "checkpoint_every", "field_every", "field_start_step", "save_field"}, "config.output")
+    _exact_keys(output, {"sample_every", "checkpoint_every", "field_every", "field_start_step", "save_field", "residual_state"}, "config.output")
+    _require(_json_string(output["residual_state"], "config.output.residual_state") in ("auto", "last_inner", "step_end"),
+             "unsupported config.output.residual_state")
     _json_int(output["sample_every"], "config.output.sample_every", minimum=1)
     _json_int(output["checkpoint_every"], "config.output.checkpoint_every", minimum=0)
     _json_int(output["field_every"], "config.output.field_every", minimum=0)
@@ -1109,7 +1143,9 @@ def _validate_history_loads(
 
 
 def _validate_cg_evidence(history, config, final=None):
-    if config["solver"]["fail_on_cg_nonconvergence"]:
+    # With the K-matrix correction the projected CG may stop on its stagnation guard; such
+    # solves are accepted and counted in metadata.k_matrix, and the ratio can exceed 1.
+    if config["solver"]["fail_on_cg_nonconvergence"] and not config["ib"]["k_matrix"]["enabled"]:
         _require(all(row["helmholtz_tolerance_ratio"] <= 1.0 for row in history),
                  "strict run contains unconverged CG history")
     if final is not None:
@@ -1403,6 +1439,14 @@ def validate_result(
         current = _sha256(solver_directory / filename)
         _require(recorded == current, f"numerical source hash mismatch for {filename}")
 
+    from ib_cpu_sparse import execution_identity
+    try:
+        current_execution = execution_identity(config)
+    except (RuntimeError, ValueError, OSError) as exc:
+        raise ValidationError(f"cannot verify sparse execution identity: {exc}") from exc
+    _require(metadata["sparse_execution"] == current_execution,
+             "metadata sparse backend/threads/compiled implementation does not match this installation")
+    execution_json = json.dumps(current_execution, sort_keys=True, separators=(",", ":"))
     checkpoint = _load_npz(paths["checkpoint"], CHECKPOINT_FIELDS)
     final = _load_npz(paths["final"], FINAL_FIELD_FIELDS) if save_field else None
     _require(
@@ -1414,6 +1458,8 @@ def validate_result(
         _string_scalar(checkpoint["update_phase"], "checkpoint.update_phase") == "post_step",
         "checkpoint update_phase must be post_step",
     )
+    _require(_string_scalar(checkpoint["sparse_execution_json"], "checkpoint.sparse_execution_json") == execution_json,
+             "checkpoint sparse execution identity differs from metadata/current installation")
     checkpoint_run_id = _validate_uuid(
         _string_scalar(checkpoint["run_id"], "checkpoint.run_id"), "checkpoint.run_id"
     )
@@ -1474,7 +1520,10 @@ def validate_result(
     )
 
     inner_iterations = int(config["time"]["inner_iterations"])
-    expected_force_updates = 1 if public_force_mode == "accumulated_explicit" else inner_iterations
+    expected_force_updates = (
+        1 if public_force_mode == "accumulated_explicit" and not config["ib"]["k_matrix"]["enabled"]
+        else inner_iterations
+    )
     update_count = _integer_scalar(
         checkpoint["ib_force_update_count"], "checkpoint.ib_force_update_count", minimum=1
     )
@@ -1632,6 +1681,8 @@ def validate_result(
         "final_field.layout_fingerprint",
     )
     _require(final_layout == layout_fingerprint, "final_field layout fingerprint mismatch")
+    _require(_string_scalar(final["sparse_execution_json"], "final_field.sparse_execution_json") == execution_json,
+             "final_field sparse execution identity differs from metadata/checkpoint")
     final_sources = _validate_npz_source_hashes(
         final["source_hashes_json"], "final_field.source_hashes_json", source_hashes
     )
@@ -1691,7 +1742,8 @@ def validate_result(
     for name in ("helmholtz_relative_residual", "helmholtz_tolerance_ratio"):
         value = _float_scalar(final[name], f"final_field.{name}")
         _require(value >= 0, f"final_field.{name} must be nonnegative")
-        if name == "helmholtz_tolerance_ratio" and config["solver"]["fail_on_cg_nonconvergence"]:
+        if (name == "helmholtz_tolerance_ratio" and config["solver"]["fail_on_cg_nonconvergence"]
+                and not config["ib"]["k_matrix"]["enabled"]):
             _require(value <= 1.0, "strict run contains an unconverged final CG solve")
     _float_array(final["cpos"], "final_field.cpos", dtype=dtype, shape=(cells, 3))
     _float_array(

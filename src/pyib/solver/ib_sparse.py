@@ -7,6 +7,12 @@ not a guaranteed replacement and has no universal linear-time complexity.
 
 A = R @ Imat @ Vblock @ P @ C   (= rot . integr_c2f . [viscous] . interp_f2c . curl)
 Self-validated: A @ s must equal the matrix-free core.flow_mat(s) (the oracle).
+
+The assembled product has about 120 non-zeros per edge row.  ``build_factored``
+keeps it as three factors, A p = (R Imat) (Vblock ((P C) p)), with about 23
+non-zeros per edge row in total: the same operator, a fifth of the memory and
+of the work per application.  The two forms differ by round-off (different
+association of the same sums), not bit for bit.
 """
 import numpy as np
 import scipy.sparse as sp
@@ -94,6 +100,64 @@ def build_A(core, alpd=0.0, visc=0.0, rou=1.0, dt=0.0, to_backend=True):
         import cupyx.scipy.sparse as csp
         return csp.csr_matrix(A)
     return A
+
+
+class FactoredOperator:
+    """flow_mat applied as three sparse factors; supports ``operator @ vector``."""
+
+    def __init__(self, rot_integr, viscous, interp_curl):
+        self.rot_integr = rot_integr            # (nedge, 3 ncell)   R @ Imat
+        self.viscous = viscous                  # (3 ncell, 3 ncell) block diagonal, or None
+        self.interp_curl = interp_curl          # (3 ncell, nedge)   P @ C
+        self.shape = (rot_integr.shape[0], interp_curl.shape[1])
+        self.dtype = interp_curl.dtype
+
+    @property
+    def nnz(self):
+        return int(self.rot_integr.nnz + self.interp_curl.nnz
+                   + (self.viscous.nnz if self.viscous is not None else 0))
+
+    def factors(self):
+        return [m for m in (self.rot_integr, self.viscous, self.interp_curl) if m is not None]
+
+    def __matmul__(self, vector):
+        work = self.interp_curl @ vector
+        if self.viscous is not None:
+            work = self.viscous @ work
+        return self.rot_integr @ work
+
+
+def build_factored(core, alpd=0.0, visc=0.0, rou=1.0, dt=0.0, to_backend=True):
+    """flow_mat as the factors (R Imat), Vblock, (P C) of ``build_A`` (no DirBC applied).
+
+    Assembled on the host; with ``to_backend`` on a CUDA run every factor is
+    uploaded as a cupyx CSR matrix.
+    """
+    nc = core.ncell
+    C = _curl_matrix(core)
+    interp_curl = (_interp_f2c_matrix(core) @ C).tocsr()
+    rot_integr = (C.T.tocsr() @ _integr_c2f_matrix(core)).tocsr()
+    viscous = None
+    if alpd != 0.0:
+        Dvol = sp.diags(_a(core.vol_ci)); DAv = sp.diags(_a(core.AoL) * visc)
+        V = (rou * sp.eye(nc) - 0.5 * dt * (Dvol @ _cdiv_matrix(core) @ DAv @ _cgrad_ghost0_matrix(core))).tocsr()
+        viscous = sp.block_diag([V, V, V]).tocsr()
+    factors = []
+    for matrix in (rot_integr, viscous, interp_curl):
+        if matrix is None:
+            factors.append(None)
+            continue
+        matrix = matrix.tocsr()
+        if FP32:
+            matrix = matrix.astype(np.float32)
+        matrix.sum_duplicates()
+        matrix.eliminate_zeros()
+        matrix.sort_indices()
+        if to_backend and GPU:
+            import cupyx.scipy.sparse as csp
+            matrix = csp.csr_matrix(matrix)
+        factors.append(matrix)
+    return FactoredOperator(*factors)
 
 
 class DirectHelm:

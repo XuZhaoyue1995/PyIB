@@ -11,6 +11,7 @@ if __name__ == "__main__":
     manifest = json.loads((root / "SOURCE_MANIFEST.json").read_text(encoding="utf-8"))
     failures = []
     updated = 0
+    added = 0
     for entry in manifest["files"]:
         path = root / entry["package_path"]
         if not path.is_file():
@@ -20,9 +21,12 @@ if __name__ == "__main__":
         if len(content) != entry["bytes"] or hashlib.sha256(content).hexdigest() != entry["sha256"]:
             failures.append(entry["package_path"])
         original = entry.get("original_source_sha256", entry["sha256"])
-        updated += original != entry["sha256"]
+        if entry.get("origin", "").startswith("added_"):
+            added += 1
+        else:
+            updated += original != entry["sha256"]
     if failures:
         print("Source hash mismatch: " + ", ".join(failures), file=sys.stderr)
         sys.exit(1)
     total = len(manifest["files"])
-    print(f"Verified {total} current source files: {total - updated} preserved, {updated} updated.")
+    print(f"Verified {total} current source files: {total - updated - added} preserved, {updated} updated, {added} added.")

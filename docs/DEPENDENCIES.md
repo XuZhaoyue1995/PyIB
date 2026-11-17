@@ -6,7 +6,7 @@ The internal historical `solver/cfdagent_ib.py` filename and log prefix remain
 part of the byte-preserved numerical source snapshot; they do not set the
 public package name.
 
-The 14 preserved files are listed with SHA-256 hashes in
+Current files, original hashes and changes are listed in
 `SOURCE_MANIFEST.json`. The mesh generator remains one directory above the
 solver modules, preserving the numerical source hashing and imports expected
 by the existing runner and validator. The console wrappers insert those two
@@ -18,6 +18,12 @@ NumPy >=2,<3; SciPy >=1.13,<2; h5py >=3.11,<4; meshio >=5.3,<6.
 The optional GPU dependency is cupy-cuda12x >=13,<14, requiring a compatible
 CUDA 12/NVIDIA environment. The CUDA kernels in the solver are embedded Python
 strings; no external CUDA source or compiled project library is needed.
+
+The optional CPU CSR extension requires a Linux GCC-compatible compiler and
+OpenMP at installation time (`PYIB_BUILD_OPENMP=1`). It uses CPython's buffer
+protocol and needs no NumPy build headers. Ordinary installs require no C
+compiler. See [CPU acceleration](CPU_ACCELERATION.md). Runtime compilation or
+automatic installation is never performed by the solver.
 
 No external geometry/data file is required by the four included sphere case
 definitions. Dynamic sphere mesh imports (`sphere_wake_mesh` and

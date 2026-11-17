@@ -27,6 +27,9 @@ pyib-run = "pyib.cli:run"
 pyib-postprocess = "pyib.cli:postprocess"
 pyib-validate = "pyib.cli:validate"
 
+[tool.setuptools.package-data]
+"pyib.solver" = ["*.c"]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 

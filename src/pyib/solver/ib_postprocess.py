@@ -14,6 +14,11 @@ All expensive recovery is offline on NumPy/SciPy, even for CUDA snapshots::
 
     python ib_postprocess.py run/final_field.npz
     python ib_postprocess.py run/field_00001000.npz --field-only
+    python ib_postprocess.py run/final_field.npz --two-sided [--far-gauge D]
+
+``--two-sided`` selects the triangulated-surface repair of ib_pressure_surface
+(both sides of open or closed surfaces, IBFast pressure_lfc.py --two-sided);
+without it the sphere-exterior path below is used, unchanged.
 
 No solver imports, model credentials or CUDA device are required.  Old fields
 without a retained momentum residual cannot provide this pressure recovery.
@@ -367,6 +372,114 @@ def process_snapshot(snapshot, *, field_only=False, pressure_width=1.5):
     return arrays, diagnostics
 
 
+def process_snapshot_two_sided(snapshot, *, pressure_width=1.5, far_gauge=None, kernel=None,
+                               triangles=None, reach=6.0, raw_pressure="mesh"):
+    """Recover the pressure on both sides of a triangulated immersed surface.
+
+    The whole-mesh pressure is recovered as in :func:`process_snapshot`.  The
+    surface is ``triangles`` (argument, or the snapshot array of that name); a
+    snapshot of the canonical sphere without triangles is triangulated by its
+    convex hull.  ``raw_pressure="mesh"`` repairs the whole-mesh projection in
+    the band; ``"lattice"`` recovers the raw pressure on the finest lattice as
+    IBFast does (cells within ``reach`` spacings, or every lattice cell with
+    ``far_gauge``).  Returns arrays plus JSON-safe diagnostics.
+    """
+    from ib_pressure_surface import (
+        KERNELS, sphere_triangulation, two_sided_surface_pressure,
+        spread_marker_force as spread_with_kernel,
+    )
+
+    if raw_pressure not in ("mesh", "lattice"):
+        raise ValueError("raw_pressure must be 'mesh' or 'lattice'")
+    required = ("cpos", "vc", "momentum_residual", "dt", "face_cells", "face_area")
+    missing = [key for key in required if key not in snapshot]
+    if missing:
+        raise ValueError("snapshot lacks pressure-recovery data: " + ", ".join(missing) + "; rerun with selected field output")
+    positions = _finite("cpos", snapshot["cpos"])
+    velocity = _finite("vc", snapshot["vc"], positions.shape)
+    dt = float(snapshot["dt"])
+    if not np.isfinite(dt) or dt <= 0:
+        raise ValueError("snapshot dt must be positive")
+    gradient = _finite("momentum_residual", snapshot["momentum_residual"], positions.shape) / dt
+    pressure, diagnostics = recover_pressure(positions, snapshot["face_cells"], snapshot["face_area"], gradient)
+    required_surface = ("index_cell", "lattice_origin", "lattice_spacing", "markers", "ib_force_L",
+                        "marker_volume_weight")
+    missing = [key for key in required_surface if key not in snapshot]
+    if missing:
+        raise ValueError("snapshot lacks surface pressure data: " + ", ".join(missing))
+    markers = _finite("markers", snapshot["markers"])
+    force = _finite("ib_force_L", snapshot["ib_force_L"], markers.shape)
+    weights = _finite("marker_volume_weight", snapshot["marker_volume_weight"], (len(markers),))
+    if np.any(weights <= 0):
+        raise ValueError("marker volume weights must be positive")
+    if triangles is None and "triangles" in snapshot:
+        triangles = np.asarray(snapshot["triangles"])
+    triangulation = "supplied"
+    if triangles is None:
+        if "sphere_center" not in snapshot or "sphere_radius" not in snapshot:
+            raise ValueError("the two-sided repair needs a triangulated surface (no triangles in the snapshot)")
+        radial = np.linalg.norm(markers - _finite("sphere_center", snapshot["sphere_center"], (3,)), axis=1)
+        radius = float(snapshot["sphere_radius"])
+        if not np.allclose(radial, radius, atol=radius * 1e-6, rtol=1e-6):
+            raise ValueError("markers are not on the recorded sphere; supply the surface triangles")
+        triangles = sphere_triangulation(markers)
+        triangulation = "convex hull of the sphere markers"
+    if kernel is None:
+        kernel = str(np.asarray(snapshot["ib_kernel"]).item()) if "ib_kernel" in snapshot else "h3"
+    if kernel not in KERNELS:
+        raise ValueError(f"unknown delta kernel {kernel!r}")
+    lattice = UniformLattice(snapshot["index_cell"], snapshot["lattice_origin"], snapshot["lattice_spacing"])
+    coordinates = lattice.coordinates()
+    valid = lattice.cell_ids >= 0
+    if not np.allclose(coordinates[valid], positions[lattice.cell_ids[valid]], atol=lattice.spacing * 1e-5, rtol=0):
+        raise ValueError("lattice coordinates do not match saved cell positions")
+    result = two_sided_surface_pressure(
+        lattice, lattice.field(gradient), markers, triangles, force, weights,
+        raw_pressure=lattice.field(pressure) if raw_pressure == "mesh" else None,
+        pressure_width=pressure_width, reach=reach, far_gauge=far_gauge, kernel=kernel)
+    surface = result["diagnostics"]
+    arrays = {"cpos": positions, "vc": velocity, "pressure_raw": pressure,
+              "step": np.asarray(snapshot.get("step", -1)), "time": np.asarray(snapshot.get("time", np.nan))}
+    if raw_pressure == "mesh":
+        if surface["far_gauge"] is not None:                 # one zero for the field and the surface
+            pressure = pressure - surface["far_gauge"]["shift_removed"]
+            arrays["pressure_raw"] = pressure
+        repaired = pressure.copy()
+        band = result["pressure_band"]
+        repaired[lattice.cell_ids[band]] = result["pressure_lfc_lattice"][band]
+        arrays["pressure_lfc"] = repaired
+    arrays.update(
+        pressure_raw_lattice=result["pressure_raw_lattice"], pressure_lfc_lattice=result["pressure_lfc_lattice"],
+        surface_distance=result["distance"], markers=markers, triangles=result["triangles"],
+        normals=result["normals"], marker_area=result["marker_area"],
+        surface_closed=np.asarray(result["closed"]),
+        surface_pressure_plus_raw=result["surface_pressure_plus_raw"],
+        surface_pressure_minus_raw=result["surface_pressure_minus_raw"],
+        surface_pressure_plus=result["surface_pressure_plus"],
+        surface_pressure_minus=result["surface_pressure_minus"],
+        pressure_force=result["pressure_force"], pressure_force_raw=result["pressure_force_raw"],
+        marker_normal_force=result["marker_normal_force"],
+    )
+    diagnostics.update(surface)
+    diagnostics.update({
+        "method": "IBFast weighted momentum-residual graph projection; two-sided normal-force LFC band repair",
+        "pressure_accuracy": "approximate: depends on inner convergence, spatial and temporal discretization",
+        "triangulation": triangulation,
+        "raw_pressure_source": raw_pressure,
+        "pressure_force_definition": surface["pressure_force_definition"] + "; pressure contribution only, not total body force",
+    })
+    if "ib_force_E" in snapshot:
+        spread_all = spread_with_kernel(lattice, markers, force, weights, kernel)
+        saved = lattice.field(_finite("ib_force_E", snapshot["ib_force_E"], positions.shape))
+        difference = float(np.max(np.abs(spread_all[valid] - saved[valid])))
+        scale = max(float(np.max(np.abs(saved[valid]))), 1e-14)
+        diagnostics["spread_replay_relative_error"] = difference / scale
+        tolerance = 1e-4 if np.asarray(snapshot["ib_force_E"]).dtype.itemsize == 4 else 1e-8
+        if difference / scale > tolerance:
+            raise ValueError("saved marker and Eulerian forces disagree; LFC source is not reproducible")
+    return arrays, diagnostics
+
+
 def _stream_sha256(handle):
     digest = hashlib.sha256()
     for chunk in iter(lambda: handle.read(1024*1024), b""):
@@ -407,9 +520,30 @@ def main(argv=None):
     parser.add_argument("--output", type=Path, help="output directory (default: snapshot stem + _postprocess)")
     parser.add_argument("--field-only", action="store_true", help="recover raw whole-field pressure only")
     parser.add_argument("--pressure-width", type=float, default=1.5, help="pressure repair band width in grid spacings")
+    parser.add_argument("--two-sided", action="store_true",
+                        help="repair and evaluate both sides of the triangulated surface (open or closed)")
+    parser.add_argument("--far-gauge", type=float, default=None, metavar="D",
+                        help="two-sided: zero of the pressure = mean over the lattice cells farther than D from all markers")
+    parser.add_argument("--kernel", choices=("h3", "h3s", "h4"), default=None,
+                        help="two-sided: delta kernel of the run (default: recorded in the snapshot, else h3)")
+    parser.add_argument("--surface", type=Path, default=None,
+                        help="two-sided: NPZ file with an integer 'triangles' (count, 3) array indexing the markers")
+    parser.add_argument("--raw-pressure", choices=("mesh", "lattice"), default="mesh",
+                        help="two-sided: repair the whole-mesh projection (default) or recover the raw pressure on the lattice as IBFast")
     parser.add_argument("--vtk", action="store_true", help="also write ParaView VTU point samples; no mesh topology is inferred")
     parser.add_argument("--overwrite", action="store_true", help="archive existing postprocessing products before replacement")
     arguments = parser.parse_args(argv)
+    if arguments.two_sided and arguments.field_only:
+        parser.error("--two-sided and --field-only are mutually exclusive")
+    if not arguments.two_sided and (arguments.far_gauge is not None or arguments.kernel is not None
+                                    or arguments.surface is not None or arguments.raw_pressure != "mesh"):
+        parser.error("--far-gauge, --kernel, --surface and --raw-pressure need --two-sided")
+    surface_triangles = None
+    if arguments.surface is not None:
+        with np.load(arguments.surface, allow_pickle=False) as surface_file:
+            if "triangles" not in surface_file:
+                raise ValueError(f"{arguments.surface} has no 'triangles' array")
+            surface_triangles = np.asarray(surface_file["triangles"])
     output = arguments.output or arguments.snapshot.with_name(arguments.snapshot.stem + "_postprocess")
     known = ("pressure.npz", "surface_pressure.csv", "postprocess.json", "pressure_field.vtu", "surface_pressure.vtu")
     # Archive products from earlier releases as well, so stale results cannot
@@ -428,8 +562,14 @@ def main(argv=None):
         source_hash = _stream_sha256(source)
         source.seek(0)
         with np.load(source, allow_pickle=False) as saved:
-            arrays, diagnostics = process_snapshot(saved, field_only=arguments.field_only,
-                                                   pressure_width=arguments.pressure_width)
+            if arguments.two_sided:
+                arrays, diagnostics = process_snapshot_two_sided(
+                    saved, pressure_width=arguments.pressure_width, far_gauge=arguments.far_gauge,
+                    kernel=arguments.kernel, triangles=surface_triangles,
+                    raw_pressure=arguments.raw_pressure)
+            else:
+                arrays, diagnostics = process_snapshot(saved, field_only=arguments.field_only,
+                                                       pressure_width=arguments.pressure_width)
             for key in ("run_id", "config_fingerprint", "layout_fingerprint"):
                 if key in saved:
                     diagnostics[key] = str(saved[key].item())
@@ -441,7 +581,13 @@ def main(argv=None):
             path.replace(archive/path.name)
         diagnostics["previous_output_archive"] = str(archive.resolve())
     np.savez_compressed(output / "pressure.npz", **arrays)
-    if "markers" in arrays:
+    if "surface_pressure_plus" in arrays:
+        columns = [arrays["markers"], arrays["normals"], arrays["marker_area"],
+                   arrays["surface_pressure_plus_raw"], arrays["surface_pressure_minus_raw"],
+                   arrays["surface_pressure_plus"], arrays["surface_pressure_minus"]]
+        header = "x,y,z,nx,ny,nz,area,p_plus_raw,p_minus_raw,p_plus,p_minus"
+        np.savetxt(output / "surface_pressure.csv", np.column_stack(columns), delimiter=",", header=header, comments="")
+    elif "markers" in arrays:
         columns = [arrays["markers"], arrays["normals"], arrays["marker_area"], arrays["surface_pressure_raw"], arrays["surface_pressure_lfc"]]
         header = "x,y,z,nx,ny,nz,area,pressure_raw,pressure_lfc"
         np.savetxt(output / "surface_pressure.csv", np.column_stack(columns), delimiter=",", header=header, comments="")
@@ -451,13 +597,21 @@ def main(argv=None):
             fields["pressure_lfc"] = arrays["pressure_lfc"]
         _write_point_cloud_vtu(output/"pressure_field.vtu", arrays["cpos"], fields)
         if "markers" in arrays:
-            surface_fields = {key: arrays[key] for key in ("normals", "surface_pressure_raw", "surface_pressure_lfc") if key in arrays}
+            surface_fields = {key: arrays[key] for key in (
+                "normals", "surface_pressure_raw", "surface_pressure_lfc", "surface_pressure_plus_raw",
+                "surface_pressure_minus_raw", "surface_pressure_plus", "surface_pressure_minus") if key in arrays}
             _write_point_cloud_vtu(output/"surface_pressure.vtu", arrays["markers"], surface_fields)
         diagnostics["vtk_representation"] = "VTK_VERTEX sample points at cell centers / markers; not volume or surface cells"
     diagnostics["source_snapshot"] = str(arguments.snapshot.resolve())
     diagnostics["source_snapshot_sha256"] = source_hash
     diagnostics["postprocess_source_sha256"] = _file_sha256(__file__)
     diagnostics["parameters"] = {key: getattr(arguments, key) for key in ("field_only", "pressure_width", "vtk")}
+    if arguments.two_sided:
+        diagnostics["parameters"].update(
+            two_sided=True, far_gauge=arguments.far_gauge, kernel=diagnostics["kernel"],
+            raw_pressure=arguments.raw_pressure,
+            surface=str(arguments.surface.resolve()) if arguments.surface is not None else None)
+        diagnostics["surface_postprocess_source_sha256"] = _file_sha256(Path(__file__).with_name("ib_pressure_surface.py"))
     (output / "postprocess.json").write_text(json.dumps(diagnostics, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     print(f"Pressure written to {output}")
     return 0

@@ -17,6 +17,10 @@ L₂ 误差为 **2.2224%**。核验包括解析解对照、周期收敛、网格
 
 软件许可证仍待定，本次预发布未授予开源许可。详见 [发布状态](RELEASE_STATUS.md)。
 
+**`0.1.0rc2` 之后的工作区改动（2026-11-17，尚未发布）：** Helmholtz 算子提速
+（D16 基准算例实测 CUDA 2.2 倍、CPU 3.6 倍）；从 IBFast 移植了可选的 K 矩阵
+修正力（默认关闭）和三角剖分面的两侧表面压力修正。详见 [变更记录](CHANGELOG.md)。
+
 ## CPU 安装与运行
 
 在 Python 3.10+ 的独立环境中，进入本目录执行：
@@ -27,7 +31,44 @@ pyib-run examples/cpu_fixed_sphere_smoke.json --outdir runs/fixed
 pyib-validate runs/fixed
 ```
 
-随包 JSON 示例包含固定球、振荡球，以及固定球 Re=100 D8/D16 配置。
+随包 JSON 示例包含固定球、振荡球、固定球 Re=100 D8/D16 配置，以及一个打开了
+K 矩阵修正力的小算例（`cpu_oscillating_sphere_d8_k_matrix.json`）。
+
+### 可选的 CPU 并行稀疏乘法
+
+在 Linux 上使用兼容 GCC 的 OpenMP 编译器，于安装时构建可选扩展：
+
+```sh
+PYIB_BUILD_OPENMP=1 python -m pip install .
+pyib-run examples/cpu_fixed_sphere_smoke.json --outdir runs/fixed-openmp --cpu-sparse-backend openmp --cpu-sparse-threads 4
+```
+
+普通安装仍使用 SciPy。扩展将 CPU float64 的 CSR 矩阵乘法按行并行，
+不改变流动模型、CG 算法及 GPU 内核。配置、验证范围与续算兼容性见
+[CPU 加速说明](docs/CPU_ACCELERATION.md)。
+源码回归已通过 23 项单元测试，以及固定球、运动球的多步与续算对照，
+被比较的数值状态完全一致。
+
+### 不需要编译器的多线程
+
+```sh
+pyib-run examples/cpu_fixed_sphere_smoke.json --outdir runs/fixed-threads --cpu-sparse-backend threads --cpu-sparse-threads 8
+```
+
+`threads` 后端把 SciPy 自己的 CSR 内核按行块放到线程池上执行，不需要扩展，
+任何平台可用，结果与 SciPy 逐位相同。
+
+## 0.1.0rc2 之后新增的求解器选项
+
+| 选项 | 默认 | 作用 |
+|---|---|---|
+| `solver.operator`（`--operator`） | `"factored"` | Helmholtz 算子写成三个稀疏因子（每条边约 23 个非零，原来 120 个）：同一个算子，只差舍入，内存约五分之一。`"assembled"` 在 CPU 上与以前的结果逐位相同。 |
+| `solver.cg_reference_speed`（`--cg-reference-speed`） | `0`（关） | 物体在静止流体中运动时，给 CG 停机判据加一个与参考系无关的下限；迭代数减少，基准算例上结果变化在 1e-7 量级。 |
+| `ib.k_matrix.enabled`（`--k-matrix on`） | `false` | 每个内迭代把动量方程和无滑移条件联立求解（IBFast `ib_update='pcg'`）。 |
+| `output.residual_state` | `"auto"` | 流场快照保存哪个动量残差：末次内迭代的（显式更新）或时间步结束时的（K 矩阵）。 |
+
+实测耗时及与旧结果的对比见 [性能说明](docs/PERFORMANCE.md)；K 矩阵修正力见
+[K 矩阵修正力说明](docs/K_MATRIX.md)。
 
 ## GPU 安装与运行
 
@@ -52,6 +93,13 @@ pyib-postprocess RUN/final_field.npz --output RUN/postprocess --vtk
 并可导出 ParaView 可读的 VTU 采样点文件。表面积分给出压力分力；本版不包含
 壁面切应力重构及表面积分总力输出。方法细节见 [后处理说明](docs/POSTPROCESSING.md)。
 
+```sh
+pyib-postprocess RUN/final_field.npz --output RUN/postprocess2 --two-sided --far-gauge 1.0
+```
+
+`--two-sided` 给出三角剖分面两侧的压力，开口面（零厚度板、翅）和闭合面都适用，
+可选远场压力零点。不加该参数时命令的行为不变。
+
 ## 结果与断点续算
 
 运行目录中的 `metadata.json` 保存配置和来源，`history.csv` 保存时间历史，
@@ -72,8 +120,9 @@ python tools/run_tests.py
 python tools/check_pressure_validation.py
 ```
 
-源码清单记录 13 个保持原样的数值文件和仅处理压力的后处理程序。
-CPU/CUDA 时间推进求解器及压力数值方法保持不变；安装与测试记录保存在 `checks/`。
+源码清单记录原始与当前哈希，包括可选 CPU 内核、调用接口和执行身份改动，以及
+2026-11-17 的新增内容。`solver.operator = "assembled"` 且 K 矩阵修正关闭时，时间
+推进在随包 CPU 算例上与以前的结果逐位相同；安装与测试记录保存在 `checks/`。
 
 ## 验证算例
 
