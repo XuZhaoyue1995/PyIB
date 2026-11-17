@@ -21,6 +21,23 @@ L₂ 误差为 **2.2224%**。核验包括解析解对照、周期收敛、网格
 （D16 基准算例实测 CUDA 2.2 倍、CPU 3.6 倍）；从 IBFast 移植了可选的 K 矩阵
 修正力（默认关闭）和三角剖分面的两侧表面压力修正。详见 [变更记录](CHANGELOG.md)。
 
+## 仓库结构
+
+| 路径 | 内容 |
+|---|---|
+| `src/pyib/` | 软件包：网格生成器和 `solver/`（时间推进、浸没边界、K 矩阵修正力、压力后处理、结果校验器） |
+| `examples/` | 用于检查安装和运行的小型 JSON 算例 |
+| `tests/` | 单元测试（`python tools/run_tests.py`） |
+| `tools/` | 源码清单校验、测试入口、验证证据校验 |
+| `docs/` | 方法与实测说明，见下面的文档列表 |
+| `checks/` | 按日期保存的运行与实测记录（[索引](checks/README.md)） |
+| `paper/` | 保留的原版论文工作稿 |
+
+文档：[验证记录](docs/VALIDATION.md) · [压力后处理](docs/POSTPROCESSING.md) ·
+[K 矩阵修正力](docs/K_MATRIX.md) · [性能说明](docs/PERFORMANCE.md) ·
+[CPU 加速](docs/CPU_ACCELERATION.md) · [依赖](docs/DEPENDENCIES.md) ·
+[变更记录](CHANGELOG.md) · [发布状态](RELEASE_STATUS.md)
+
 ## CPU 安装与运行
 
 在 Python 3.10+ 的独立环境中，进入本目录执行：

@@ -28,6 +28,26 @@ case, measured), an optional K-matrix force correction (off by default) and a
 two-sided surface-pressure correction for triangulated surfaces, both ported
 from IBFast. See the [changelog](CHANGELOG.md).
 
+## Repository layout
+
+| Path | Contents |
+|---|---|
+| `src/pyib/` | The package: mesh generator and `solver/` (time stepping, immersed boundary, K-matrix correction, pressure postprocessing, result validator) |
+| `examples/` | Small JSON cases for installation and execution checks |
+| `tests/` | Unit tests (`python tools/run_tests.py`) |
+| `tools/` | Source-manifest check, test runner, validation-evidence checker |
+| `docs/` | Method and measurement documents, listed below |
+| `checks/` | Dated records of what was run and measured ([index](checks/README.md)) |
+| `paper/` | The retained original manuscript draft |
+
+Documents: [validation](docs/VALIDATION.md) ·
+[pressure postprocessing](docs/POSTPROCESSING.md) ·
+[K-matrix force correction](docs/K_MATRIX.md) ·
+[performance](docs/PERFORMANCE.md) ·
+[CPU acceleration](docs/CPU_ACCELERATION.md) ·
+[dependencies](docs/DEPENDENCIES.md) · [changelog](CHANGELOG.md) ·
+[release status](RELEASE_STATUS.md)
+
 ## CPU installation and first run
 
 Use Python 3.10 or newer in a virtual environment, from this directory:
