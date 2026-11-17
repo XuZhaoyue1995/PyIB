@@ -13,6 +13,6 @@ numbers.
 | [pressure-validation-20260925.json](pressure-validation-20260925.json) | 2026-09-25 | Summary of the D32/D40 oscillating-sphere validation of `0.1.0rc2` ([VALIDATION](../docs/VALIDATION.md)). |
 | [pressure-validation-20260925.zip](pressure-validation-20260925.zip) | 2026-09-25 | The evidence itself: cases, histories, per-marker surface pressures and a standalone checker. `python tools/check_pressure_validation.py` recomputes the published figures from it. |
 | [pressure-release-checks.json](pressure-release-checks.json) | 2026-09-25 | Build, installation and command-line checks of the `0.1.0rc2` release. |
-| [pyib-packaging-checks.md](pyib-packaging-checks.md) | 2026-09-25 | Narrative of the `0.1.0rc2` packaging and source-identity checks. |
+| [pyib-packaging-checks.md](pyib-packaging-checks.md) | 2026-09-25 | Narrative of the `0.1.0rc2` packaging and source-identity checks. Its statement that the license is pending describes that date; the license was chosen on 2026-11-17. |
 | [pyib-installation.json](pyib-installation.json) | 2026-09-22 | Installation metadata of the first packaged build (`0.1.0rc1`). |
 | [packaging-checks.md](packaging-checks.md) | 2026-09-22 | Initial packaging check, made before the package was named PyIB. |

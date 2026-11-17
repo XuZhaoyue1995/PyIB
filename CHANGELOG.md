@@ -12,6 +12,12 @@ Numbers quoted here were measured on 2026-11-17 on one shared workstation
 [docs/PERFORMANCE.md](docs/PERFORMANCE.md) and
 [docs/VALIDATION.md](docs/VALIDATION.md).
 
+### License
+
+- PyIB is licensed under the BSD 3-Clause License from 2026-11-17 (`LICENSE`,
+  `pyproject.toml`, `CITATION.cff`). The retained manuscript in `paper/` is
+  excluded. `0.1.0rc2` as released carried no license.
+
 ### Added
 
 - **Two-sided surface-pressure correction** (`ib_pressure_surface.py`,

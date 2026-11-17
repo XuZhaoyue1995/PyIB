@@ -6,4 +6,5 @@ authors:
   - family-names: Xu
     given-names: Zhaoyue
 version: "0.1.0rc2"
+license: BSD-3-Clause
 repository-code: "https://github.com/XuZhaoyue1995/PyIB"
