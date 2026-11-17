@@ -1,5 +1,6 @@
-include README.md README.zh-CN.md RELEASE_STATUS.md SOURCE_MANIFEST.json
-include AUTHORS.md CITATION.cff
+include README.md README.zh-CN.md RELEASE_STATUS.md SOURCE_MANIFEST.json CHANGELOG.md
+include AUTHORS.md CITATION.cff setup.py
+recursive-include src/pyib/solver *.c
 include requirements-cpu.txt requirements-gpu.txt
 recursive-include examples *.json
 recursive-include tests *.py

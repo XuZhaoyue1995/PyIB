@@ -22,6 +22,12 @@ and import namespace are `pyib`; this research prerelease is `0.1.0rc2`.
 The software license is pending; this prerelease does not grant an open-source
 license. See [release status](RELEASE_STATUS.md).
 
+**Working tree after `0.1.0rc2` (2026-11-17, not released):** a faster
+Helmholtz operator (2.2 times on CUDA and 3.6 times on CPU on the D16 benchmark
+case, measured), an optional K-matrix force correction (off by default) and a
+two-sided surface-pressure correction for triangulated surfaces, both ported
+from IBFast. See the [changelog](CHANGELOG.md).
+
 ## CPU installation and first run
 
 Use Python 3.10 or newer in a virtual environment, from this directory:
@@ -33,7 +39,48 @@ pyib-validate runs/fixed
 ```
 
 The bundled JSON examples include fixed and oscillating spheres, plus
-fixed-sphere Re=100 D8/D16 configurations.
+fixed-sphere Re=100 D8/D16 configurations and one small case with the K-matrix
+force correction switched on (`cpu_oscillating_sphere_d8_k_matrix.json`).
+
+### Optional parallel CPU sparse multiplication
+
+On Linux with a GCC-compatible OpenMP compiler, build the optional extension
+at installation time:
+
+```sh
+PYIB_BUILD_OPENMP=1 python -m pip install .
+pyib-run examples/cpu_fixed_sphere_smoke.json --outdir runs/fixed-openmp --cpu-sparse-backend openmp --cpu-sparse-threads 4
+```
+
+Ordinary installations continue to use SciPy. The extension parallelizes CSR
+matrix rows for CPU float64 calculations; it does not change the flow model,
+CG algorithm, or GPU kernels. See [CPU acceleration](docs/CPU_ACCELERATION.md)
+for configuration, tested scope, and restart compatibility.
+The source regression passed 23 unit tests and fixed/moving multi-step and
+restart comparisons, with identical compared numerical states.
+
+### Threads without a compiler
+
+```sh
+pyib-run examples/cpu_fixed_sphere_smoke.json --outdir runs/fixed-threads --cpu-sparse-backend threads --cpu-sparse-threads 8
+```
+
+The `threads` backend applies SciPy's CSR kernel to row blocks on a thread
+pool; it needs no extension, runs on any platform and reproduces the SciPy
+result bit for bit.
+
+## Solver options added after 0.1.0rc2
+
+| Option | Default | Effect |
+|---|---|---|
+| `solver.operator` (`--operator`) | `"factored"` | Helmholtz operator as three sparse factors (about 23 non-zeros per edge instead of 120): same operator up to round-off, a fifth of the memory. `"assembled"` reproduces earlier results bit for bit on CPU. |
+| `solver.cg_reference_speed` (`--cg-reference-speed`) | `0` (off) | Frame-independent floor of the CG stopping test for bodies moving through fluid at rest; fewer iterations, results change at the 1e-7 level on the benchmark case. |
+| `ib.k_matrix.enabled` (`--k-matrix on`) | `false` | Momentum and no-slip solved together in every inner iteration (IBFast `ib_update='pcg'`). |
+| `output.residual_state` | `"auto"` | Which momentum residual a field snapshot keeps: of the last inner iteration (explicit update) or of the finished step (K-matrix). |
+
+Measured times and the comparison with the previous results are in
+[performance](docs/PERFORMANCE.md); the K-matrix correction is described in
+[K-matrix force correction](docs/K_MATRIX.md).
 
 ## GPU installation
 
@@ -61,6 +108,14 @@ The surface integral reports the pressure contribution to force. This
 release contains no wall-shear recovery or surface-total-force output.
 See [postprocessing notes](docs/POSTPROCESSING.md) for method details.
 
+```sh
+pyib-postprocess RUN/final_field.npz --output RUN/postprocess2 --two-sided --far-gauge 1.0
+```
+
+`--two-sided` evaluates the pressure on both sides of a triangulated surface,
+open (zero-thickness plates, wings) or closed, with an optional far-field
+pressure zero. The command without it is unchanged.
+
 ## Outputs and restart
 
 Runs write configuration and provenance to `metadata.json`, time histories to
@@ -81,10 +136,11 @@ python tools/run_tests.py
 python tools/check_pressure_validation.py
 ```
 
-The source manifest identifies 13 preserved numerical files and the
-pressure-only postprocessor. The CPU/CUDA time integrator and pressure
-numerical methods are unchanged. Packaging and test evidence is retained
-in `checks/`.
+The source manifest records both original and current hashes, including the
+optional CPU kernel, its dispatch and execution-identity changes, and the
+additions of 2026-11-17. With `solver.operator = "assembled"` and the K-matrix
+correction off, the time stepping reproduces the earlier results bit for bit on
+the bundled CPU examples. Packaging and test evidence is retained in `checks/`.
 
 ## Validation examples
 

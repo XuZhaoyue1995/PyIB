@@ -24,12 +24,26 @@ joint grid/time refinement and source identities are documented in
 [validation summary](checks/pressure-validation-20260925.json) and
 [evidence archive](checks/pressure-validation-20260925.zip) accompany the release.
 
+## Working tree after 0.1.0rc2 — 2026-11-17, not released
+
+The source tree contains changes that are not part of the `0.1.0rc2` release
+and have not been tagged or released: a factored Helmholtz operator
+and in-place CG (faster, smaller), an optional K-matrix force correction (off by
+default), a two-sided surface-pressure correction for triangulated surfaces, a
+`threads` CPU backend and an optional floor of the CG stopping test.  The
+version number is unchanged.  What was measured and what was not is in
+[CHANGELOG.md](CHANGELOG.md), [docs/PERFORMANCE.md](docs/PERFORMANCE.md),
+[docs/K_MATRIX.md](docs/K_MATRIX.md) and [docs/VALIDATION.md](docs/VALIDATION.md).
+The D32/D40 results above were produced by the released code; they were not
+rerun in full with the changed code.
+
 ## Distribution and attribution
 
-`SOURCE_MANIFEST.json` verifies the current numerical files. Thirteen files
-retain their captured source bytes; the pressure-only postprocessor has a
-new hash and an explicit record of its original source hash. The CPU/CUDA
-numerical time integrator is unchanged. Installation and commands are described in
+`SOURCE_MANIFEST.json` verifies current numerical files and retains original
+hashes for changed files. Optional CPU CSR parallel multiplication and explicit
+execution identity have been added; the CG/time-stepping and pressure methods
+are retained. The historical D32/D40 evidence retains its original source
+identities. Installation and commands are described in
 [README.md](README.md).
 
 The original manuscript in `paper/IB_GPU_Solver_Paper_CN_JCP.pdf` remains

@@ -23,6 +23,31 @@ else:
         pass
 
 
+_CG_KERNELS = None
+
+
+def _cg_kernels():
+    """CUDA kernels for the two vector updates of one CG iteration.
+
+    The NumPy/CuPy expression form of these updates launches about ten small
+    kernels and allocates four edge vectors per iteration; fused and in place
+    it is two launches and no allocation.  Multiply-add contraction is switched
+    off so that every element sees the same multiply and add as before.
+    """
+    global _CG_KERNELS
+    if _CG_KERNELS is None:
+        update = _cp.ElementwiseKernel(
+            "T pp, T w, T prec, T eta, T den, T inf", "T x, T r, T z",
+            "T a = eta / ((den != 0) ? den : inf); x = x + a * pp; r = r - a * w; z = r * prec;",
+            "pyib_cg_update", options=("--fmad=false",))
+        direction = _cp.ElementwiseKernel(
+            "T z, T eta_new, T eta, T inf", "T pp",
+            "T b = eta_new / ((eta != 0) ? eta : inf); pp = z + b * pp;",
+            "pyib_cg_direction", options=("--fmad=false",))
+        _CG_KERNELS = (update, direction)
+    return _CG_KERNELS
+
+
 # ---------------------------------------------------------------------------
 # [1] CG elliptic solver  (Helm_s/CG_m with flow_mat as the matrix-free matvec)
 # ---------------------------------------------------------------------------
@@ -121,7 +146,11 @@ class Driver:
         self.dir_mask = xp.isin(self.bc_edge, xp.asarray([3, 4, 5, 6]))   # FIXED -> DirBC_s residual zero
         self.prec = diag_preconditioner(core, self.dir_mask)
         self.Asp = None                                 # optional sparse matrix for fast CG matvec
+        self.sparse_operator = None                     # 'assembled' or 'factored' once enable_sparse ran
         self.ib = None                                  # optional immersed body (set_ib)
+        self.ib_kmatrix = None                          # optional constrained force update (set_k_matrix)
+        self.residual_step_end = False                  # True: keep the residual of the finished step
+        self.cg_xnorm_min = 0.0                         # lower bound of |psi|^2 in the absolute part of the CG stopping test
         self.ib_alpha = 1.0                             # IB force amplification (compensate Helm^-1 attenuation)
         self.ib_implicit = False                        # True -> solve M f = rhs (coef matrix) instead of explicit f=rhs
         self._step_count = 0                            # for cold-start handling
@@ -248,13 +277,67 @@ class Driver:
         self.time = float(t0)
         return self
 
-    def enable_sparse(self, dt):
-        """Assemble flow_mat as a constant sparse matrix; CG then uses A@p (fast matvec)
+    def enable_sparse(self, dt, *, cpu_backend="scipy", cpu_threads=1, operator="assembled"):
+        """Assemble flow_mat as a constant sparse operator; CG then uses A@p (fast matvec)
         instead of the python operator chain.  CG (not direct LU) because the stream-
-        function operator has a gauge null space that LU can't factor but CG handles."""
-        from ib_sparse import build_A
-        self.Asp = build_A(self.core, alpd=self.ad, visc=self.visc, rou=self.rou, dt=dt)
+        function operator has a gauge null space that LU can't factor but CG handles.
+
+        ``operator='assembled'`` is the single product matrix (about 120 non-zeros per
+        edge); ``'factored'`` keeps the three factors of ib_sparse.build_factored (about
+        23 per edge in total): the same operator up to round-off."""
+        from ib_sparse import build_A, build_factored
+        from ib_cpu_sparse import validate_options, OpenMPCSR, ThreadedCSR
+        validate_options(cpu_backend, cpu_threads, device="cuda" if GPU else "cpu",
+                         precision="float32" if FP32 else "float64")
+        if operator not in {"assembled", "factored"}:
+            raise ValueError("operator must be 'assembled' or 'factored'")
+
+        def wrap(matrix):
+            if cpu_backend == "openmp":
+                return OpenMPCSR(matrix, cpu_threads)
+            if cpu_backend == "threads":
+                return ThreadedCSR(matrix, cpu_threads)
+            return matrix
+
+        kw = dict(alpd=self.ad, visc=self.visc, rou=self.rou, dt=dt)
+        if operator == "factored":
+            factored = build_factored(self.core, **kw)
+            factored.rot_integr = wrap(factored.rot_integr)
+            factored.interp_curl = wrap(factored.interp_curl)
+            if factored.viscous is not None:
+                factored.viscous = wrap(factored.viscous)
+            self.Asp = factored
+        else:
+            self.Asp = wrap(build_A(self.core, **kw))
+        self.sparse_operator = operator
         return self
+
+    def set_k_matrix(self, correction):
+        """Attach the optional constrained force update (ib_constraint.KMatrixCorrection).
+        With None (default) the explicit update of the selected force mode is used."""
+        if correction is not None and self.ib is None:
+            raise RuntimeError("set_ib must be called before set_k_matrix")
+        self.ib_kmatrix = correction
+        return self
+
+    def helm_matvec(self, vector, dt):
+        """Helmholtz operator with zero rows at the Dirichlet edges (the CG operator)."""
+        if self.Asp is not None:
+            out = self.Asp @ vector
+        else:
+            out = self.core.flow_mat(vector, alpd=self.ad, visc=self.visc, rou=self.rou, dt=dt)
+        out[self.dir_mask] = 0.0
+        return out
+
+    def momentum_residual(self, res_c0, U, vc, dt):
+        """Cell momentum residual of the state (U, vc) with the held IB force.  After the
+        last inner solve it is dt times the pressure gradient left by the curl-curl solve."""
+        core = self.core
+        conv, diff = self.conv_diff(U, vc)
+        res_c = res_c0 - self.rou * vc[:core.ncell] - self.ac * dt * self.rou * conv + self.ad * dt * diff
+        if self.ib is not None:
+            res_c = res_c + dt * self.ib_force_E
+        return res_c
 
     # cell-vec operators on ghost-extended fields ------------------------------
     def cgrad_ext(self, cell_ext_col):   # scalar component (ncell+nghost,)
@@ -334,6 +417,10 @@ class Driver:
         pp = r * self.prec
         eta = pp.dot(r); rho0 = eta
         xnorm = x.dot(x) + 1e-16
+        if self.cg_xnorm_min > 0.0:
+            # Frame-independent floor: without it a body moving through fluid at rest is
+            # solved orders of magnitude tighter than the same flow seen from the body.
+            xnorm = xp.maximum(xnorm, self.cg_xnorm_min)
         err_tot = xnorm * (tol1 ** 2) + (tol2 ** 2) * rho0
         def finish(iterations, true_residual):
             # One batched device-to-host transfer; no per-edge host copy.
@@ -383,23 +470,36 @@ class Driver:
         # the subsequent trajectory.  Publication CPU parity runs set it to 20.
         check = self.cg_check_interval
         infinity = xp.asarray(xp.inf, dtype=r.dtype)
+        # The vector updates are done in place: same multiplies and adds per element as
+        # x += alf*pp; r -= alf*w; z = r*prec; pp = z + beta*pp, without the temporaries.
+        z = xp.empty_like(r)
+        if GPU:
+            update, direction = _cg_kernels()
+        else:
+            scratch = np.empty_like(r)
         for m in range(1, cg_max + 1):
             w = (self.Asp @ pp) if self.Asp is not None else core.flow_mat(pp, **kw)
             w[self.dir_mask] = 0.0
             denominator = pp.dot(w)
             # Exact convergence can precede the next scheduled device check.
             # Keep the converged iterate instead of producing 0/0 and NaNs.
-            alf = eta / xp.where(denominator != 0.0, denominator, infinity)
-            x += alf * pp
-            r -= alf * w
-            z = r * self.prec
+            if GPU:
+                update(pp, w, self.prec, eta, denominator, infinity, x, r, z)
+            else:
+                alf = eta / xp.where(denominator != 0.0, denominator, infinity)
+                np.multiply(pp, alf, out=scratch); x += scratch
+                np.multiply(w, alf, out=scratch); r -= scratch
+                np.multiply(r, self.prec, out=z)
             eta_new = z.dot(r)
             if m % check == 0:
                 checked_eta = float(eta_new)
                 if not np.isfinite(checked_eta) or checked_eta < err_tot:
                     break
-            beta = eta_new / xp.where(eta != 0.0, eta, infinity)
-            pp = z + beta * pp
+            if GPU:
+                direction(z, eta_new, eta, infinity, pp)
+            else:
+                beta = eta_new / xp.where(eta != 0.0, eta, infinity)
+                pp *= beta; pp += z
             eta = eta_new
         # res_e is b-A(s_initial), not b. This form avoids subtracting two
         # separately reconstructed large b/Ax vectors for a warm start.
@@ -422,7 +522,12 @@ class Driver:
                 'accumulated_explicit', 'fortran_accumulated'
             }
         )
-        if accumulated and inner < 2:
+        constrained = self.ib is not None and self.ib_kmatrix is not None
+        if constrained and not accumulated:
+            raise ValueError('the K-matrix correction requires the accumulated_explicit force mode')
+        if constrained and self.ib_implicit:
+            raise ValueError('the K-matrix correction replaces the implicit marker solve; set ib_implicit False')
+        if accumulated and inner < 2 and not constrained:
             raise ValueError('accumulated_explicit requires at least 2 fluid inner iterations')
         self._step_count += 1
         self.time += dt
@@ -449,6 +554,10 @@ class Driver:
                 self.ib_force_E = self.ib.spread(
                     self.ib_force_L, self.ib_markers, self.ib_ds
                 )
+        if constrained:
+            # B and K = B G^-1 B^T for the marker positions of this step (built once for a
+            # fixed body); the held force above is only the initial guess of the multiplier.
+            self.ib_kmatrix.begin_step()
         cg = self._positive_cg_limit(self.cg_max_iterations)
         if self.cold_cg and self._step_count <= 3:
             cg = min(self._positive_cg_limit(self.cold_cg), cg)
@@ -494,7 +603,22 @@ class Driver:
                 self.last_momentum_residual = res_c
             res_f = core.integr_c2f(res_c)
             res_e = core.rot(res_f)
-            s, helm_m = self.helm_solve(res_e, s, dt, cg_max=cg)
+            if constrained:
+                # Momentum and no-slip solved together; updates the held force.
+                s, helm_m, info = self.ib_kmatrix.inner_iteration(res_e, s, vc, dt)
+                self.last_helm_m = int(helm_m)
+                self.last_helm_rel_residual = float(info["relative_residual"])
+                self.last_helm_tolerance_ratio = float(info["tolerance_ratio"])
+                self.last_helm_converged = not info["iteration_cap"]
+                if self.fail_on_cg_nonconvergence and info["iteration_cap"]:
+                    self.helmholtz_converged_last_step = False
+                    raise RuntimeError(
+                        "constrained solve did not converge: "
+                        f"iterations={helm_m}/{self.ib_kmatrix.max_iterations}, "
+                        f"projected_relative_residual={info['relative_residual']:.6e}"
+                    )
+            else:
+                s, helm_m = self.helm_solve(res_e, s, dt, cg_max=cg)
             self.helmholtz_iterations_last_step = max(
                 self.helmholtz_iterations_last_step, int(helm_m)
             )
@@ -508,7 +632,7 @@ class Driver:
                 self.helmholtz_converged_last_step and self.last_helm_converged
             )
             s, U, vc = self.calc_vel(s)
-            if accumulated and i == 1:
+            if accumulated and i == 1 and not constrained:
                 # Evaluate one explicit increment from the post-predictor
                 # velocity, then add it to the persistent force state.
                 if self.ib_implicit:
@@ -525,6 +649,10 @@ class Driver:
                 self.ib_force_L = self.ib_force_L + self.ib_force_increment_L
                 self.ib_force_update_count += 1
                 self.ib_force_updates_last_step += 1
+        if self.residual_step_end:
+            # Residual of the finished step: final velocity and final IB force (IBFast
+            # resid_final).  One extra convection/diffusion evaluation per step.
+            self.last_momentum_residual = self.momentum_residual(res_c0, U, vc, dt)
         self.last_face_flux = U
         self.last_step_dt = float(dt)
         if self.free_each_step:

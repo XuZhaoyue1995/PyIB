@@ -1,0 +1,395 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "reviewed_utc": "2026-10-05T10:03:57.126301+00:00",
+  "job_id": "12259735",
+  "scope": "Optional Linux CPU FP64 source-tree implementation regression. General CSR row parallelism; no case or cluster layout hardcoded in the solver.",
+  "baseline_commit": "a7003dd6f09a0aeb954f7766be548d469b8e65a3",
+  "baseline_archive_sha256": "acf5698cbcd81f8dcd32e05e6c07feb0c34f3bab90b2e57a0f412a01f1b350b3",
+  "candidate_archive_sha256": "4e524aac7a6b94c71e55942defaa088e59586826a84b7a41afae6598b13be6b3",
+  "input_manifest_sha256": "869b7535edf5c135af8d5748c3b4bb8b875f03c0f9567b46379f0848a7a974b6",
+  "candidate_files": [
+    {
+      "path": "examples/cpu_fixed_sphere_re100_d16.json",
+      "bytes": 894,
+      "sha256": "cec0eb187e9d744c8f5ecbd90f7e093fffa503687ad5ad7b5599d5487869c2b7"
+    },
+    {
+      "path": "examples/cpu_fixed_sphere_re100_d8_gate.json",
+      "bytes": 890,
+      "sha256": "94736f230dba63f6b7545737bd24e0042811cf94c8788190aa0dd22c42510575"
+    },
+    {
+      "path": "examples/cpu_fixed_sphere_smoke.json",
+      "bytes": 945,
+      "sha256": "87fa8d9263b94c078f721360b37d43485b462d8884a3e7a5b0f2ce0ba15f6284"
+    },
+    {
+      "path": "examples/cpu_oscillating_sphere_smoke.json",
+      "bytes": 965,
+      "sha256": "1ea9a32d53dd109783c2da78c6ed64dff8e18a5d59383583f60f7eda178c7c9a"
+    },
+    {
+      "path": "MANIFEST.in",
+      "bytes": 426,
+      "sha256": "a1af767447290ed7a9fe84cdee6052e6708427218dde95783b627231779c1ec0"
+    },
+    {
+      "path": "pyproject.toml",
+      "bytes": 750,
+      "sha256": "6b90d94ec34ce311ea8966a3e3a466d7a18f1130de1e901409c7de32d6ce3c92"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4708,
+      "sha256": "ada3a52540ba461043d1cddd6b5843223f678124ef7739647f43e4b028a3fefe"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "bytes": 4126,
+      "sha256": "77c65cfc0187945789fa9d5104a2824bd02783a06d19ff8ced5c23535cf6d4a6"
+    },
+    {
+      "path": "setup.py",
+      "bytes": 1089,
+      "sha256": "6afe376ed0ea0efc3290fa5de76c0c1f01403b8ed6111e38fb40557563037ba5"
+    },
+    {
+      "path": "SOURCE_MANIFEST.json",
+      "bytes": 6207,
+      "sha256": "d43a3a82788ae89e993612089cef180af3867984b647532b8088767fa26c9653"
+    },
+    {
+      "path": "src/pyib/__init__.py",
+      "bytes": 113,
+      "sha256": "7423c098a4de7d5f6ed6facc309a1aea1ef5f6e9d0b9ff337ce3b8cc0919d386"
+    },
+    {
+      "path": "src/pyib/cli.py",
+      "bytes": 938,
+      "sha256": "d5f0dab35261314105830bd5f4515a83e104f2e664b0add92e00e3b7a192a3df"
+    },
+    {
+      "path": "src/pyib/make_euler_mesh.py",
+      "bytes": 84313,
+      "sha256": "64d241f3a826b908151e54dad9de355698dbf31b3a3613e5fd5a36740f4e0f50"
+    },
+    {
+      "path": "src/pyib/solver/__init__.py",
+      "bytes": 76,
+      "sha256": "21393b0967228ec25bde560f0041203da8ba80e883eeb131a13462e40bb2f833"
+    },
+    {
+      "path": "src/pyib/solver/_csr_openmp.c",
+      "bytes": 6353,
+      "sha256": "d277e3cc40254388cf300dcaea6310cf0481f59b2875db5479527c9cf194a8a9"
+    },
+    {
+      "path": "src/pyib/solver/backend.py",
+      "bytes": 1607,
+      "sha256": "37324b86b9841f1cba0fd9b051f11c60e0c48ad11b50514c8be04a5f589667fa"
+    },
+    {
+      "path": "src/pyib/solver/cfdagent_ib.py",
+      "bytes": 3514,
+      "sha256": "782e2aa4dc46ae810728622d7fb331be2df7459bb978fcedc0ee61f35c1feead"
+    },
+    {
+      "path": "src/pyib/solver/ib_case.py",
+      "bytes": 72798,
+      "sha256": "4fa3cf32355bae0c0f7f8ea07e01550365366a6c9d0207916622d7b521bf5fa2"
+    },
+    {
+      "path": "src/pyib/solver/ib_core_np.py",
+      "bytes": 11928,
+      "sha256": "a42eaed6ebb9c62780aed4d6941e5e84b6c741c6b6e439f802a3a099e5e16e6f"
+    },
+    {
+      "path": "src/pyib/solver/ib_cpu_sparse.py",
+      "bytes": 6416,
+      "sha256": "9fad0d051f0dcf47c020dbffcb94d41aea064f5f3ab387a6fd2da1514bdc9549"
+    },
+    {
+      "path": "src/pyib/solver/ib_driver_np.py",
+      "bytes": 29378,
+      "sha256": "9edbaacfa37ddd29653a5b8b4676dfe6f5de1b36b4bdfa2004d0420cef248153"
+    },
+    {
+      "path": "src/pyib/solver/ib_immersed.py",
+      "bytes": 11038,
+      "sha256": "fcb2f71e838dac5f6dc607d3ada74406e9f738b4b1aba4d2e91c40653c905415"
+    },
+    {
+      "path": "src/pyib/solver/ib_interior.py",
+      "bytes": 12721,
+      "sha256": "367ec59a0826150fff6b58efaee466cfb216865eb58400843f0a450430089b77"
+    },
+    {
+      "path": "src/pyib/solver/ib_kinematics.py",
+      "bytes": 5905,
+      "sha256": "5e7fbf094f5b07d31254280a421892dd38c6b1a19c66fe019284ade064f469f9"
+    },
+    {
+      "path": "src/pyib/solver/ib_postprocess.py",
+      "bytes": 25913,
+      "sha256": "3049e148a875250734d2917eb2fac61d9d4abefdcfab4fafbc0ac1a826be19a9"
+    },
+    {
+      "path": "src/pyib/solver/ib_sparse.py",
+      "bytes": 6206,
+      "sha256": "77a040719e4262a2fda85253582023a388297c318be637174a272bc7f6017083"
+    },
+    {
+      "path": "src/pyib/solver/sphere_quiescent_mesh.py",
+      "bytes": 3685,
+      "sha256": "3796cc8c4294141ab462f3af1f940dc970cf7da3554fb0c48530a711ceb627b3"
+    },
+    {
+      "path": "src/pyib/solver/sphere_wake_mesh.py",
+      "bytes": 4495,
+      "sha256": "bdb4178df0c10c44a8bc73a06fc8b5dd6b381b5e06231dcb3a332b84a2401e87"
+    },
+    {
+      "path": "src/pyib/solver/validate_ib_result.py",
+      "bytes": 81154,
+      "sha256": "6dbbd93bdd2b572df8b7f4d35c310b592ae699d94d2bf704c65516b18ee5376d"
+    },
+    {
+      "path": "tests/test_ib_cpu_sparse.py",
+      "bytes": 9097,
+      "sha256": "a19477c49c2605389d129855fd43aa4b5faa0e45a486cd54514b5b6e976f5062"
+    },
+    {
+      "path": "tests/test_ib_postprocess.py",
+      "bytes": 12387,
+      "sha256": "ed1057905d6cac566b299f77ae0613e62ca1378739d3ff12ea1871a86ae0f452"
+    },
+    {
+      "path": "tools/check_pressure_validation.py",
+      "bytes": 13295,
+      "sha256": "8b1253522c1a881abbf34ae15f9dd1eca05c3e1b0baa0ba76ba78395cf40edc6"
+    },
+    {
+      "path": "tools/run_tests.py",
+      "bytes": 469,
+      "sha256": "d816e1815445bd90af584c599e71d861953ddc0a71f442d38f600a7a26987518"
+    },
+    {
+      "path": "tools/verify_source_manifest.py",
+      "bytes": 1215,
+      "sha256": "aa1630dea4b46c54106d8afd17c18fdd78533811ebcec259dbbf972b63a1a7fa"
+    }
+  ],
+  "source_bytes_unchanged_after_tests": true,
+  "runtime": {
+    "python": "3.10.20",
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "openmp": {
+      "schema": 1,
+      "backend": "openmp",
+      "threads": 4,
+      "actual_threads": 4,
+      "implementation_sha256": {
+        "extension": "49c3715dcae0a27974c38df669c622861617c82f8d66c85a1a0a97bcbd804188",
+        "openmp_runtime": "23edb748d6c9584e337fc00cb22eba3bf535478204d6e5eddbb637b7f417fd25"
+      },
+      "build": {
+        "abi": 1,
+        "compiler": "12.2.0",
+        "fixed_compile_flags": "-O2 -std=c11 -fopenmp -fno-fast-math -fno-associative-math -ffp-contract=off -fno-tree-vectorize -frounding-math",
+        "openmp": 201511
+      }
+    }
+  },
+  "compiled_unit_tests": {
+    "run": 23,
+    "failed": 0,
+    "skipped": 0,
+    "output_sha256": "2d9f24b6dd62f0dae940e39e89a6b036f275017fd857a38d26b700f7f92bf300",
+    "output": "test_buffers_endian_alignment_shape_stride_alias_and_readonly (test_ib_cpu_sparse.CompiledCSRTests) ... ok\ntest_identity_records_actual_binary_and_team (test_ib_cpu_sparse.CompiledCSRTests) ... ok\ntest_low_level_invalid_csr_cannot_access_outside_buffers (test_ib_cpu_sparse.CompiledCSRTests) ... ok\ntest_rectangular_unsorted_empty_rows_and_thread_parity (test_ib_cpu_sparse.CompiledCSRTests) ... ok\ntest_zero_nnz_and_zero_dimensions (test_ib_cpu_sparse.CompiledCSRTests) ... ok\ntest_checkpoint_rejects_changed_execution_identity_before_state_restore (test_ib_cpu_sparse.SelectionTests) ... ok\ntest_defaults_do_not_require_extension (test_ib_cpu_sparse.SelectionTests) ... ok\ntest_explicit_missing_extension_does_not_fall_back (test_ib_cpu_sparse.SelectionTests) ... ok\ntest_invalid_options (test_ib_cpu_sparse.SelectionTests) ... ok\ntest_spread_conserves_force (test_ib_postprocess.ForceSpreadingTests) ... ok\ntest_disconnected_pressure_graph_is_rejected (test_ib_postprocess.PressureTests) ... ok\ntest_linear_pressure_integral_matches_analytic_sphere_force (test_ib_postprocess.PressureTests) ... ok\ntest_pressure_band_removes_defect_and_retains_outer_anchors (test_ib_postprocess.PressureTests) ... ok\ntest_pressure_force_is_gauge_invariant_even_for_coarse_markers (test_ib_postprocess.PressureTests) ... ok\ntest_surface_fit_exact_for_external_quadratic (test_ib_postprocess.PressureTests) ... ok\ntest_surface_fit_widens_a_planar_stencil (test_ib_postprocess.PressureTests) ... ok\ntest_whole_graph_recovers_quadratic_and_boundary_gauge (test_ib_postprocess.PressureTests) ... ok\ntest_complete_offline_recovery_and_cli_artifacts (test_ib_postprocess.SnapshotTests) ... ok\ntest_field_only_recovers_pressure_without_surface_metadata (test_ib_postprocess.SnapshotTests) ... ok\ntest_non_spherical_geometry_is_rejected (test_ib_postprocess.SnapshotTests) ... ok\ntest_old_snapshot_does_not_silently_invent_pressure (test_ib_postprocess.SnapshotTests) ... ok\ntest_overwrite_archives_previous_release_products (test_ib_postprocess.SnapshotTests) ... ok\ntest_pressure_recovery_needs_no_wall_motion_or_viscosity (test_ib_postprocess.SnapshotTests) ... ok\n\n----------------------------------------------------------------------\nRan 23 tests in 0.500s\n\nOK\n"
+  },
+  "native_flow_invocations": 12,
+  "native_artifact_validators_passed": 10,
+  "comparison_groups_passed": 10,
+  "stored_member_comparisons": 656,
+  "history_column_comparisons": 400,
+  "bitwise_checks_all_true": 1026,
+  "integer_history_checks_exact": 30,
+  "maximum_reported_absolute_difference": 0.0,
+  "comparison_artifact": "cpu-csr-comparison-20261005.json",
+  "comparison_sha256": "f034443ba3ff9c4691b4052b1385945b20c9b38df154d182360a38966f6dc08a",
+  "cases": {
+    "fixed": {
+      "schema_version": 1,
+      "name": "csr_regression_fixed",
+      "case": {
+        "kind": "fixed_sphere"
+      },
+      "runtime": {
+        "device": "cpu",
+        "precision": "float64"
+      },
+      "mesh": {
+        "kind": "uniform_box",
+        "dx": 0.125,
+        "bounds": [
+          [
+            -1.0,
+            1.0
+          ],
+          [
+            -1.0,
+            1.0
+          ],
+          [
+            -1.0,
+            1.0
+          ]
+        ],
+        "verbose": false
+      },
+      "physics": {
+        "reynolds": 100.0,
+        "density": 1.0,
+        "inflow_speed": 1.0
+      },
+      "time": {
+        "dt": 0.01,
+        "steps": 12,
+        "inner_iterations": 4
+      },
+      "ib": {
+        "radius": 0.25,
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "marker_spacing": 0.125,
+        "force_mode": "accumulated_explicit",
+        "implicit": false,
+        "alpha": 1.0,
+        "motion": {
+          "kind": "none",
+          "axis": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "amplitude": 0.0,
+          "frequency": 1.0,
+          "phase": 0.0
+        }
+      },
+      "solver": {
+        "sparse": true,
+        "cg_check_interval": 1,
+        "cg_max_iterations": 3000,
+        "fail_on_cg_nonconvergence": true,
+        "cpu_sparse_backend": "scipy",
+        "cpu_sparse_threads": 1
+      },
+      "output": {
+        "sample_every": 1,
+        "checkpoint_every": 2,
+        "save_field": true
+      }
+    },
+    "moving": {
+      "schema_version": 1,
+      "name": "csr_regression_moving",
+      "case": {
+        "kind": "oscillating_sphere"
+      },
+      "runtime": {
+        "device": "cpu",
+        "precision": "float64"
+      },
+      "mesh": {
+        "kind": "uniform_box",
+        "dx": 0.125,
+        "bounds": [
+          [
+            -1.0,
+            1.0
+          ],
+          [
+            -1.0,
+            1.0
+          ],
+          [
+            -1.0,
+            1.0
+          ]
+        ],
+        "verbose": false
+      },
+      "physics": {
+        "reynolds": 100.0,
+        "density": 1.0,
+        "inflow_speed": 1.0
+      },
+      "time": {
+        "dt": 0.01,
+        "steps": 12,
+        "inner_iterations": 4
+      },
+      "ib": {
+        "radius": 0.25,
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "marker_spacing": 0.125,
+        "force_mode": "accumulated_explicit",
+        "implicit": false,
+        "alpha": 1.0,
+        "motion": {
+          "kind": "oscillation",
+          "axis": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "amplitude": 0.05,
+          "frequency": 0.5,
+          "phase": 0.0
+        }
+      },
+      "solver": {
+        "sparse": true,
+        "cg_check_interval": 1,
+        "cg_max_iterations": 3000,
+        "fail_on_cg_nonconvergence": true,
+        "cpu_sparse_backend": "scipy",
+        "cpu_sparse_threads": 1
+      },
+      "output": {
+        "sample_every": 1,
+        "checkpoint_every": 2,
+        "save_field": true
+      }
+    }
+  },
+  "whole_process_seconds": {
+    "fixed_scipy": 5.982397131971084,
+    "fixed_omp1": 6.284953620983288,
+    "fixed_omp4": 2.8222462330013514,
+    "moving_scipy": 6.185801514075138,
+    "moving_omp1": 6.599540371913463,
+    "moving_omp4": 2.922066438011825
+  },
+  "timing_scope": "Single ordered trials, including Python startup, setup, twelve steps and output. Not repeated performance benchmarks.",
+  "solver_stage_wall_seconds": 152.3974666770082,
+  "slurm_elapsed_seconds": 159,
+  "allocated_cpus": 64,
+  "allocated_core_hours": 2.8266666666666667,
+  "implementation_review_sha256": "d22e2f4ae43a0f7a414f7466e96aa25707443cdb3382b6349f8bbcc25470ca03",
+  "execution_review_sha256": "e3aa5deb0bbc2ed3fd8959984aa42a670a4bfd3c0530ce1c94d0b341ee0c9590",
+  "numerical_reference_validation": false,
+  "gpu_execution_in_this_job": false,
+  "wheel_installation_in_this_job": false,
+  "retained_manuscript_sha256": "87ecd238e149ee1ff5738f7ddb263dddc482447182f1d5b23a13253f61190354"
+}

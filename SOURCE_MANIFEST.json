@@ -1,9 +1,9 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "release_candidate": "0.1.0rc2",
   "captured_utc": "2026-09-22T14:04:56.344780+00:00",
   "source_origin": "Author-provided local IBZhaoyue tree; maintained distribution at https://github.com/XuZhaoyue1995/PyIB",
-  "preservation": "Thirteen listed numerical source files retain their captured bytes. The postprocessor now provides pressure-only processing; pressure numerical functions remain unchanged.",
+  "preservation": "Original hashes retained for modified files. Optional CPU CSR kernel/dispatch and execution identities added (2026-10-05). 2026-11-17: optional K-matrix force correction, two-sided surface-pressure correction, factored operator and in-place CG added; with solver.operator='assembled' and ib.k_matrix off the time stepping reproduces the previous results bit for bit on the bundled CPU examples.",
   "files": [
     {
       "source_relative_path": "make_euler_mesh.py",
@@ -20,14 +20,20 @@
     {
       "source_relative_path": "solver/cfdagent_ib.py",
       "package_path": "src/pyib/solver/cfdagent_ib.py",
-      "sha256": "31aa82f7be148c3f5a8f527e1b8b9490eed7345c0e6c4cc31c9503353bdbb81f",
-      "bytes": 2981
+      "sha256": "d7a6710fdab7c2a3cd30ad43c93ec789d3b4df5a8ec6a0f7f009659bda6af9cf",
+      "bytes": 4574,
+      "original_source_sha256": "31aa82f7be148c3f5a8f527e1b8b9490eed7345c0e6c4cc31c9503353bdbb81f",
+      "original_source_bytes": 2981,
+      "change_note": "Optional CPU CSR selection and/or strict execution identity in result schema 6/checkpoint schema 4; numerical algorithms retained. 2026-11-17: Command-line overrides --operator and --k-matrix; threads CPU backend selectable."
     },
     {
       "source_relative_path": "solver/ib_case.py",
       "package_path": "src/pyib/solver/ib_case.py",
-      "sha256": "09f0657f7ed1c3f453604e3b4e74170dbc4804c14a0938aa3675b60f315ab240",
-      "bytes": 71161
+      "sha256": "6a07260a1d74502b6770908b0cd53246fbe5875aee290e968f9e93ea94faf24f",
+      "bytes": 77765,
+      "original_source_sha256": "09f0657f7ed1c3f453604e3b4e74170dbc4804c14a0938aa3675b60f315ab240",
+      "original_source_bytes": 71161,
+      "change_note": "Optional CPU CSR selection and/or strict execution identity in result schema 6/checkpoint schema 4; numerical algorithms retained. 2026-11-17: Configuration ib.k_matrix (default off), solver.operator, output.residual_state; result schema 7 / checkpoint schema 5."
     },
     {
       "source_relative_path": "solver/ib_core_np.py",
@@ -38,8 +44,11 @@
     {
       "source_relative_path": "solver/ib_driver_np.py",
       "package_path": "src/pyib/solver/ib_driver_np.py",
-      "sha256": "0f39341f7e2120a08c5e8ee923eea7f49cdf6475e7e6a663ee1c96fede8bb85b",
-      "bytes": 29032
+      "sha256": "1355e34f40b2669f7d57d95cfcbbc997b5b2f5850e9def90c6ba5606a99db3a2",
+      "bytes": 35941,
+      "original_source_sha256": "0f39341f7e2120a08c5e8ee923eea7f49cdf6475e7e6a663ee1c96fede8bb85b",
+      "original_source_bytes": 29032,
+      "change_note": "Optional CPU CSR selection and/or strict execution identity in result schema 6/checkpoint schema 4; numerical algorithms retained. 2026-11-17: Factored operator option, in-place CG vector updates (same arithmetic), optional constrained force update branch, optional step-end residual."
     },
     {
       "source_relative_path": "solver/ib_immersed.py",
@@ -62,17 +71,20 @@
     {
       "source_relative_path": "solver/ib_postprocess.py",
       "package_path": "src/pyib/solver/ib_postprocess.py",
-      "sha256": "3049e148a875250734d2917eb2fac61d9d4abefdcfab4fafbc0ac1a826be19a9",
-      "bytes": 25913,
+      "sha256": "8ac1472bfde9e1ac8ba0fddd327983a4dc956384fadc6af51a6a47e1da0a3bcd",
+      "bytes": 36180,
       "original_source_sha256": "3d7f5f476db8cc126d6695f6f88aa387ae53833916307b1ebaf033078c6dfbfd",
       "original_source_bytes": 35695,
-      "change_note": "Remove wall-shear processing and its options/outputs. Pressure numerical functions unchanged; pressure force labelled as pressure contribution only."
+      "change_note": "Remove wall-shear processing and its options/outputs. Pressure numerical functions unchanged; pressure force labelled as pressure contribution only. 2026-11-17: Added the --two-sided path (triangulated surfaces, both sides); the sphere-exterior path is unchanged."
     },
     {
       "source_relative_path": "solver/ib_sparse.py",
       "package_path": "src/pyib/solver/ib_sparse.py",
-      "sha256": "77a040719e4262a2fda85253582023a388297c318be637174a272bc7f6017083",
-      "bytes": 6206
+      "sha256": "74466120e1c23e59bf984f0b458e24900e0d1a2688ed29b052257853bec2006a",
+      "bytes": 8843,
+      "original_source_sha256": "77a040719e4262a2fda85253582023a388297c318be637174a272bc7f6017083",
+      "original_source_bytes": 6206,
+      "change_note": "2026-11-17: Added build_factored/FactoredOperator (three-factor form of the same operator); build_A unchanged."
     },
     {
       "source_relative_path": "solver/sphere_quiescent_mesh.py",
@@ -89,12 +101,56 @@
     {
       "source_relative_path": "solver/validate_ib_result.py",
       "package_path": "src/pyib/solver/validate_ib_result.py",
-      "sha256": "22790438a354d868b2b32ba0d911d3071a31f47214235830799b23b2a62dc8fb",
-      "bytes": 79693
+      "sha256": "1e02a26e54a1f6d3fbc5a7e91bf386592a400df7613082779520f3dd8cea0dfc",
+      "bytes": 83401,
+      "original_source_sha256": "22790438a354d868b2b32ba0d911d3071a31f47214235830799b23b2a62dc8fb",
+      "original_source_bytes": 79693,
+      "change_note": "Optional CPU CSR selection and/or strict execution identity in result schema 6/checkpoint schema 4; numerical algorithms retained. 2026-11-17: Accepts the new configuration keys, result schema 7 and K-matrix runs."
+    },
+    {
+      "source_relative_path": "solver/ib_cpu_sparse.py",
+      "package_path": "src/pyib/solver/ib_cpu_sparse.py",
+      "sha256": "34aac2983ef039a5ce2d7ceb3978af3ef477f591992ca63df47d7721d960f463",
+      "bytes": 10270,
+      "origin": "added_cpu_sparse_backend",
+      "change_note": "New optional ordered-row CPU CSR implementation and execution identity. 2026-11-17: Added the 'threads' backend (SciPy CSR kernel on row blocks); OpenMP path unchanged."
+    },
+    {
+      "source_relative_path": "solver/_csr_openmp.c",
+      "package_path": "src/pyib/solver/_csr_openmp.c",
+      "sha256": "d277e3cc40254388cf300dcaea6310cf0481f59b2875db5479527c9cf194a8a9",
+      "bytes": 6353,
+      "origin": "added_cpu_sparse_backend",
+      "change_note": "New optional ordered-row CPU CSR implementation and execution identity."
+    },
+    {
+      "source_relative_path": "solver/ib_constraint.py",
+      "package_path": "src/pyib/solver/ib_constraint.py",
+      "sha256": "89f4b762b1cedf370f1d832d82f676d1159f626d14e8b34e34d8df3301ebf7de",
+      "bytes": 16920,
+      "origin": "added_ibfast_methods_20261117",
+      "change_note": "K-matrix force correction: port of IBFast src/ibf_pcg.f90 (ib_update='pcg'); off by default."
+    },
+    {
+      "source_relative_path": "solver/ib_patches.py",
+      "package_path": "src/pyib/solver/ib_patches.py",
+      "sha256": "239631e89410ad46b5e87c6600f8b64b6f51b4825dfe03b69b935ce5f08c17ca",
+      "bytes": 10255,
+      "origin": "added_ibfast_methods_20261117",
+      "change_note": "Constraint patches: port of IBFast tools/make_ib_patches.py."
+    },
+    {
+      "source_relative_path": "solver/ib_pressure_surface.py",
+      "package_path": "src/pyib/solver/ib_pressure_surface.py",
+      "sha256": "1c3746d6b5642decfd9283f1ba03ea3f450a57c75b37283dad16e3620faba27d",
+      "bytes": 28038,
+      "origin": "added_ibfast_methods_20261117",
+      "change_note": "Two-sided surface-pressure correction: port of IBFast tools/pressure_lfc.py --two-sided."
     }
   ],
   "packaging_name": "PyIB",
   "packaging_namespace": "pyib",
   "packaging_note": "Public package and namespace are PyIB/pyib. Original capture metadata is retained; current file hashes verify the maintained distribution.",
-  "updated_utc_date": "2026-09-25"
+  "updated_utc_date": "2026-11-17",
+  "updated_utc": "2026-11-17T13:46:05.895913+00:00"
 }

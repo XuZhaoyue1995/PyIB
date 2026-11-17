@@ -47,11 +47,14 @@ from ib_driver_np import Driver
 from ib_immersed import ImmersedBoundary
 from ib_interior import ClosedSphereLoadCorrection, CorrectedBodyLoad
 from ib_kinematics import Oscillation
+from ib_cpu_sparse import execution_identity, validate_options
+from ib_constraint import KMatrixCorrection
+from ib_patches import make_patches
 
 
 SCHEMA_VERSION = 1
-RESULT_SCHEMA_VERSION = 5
-CHECKPOINT_SCHEMA_VERSION = 3
+RESULT_SCHEMA_VERSION = 7
+CHECKPOINT_SCHEMA_VERSION = 5
 
 DEFAULT_CONFIG: dict[str, Any] = {
     "schema_version": SCHEMA_VERSION,
@@ -77,6 +80,15 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "force_mode": "accumulated_explicit",
         "implicit": False,
         "alpha": 1.0,
+        # Optional constrained force update (IBFast ib_update='pcg'); off by default.
+        "k_matrix": {
+            "enabled": False,
+            "tolerance": 1.0e-6,
+            "max_iterations": 5000,
+            "xnorm_min": 0.0,
+            "patch_size": 1,
+            "k_solver": "auto",
+        },
         "motion": {
             "kind": "none",
             "axis": [0.0, 1.0, 0.0],
@@ -85,14 +97,16 @@ DEFAULT_CONFIG: dict[str, Any] = {
             "phase": 0.0,
         },
     },
-    "solver": {"sparse": True, "cg_check_interval": 20,
-               "cg_max_iterations": 1000, "fail_on_cg_nonconvergence": False},
+    "solver": {"sparse": True, "operator": "factored", "cpu_sparse_backend": "scipy", "cpu_sparse_threads": 1,
+               "cg_check_interval": 20, "cg_max_iterations": 1000, "fail_on_cg_nonconvergence": False,
+               "cg_reference_speed": 0.0},
     "output": {
         "sample_every": 10,
         "checkpoint_every": 1000,
         "field_every": 0,
         "field_start_step": 0,
         "save_field": True,
+        "residual_state": "auto",
     },
 }
 
@@ -103,10 +117,11 @@ _ALLOWED_KEYS = {
     "mesh": {"kind", "dx", "bounds", "cells_per_diameter", "verbose"},
     "physics": {"reynolds", "density", "inflow_speed"},
     "time": {"dt", "steps", "inner_iterations"},
-    "ib": {"radius", "center", "marker_spacing", "force_mode", "implicit", "alpha", "motion"},
+    "ib": {"radius", "center", "marker_spacing", "force_mode", "implicit", "alpha", "k_matrix", "motion"},
+    "k_matrix": {"enabled", "tolerance", "max_iterations", "xnorm_min", "patch_size", "k_solver"},
     "motion": {"kind", "axis", "amplitude", "frequency", "phase", "spin_ratio"},
-    "solver": {"sparse", "cg_check_interval", "cg_max_iterations", "fail_on_cg_nonconvergence"},
-    "output": {"sample_every", "checkpoint_every", "field_every", "field_start_step", "save_field"},
+    "solver": {"sparse", "operator", "cpu_sparse_backend", "cpu_sparse_threads", "cg_check_interval", "cg_max_iterations", "fail_on_cg_nonconvergence", "cg_reference_speed"},
+    "output": {"sample_every", "checkpoint_every", "field_every", "field_start_step", "save_field", "residual_state"},
 }
 
 HISTORY_COLUMNS = [
@@ -176,6 +191,7 @@ class CaseRuntime:
     inner_iterations: int
     layout_fingerprint: str
     source_hashes: dict[str, str]
+    sparse_execution: dict[str, Any]
 
 
 @dataclass
@@ -273,6 +289,10 @@ def validate_config(raw: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(raw["ib"]["motion"], dict):
             raise CaseConfigError("ib.motion must be a JSON object")
         _reject_unknown("motion", raw["ib"]["motion"])
+    if isinstance(raw.get("ib"), dict) and "k_matrix" in raw["ib"]:
+        if not isinstance(raw["ib"]["k_matrix"], dict):
+            raise CaseConfigError("ib.k_matrix must be a JSON object")
+        _reject_unknown("k_matrix", raw["ib"]["k_matrix"])
 
     config = _deep_merge(DEFAULT_CONFIG, raw)
     if isinstance(config["schema_version"], bool):
@@ -370,6 +390,29 @@ def validate_config(raw: dict[str, Any]) -> dict[str, Any]:
     elif ib["implicit"] and ib["alpha"] > 0.7:
         raise CaseConfigError("implicit IB currently requires ib.alpha <= 0.7")
 
+    k_matrix = ib["k_matrix"]
+    k_matrix["enabled"] = _boolean("ib.k_matrix.enabled", k_matrix["enabled"])
+    k_matrix["tolerance"] = _positive("ib.k_matrix.tolerance", k_matrix["tolerance"])
+    k_matrix["max_iterations"] = _positive_int("ib.k_matrix.max_iterations", k_matrix["max_iterations"])
+    try:
+        k_matrix["xnorm_min"] = float(k_matrix["xnorm_min"])
+    except (TypeError, ValueError) as exc:
+        raise CaseConfigError("ib.k_matrix.xnorm_min must be numeric") from exc
+    if not np.isfinite(k_matrix["xnorm_min"]) or k_matrix["xnorm_min"] < 0.0:
+        raise CaseConfigError("ib.k_matrix.xnorm_min must be finite and non-negative")
+    if isinstance(k_matrix["patch_size"], bool) or k_matrix["patch_size"] not in (1, 2, 4):
+        raise CaseConfigError("ib.k_matrix.patch_size must be 1, 2 or 4")
+    k_matrix["patch_size"] = int(k_matrix["patch_size"])
+    if k_matrix["k_solver"] not in ("auto", "inverse", "cholesky"):
+        raise CaseConfigError("ib.k_matrix.k_solver must be 'auto', 'inverse' or 'cholesky'")
+    if k_matrix["enabled"]:
+        if force_mode != "accumulated_explicit" or ib["implicit"]:
+            raise CaseConfigError(
+                "ib.k_matrix requires ib.force_mode='accumulated_explicit' and ib.implicit=false"
+            )
+        if precision != "float64":
+            raise CaseConfigError("ib.k_matrix requires runtime.precision='float64'")
+
     motion = ib["motion"]
     motion_kind = str(motion["kind"])
     expected_motion = {
@@ -417,12 +460,22 @@ def validate_config(raw: dict[str, Any]) -> dict[str, Any]:
     output["save_field"] = _boolean("output.save_field", output["save_field"])
     output["field_every"] = _nonnegative_int("output.field_every", output["field_every"])
     output["field_start_step"] = _nonnegative_int("output.field_start_step", output["field_start_step"])
+    if output["residual_state"] not in ("auto", "last_inner", "step_end"):
+        raise CaseConfigError("output.residual_state must be 'auto', 'last_inner' or 'step_end'")
     config["mesh"]["verbose"] = _boolean(
         "mesh.verbose", config["mesh"].get("verbose", False)
     )
     config["solver"]["sparse"] = _boolean(
         "solver.sparse", config["solver"]["sparse"]
     )
+    if config["solver"]["operator"] not in ("assembled", "factored"):
+        raise CaseConfigError("solver.operator must be 'assembled' or 'factored'")
+    try:
+        config["solver"]["cg_reference_speed"] = float(config["solver"]["cg_reference_speed"])
+    except (TypeError, ValueError) as exc:
+        raise CaseConfigError("solver.cg_reference_speed must be numeric") from exc
+    if not np.isfinite(config["solver"]["cg_reference_speed"]) or config["solver"]["cg_reference_speed"] < 0.0:
+        raise CaseConfigError("solver.cg_reference_speed must be finite and non-negative")
     config["solver"]["cg_check_interval"] = _positive_int(
         "solver.cg_check_interval", config["solver"]["cg_check_interval"]
     )
@@ -432,6 +485,12 @@ def validate_config(raw: dict[str, Any]) -> dict[str, Any]:
     config["solver"]["fail_on_cg_nonconvergence"] = _boolean(
         "solver.fail_on_cg_nonconvergence", config["solver"]["fail_on_cg_nonconvergence"]
     )
+
+    try:
+        validate_options(config["solver"]["cpu_sparse_backend"], config["solver"]["cpu_sparse_threads"],
+                         device=device, precision=precision, sparse=config["solver"]["sparse"])
+    except ValueError as exc:
+        raise CaseConfigError(str(exc)) from exc
 
     if mesh_kind in {"sphere_wake", "sphere_concentric"}:
         if not np.allclose(centre, 0.0) or not np.isclose(ib["radius"], 0.25):
@@ -481,6 +540,10 @@ def _numerical_source_hashes() -> dict[str, str]:
         "interior_load": _source_hash(HERE / "ib_interior.py"),
         "kinematics": _source_hash(HERE / "ib_kinematics.py"),
         "sparse_operator": _source_hash(HERE / "ib_sparse.py"),
+        "cpu_sparse": _source_hash(HERE / "ib_cpu_sparse.py"),
+        "cpu_sparse_kernel": _source_hash(HERE / "_csr_openmp.c"),
+        "constraint": _source_hash(HERE / "ib_constraint.py"),
+        "constraint_patches": _source_hash(HERE / "ib_patches.py"),
         "mesh_builder": _source_hash(PROJECT / "make_euler_mesh.py"),
         "sphere_wake_mesh": _source_hash(HERE / "sphere_wake_mesh.py"),
         "sphere_quiescent_mesh": _source_hash(HERE / "sphere_quiescent_mesh.py"),
@@ -632,6 +695,8 @@ def _validate_ib_support(config: dict[str, Any], dx: float, bounds: np.ndarray) 
 
 def build_runtime(config: dict[str, Any]) -> CaseRuntime:
     config = validate_config(config)
+    # Explicit backend availability/team check before expensive mesh setup.
+    sparse_execution = execution_identity(config, check_team=True)
     mesh_cfg = config["mesh"]
     ib_cfg = config["ib"]
     radius = float(ib_cfg["radius"])
@@ -718,7 +783,9 @@ def build_runtime(config: dict[str, Any]) -> CaseRuntime:
         driver.set_cavity(U_lid=0.0, spanwise_zerograd=False)
     dt = float(config["time"]["dt"])
     if config["solver"]["sparse"]:
-        driver.enable_sparse(dt)
+        driver.enable_sparse(dt, cpu_backend=config["solver"]["cpu_sparse_backend"],
+                             cpu_threads=config["solver"]["cpu_sparse_threads"],
+                             operator=config["solver"]["operator"])
 
     marker_spacing = float(ib_cfg["marker_spacing"])
     marker_count = max(12, int(round(4.0 * np.pi * radius**2 / marker_spacing**2)))
@@ -764,6 +831,30 @@ def build_runtime(config: dict[str, Any]) -> CaseRuntime:
 
     driver.ib_alpha = float(ib_cfg["alpha"])
     driver.ib_implicit = bool(ib_cfg["implicit"])
+    # Optional floor of |psi|^2 in the absolute part of the CG stopping tests: |psi|^2 of a
+    # uniform stream of the reference speed on this mesh (the initial-condition formula).
+    stopping_floor = 0.0
+    if config["solver"]["cg_reference_speed"] > 0.0:
+        uniform = float(config["solver"]["cg_reference_speed"]) * core.epos[:, 1] * core.te[:, 2]
+        stopping_floor = float(asnumpy(uniform.dot(uniform)))
+        driver.cg_xnorm_min = stopping_floor
+    k_cfg = ib_cfg["k_matrix"]
+    if k_cfg["enabled"]:
+        patch_ids = patch_weights = None
+        if k_cfg["patch_size"] > 1:
+            from scipy.spatial import ConvexHull
+            patch_ids, patch_weights, _ = make_patches(
+                markers, ConvexHull(markers).simplices, size=int(k_cfg["patch_size"])
+            )
+        driver.set_k_matrix(KMatrixCorrection(
+            driver, ib, patch_ids=patch_ids, patch_weights=patch_weights,
+            tolerance=float(k_cfg["tolerance"]), max_iterations=int(k_cfg["max_iterations"]),
+            xnorm_min=max(float(k_cfg["xnorm_min"]), stopping_floor), k_solver=str(k_cfg["k_solver"]),
+        ))
+    residual_state = str(config["output"]["residual_state"])
+    driver.residual_step_end = residual_state == "step_end" or (
+        residual_state == "auto" and bool(k_cfg["enabled"])
+    )
     maximum_translation = np.zeros(3)
     if motion_cfg["kind"] == "oscillation":
         maximum_translation = (
@@ -806,6 +897,7 @@ def build_runtime(config: dict[str, Any]) -> CaseRuntime:
         inner_iterations=int(config["time"]["inner_iterations"]),
         layout_fingerprint=layout_fingerprint,
         source_hashes=source_hashes,
+        sparse_execution=sparse_execution,
     )
 
 
@@ -841,6 +933,7 @@ def _checkpoint_payload(
         "previous_dt": np.float64(runtime.dt),
         "precision": np.str_("float32" if FP32 else "float64"),
         "device": np.str_("cuda" if GPU else "cpu"),
+        "sparse_execution_json": np.str_(json.dumps(runtime.sparse_execution, sort_keys=True, separators=(",", ":"))),
         "source_hashes_json": np.str_(
             json.dumps(runtime.source_hashes, sort_keys=True, separators=(",", ":"))
         ),
@@ -921,7 +1014,7 @@ def load_checkpoint(path: Path, runtime: CaseRuntime):
             "checkpoint_schema", "update_phase", "run_id", "config_fingerprint",
             "layout_fingerprint", "step",
             "physical_time", "dt", "previous_dt", "precision", "device",
-            "source_hashes_json", "s", "s_old", "markers", "marker_velocity",
+            "source_hashes_json", "sparse_execution_json", "s", "s_old", "markers", "marker_velocity",
             "ib_force_mode", "ib_force_E", "ib_force_L", "ib_force_update_count",
             "force_fluid", "moment_fluid", "body_force", "body_moment",
             "interior_momentum", "interior_angular_momentum",
@@ -962,6 +1055,9 @@ def load_checkpoint(path: Path, runtime: CaseRuntime):
             raise CaseConfigError("checkpoint source identity is invalid") from exc
         if old_hashes != runtime.source_hashes:
             raise CaseConfigError("checkpoint numerical source identity does not match this solver")
+        expected_execution = json.dumps(runtime.sparse_execution, sort_keys=True, separators=(",", ":"))
+        if str(np.asarray(checkpoint["sparse_execution_json"]).item()) != expected_execution:
+            raise CaseConfigError("checkpoint sparse execution identity differs (backend, threads or compiled implementation)")
         run_id = str(np.asarray(checkpoint["run_id"]).item())
         try:
             uuid.UUID(run_id)
@@ -1044,6 +1140,7 @@ def load_checkpoint(path: Path, runtime: CaseRuntime):
         expected_force_updates = (
             step
             if runtime.config["ib"]["force_mode"] == "accumulated_explicit"
+            and not runtime.config["ib"]["k_matrix"]["enabled"]
             else step * runtime.inner_iterations
         )
         if force_update_count != expected_force_updates:
@@ -1214,6 +1311,7 @@ def diagnostics(runtime: CaseRuntime, step: int, s, vc, milliseconds_per_step: f
     expected_updates = (
         1
         if runtime.config["ib"]["force_mode"] == "accumulated_explicit"
+        and not runtime.config["ib"]["k_matrix"]["enabled"]
         else runtime.inner_iterations
     )
     if row["ib_force_updates"] != expected_updates:
@@ -1237,6 +1335,7 @@ def _validated_history_prefix(
     expected_updates = (
         1
         if runtime.config["ib"]["force_mode"] == "accumulated_explicit"
+        and not runtime.config["ib"]["k_matrix"]["enabled"]
         else runtime.inner_iterations
     )
     with path.open("r", newline="", encoding="utf-8") as source:
@@ -1356,6 +1455,7 @@ def _metadata(
         "resumed_from": str(resume.resolve()) if resume else None,
         "output_directory": str(output_directory.resolve()),
         "source_sha256": runtime.source_hashes,
+        "sparse_execution": runtime.sparse_execution,
         "closed_body_load": {
             "method": "Uhlmann interior-fluid momentum correction",
             "force": "-force_fluid + backward_difference(interior_momentum)",
@@ -1384,6 +1484,8 @@ def _read_resume_metadata(
     for name, value in expected.items():
         if metadata.get(name) != value:
             raise CaseConfigError(f"existing metadata {name} does not match the checkpoint")
+    if metadata.get("sparse_execution") != runtime.sparse_execution:
+        raise CaseConfigError("existing metadata sparse execution identity does not match this solver")
     if metadata.get("source_sha256") != runtime.source_hashes:
         raise CaseConfigError("existing metadata source identity does not match this solver")
     if not isinstance(metadata.get("created_utc"), str) or not metadata["created_utc"]:
@@ -1612,6 +1714,9 @@ def run_case(
             "complete": completed_step == runtime.steps,
         }
     )
+    if runtime.driver.ib_kmatrix is not None:
+        # Counters cover this process only (a resumed run restarts them).
+        metadata["k_matrix"] = runtime.driver.ib_kmatrix.summary()
     _atomic_json(metadata_path, metadata)
     history = _read_history(history_path)
     body_load = runtime.load_correction.latest_load

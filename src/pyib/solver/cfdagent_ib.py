@@ -31,6 +31,16 @@ def parse_args(argv=None):
     parser.add_argument(
         "--precision", choices=("float64", "float32"), help="override runtime.precision"
     )
+    parser.add_argument("--cpu-sparse-backend", choices=("scipy", "threads", "openmp"),
+                        help="CPU CSR implementation: scipy (default), threads (SciPy kernel on a thread pool, any platform) "
+                             "or openmp (requires an optional installation build)")
+    parser.add_argument("--cpu-sparse-threads", type=int, help="Thread count of the threads/openmp backends; use 1 with SciPy")
+    parser.add_argument("--operator", choices=("assembled", "factored"),
+                        help="override solver.operator (factored: default, three sparse factors; assembled: one product matrix)")
+    parser.add_argument("--cg-reference-speed", type=float,
+                        help="override solver.cg_reference_speed (floor of the CG stopping test; 0 = off, the default)")
+    parser.add_argument("--k-matrix", choices=("on", "off"),
+                        help="override ib.k_matrix.enabled (constrained force update; off by default)")
     parser.add_argument("--steps", type=int, help="override the target total step count")
     parser.add_argument("--overwrite", action="store_true", help="replace known run artifacts")
     parser.add_argument("--quiet", action="store_true")
@@ -51,6 +61,18 @@ def main(argv=None) -> int:
         if args.steps <= 0:
             raise SystemExit("--steps must be positive")
         raw.setdefault("time", {})["steps"] = args.steps
+
+    if args.cpu_sparse_backend is not None:
+        raw.setdefault("solver", {})["cpu_sparse_backend"] = args.cpu_sparse_backend
+    if args.cpu_sparse_threads is not None:
+        raw.setdefault("solver", {})["cpu_sparse_threads"] = args.cpu_sparse_threads
+
+    if args.operator is not None:
+        raw.setdefault("solver", {})["operator"] = args.operator
+    if args.cg_reference_speed is not None:
+        raw.setdefault("solver", {})["cg_reference_speed"] = args.cg_reference_speed
+    if args.k_matrix is not None:
+        raw.setdefault("ib", {}).setdefault("k_matrix", {})["enabled"] = args.k_matrix == "on"
 
     # The existing array backend is intentionally selected at import time.  Set
     # it before importing ib_case and keep one device per process.

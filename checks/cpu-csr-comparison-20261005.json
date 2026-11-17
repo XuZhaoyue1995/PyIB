@@ -1,0 +1,5310 @@
+{
+  "status": "passed",
+  "absolute_tolerance": 1e-11,
+  "relative_tolerance": 1e-11,
+  "comparisons": [
+    {
+      "case": "fixed",
+      "reference": "baseline",
+      "branch": "scipy",
+      "fields": {
+        "checkpoint.npz": {
+          "update_phase": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "physical_time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "previous_dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "checkpoint_schema",
+            "config_fingerprint",
+            "run_id",
+            "source_hashes_json"
+          ]
+        },
+        "final_field.npz": {
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "vc": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cpos": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cell_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_volume_weight": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "momentum_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_relative_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_tolerance_ratio": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "face_cells": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "face_area": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "index_cell": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "lattice_origin": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "lattice_spacing": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_center": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_radius": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "density": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "kinematic_viscosity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "config_fingerprint",
+            "result_schema",
+            "run_id",
+            "source_hashes_json"
+          ]
+        }
+      },
+      "history": {
+        "step": {
+          "passed": true
+        },
+        "time": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cd": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cy": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cz": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_indicator_volume": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_rms": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "speed_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "cfl": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "mass_residual_inf": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_balance_relerr": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "ib_force_updates": {
+          "passed": true
+        },
+        "helmholtz_iterations": {
+          "passed": true
+        },
+        "helmholtz_relative_residual": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "helmholtz_tolerance_ratio": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        }
+      },
+      "passed": true
+    },
+    {
+      "case": "fixed",
+      "reference": "baseline",
+      "branch": "omp1",
+      "fields": {
+        "checkpoint.npz": {
+          "update_phase": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "physical_time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "previous_dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "checkpoint_schema",
+            "config_fingerprint",
+            "run_id",
+            "source_hashes_json"
+          ]
+        },
+        "final_field.npz": {
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "vc": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cpos": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cell_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_volume_weight": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "momentum_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_relative_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_tolerance_ratio": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "face_cells": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "face_area": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "index_cell": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "lattice_origin": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "lattice_spacing": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_center": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_radius": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "density": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "kinematic_viscosity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "config_fingerprint",
+            "result_schema",
+            "run_id",
+            "source_hashes_json"
+          ]
+        }
+      },
+      "history": {
+        "step": {
+          "passed": true
+        },
+        "time": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cd": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cy": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cz": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_indicator_volume": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_rms": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "speed_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "cfl": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "mass_residual_inf": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_balance_relerr": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "ib_force_updates": {
+          "passed": true
+        },
+        "helmholtz_iterations": {
+          "passed": true
+        },
+        "helmholtz_relative_residual": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "helmholtz_tolerance_ratio": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        }
+      },
+      "passed": true
+    },
+    {
+      "case": "fixed",
+      "reference": "baseline",
+      "branch": "omp4",
+      "fields": {
+        "checkpoint.npz": {
+          "update_phase": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "physical_time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "previous_dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "checkpoint_schema",
+            "config_fingerprint",
+            "run_id",
+            "source_hashes_json"
+          ]
+        },
+        "final_field.npz": {
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "vc": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cpos": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cell_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_volume_weight": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "momentum_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_relative_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_tolerance_ratio": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "face_cells": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "face_area": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "index_cell": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "lattice_origin": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "lattice_spacing": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_center": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_radius": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "density": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "kinematic_viscosity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "config_fingerprint",
+            "result_schema",
+            "run_id",
+            "source_hashes_json"
+          ]
+        }
+      },
+      "history": {
+        "step": {
+          "passed": true
+        },
+        "time": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cd": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cy": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cz": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_indicator_volume": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_rms": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "speed_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "cfl": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "mass_residual_inf": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_balance_relerr": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "ib_force_updates": {
+          "passed": true
+        },
+        "helmholtz_iterations": {
+          "passed": true
+        },
+        "helmholtz_relative_residual": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "helmholtz_tolerance_ratio": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        }
+      },
+      "passed": true
+    },
+    {
+      "case": "fixed",
+      "reference": "baseline",
+      "branch": "restart",
+      "fields": {
+        "checkpoint.npz": {
+          "update_phase": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "physical_time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "previous_dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "checkpoint_schema",
+            "config_fingerprint",
+            "run_id",
+            "source_hashes_json"
+          ]
+        },
+        "final_field.npz": {
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "vc": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cpos": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cell_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_volume_weight": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "momentum_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_relative_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_tolerance_ratio": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "face_cells": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "face_area": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "index_cell": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "lattice_origin": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "lattice_spacing": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_center": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_radius": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "density": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "kinematic_viscosity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "config_fingerprint",
+            "result_schema",
+            "run_id",
+            "source_hashes_json"
+          ]
+        }
+      },
+      "history": {
+        "step": {
+          "passed": true
+        },
+        "time": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cd": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cy": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cz": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_indicator_volume": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_rms": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "speed_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "cfl": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "mass_residual_inf": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_balance_relerr": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "ib_force_updates": {
+          "passed": true
+        },
+        "helmholtz_iterations": {
+          "passed": true
+        },
+        "helmholtz_relative_residual": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "helmholtz_tolerance_ratio": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        }
+      },
+      "passed": true
+    },
+    {
+      "case": "fixed",
+      "reference": "omp4",
+      "branch": "restart",
+      "fields": {
+        "checkpoint.npz": {
+          "checkpoint_schema": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "update_phase": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "config_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "physical_time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "previous_dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "sparse_execution_json": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "source_hashes_json": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "run_id"
+          ]
+        },
+        "final_field.npz": {
+          "config_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "sparse_execution_json": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "source_hashes_json": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "result_schema": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "vc": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cpos": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cell_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_volume_weight": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "momentum_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_relative_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_tolerance_ratio": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "face_cells": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "face_area": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "index_cell": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "lattice_origin": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "lattice_spacing": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_center": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_radius": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "density": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "kinematic_viscosity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "run_id"
+          ]
+        }
+      },
+      "history": {
+        "step": {
+          "passed": true
+        },
+        "time": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cd": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cy": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cz": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_indicator_volume": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_rms": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "speed_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "cfl": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "mass_residual_inf": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_balance_relerr": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "ib_force_updates": {
+          "passed": true
+        },
+        "helmholtz_iterations": {
+          "passed": true
+        },
+        "helmholtz_relative_residual": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "helmholtz_tolerance_ratio": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        }
+      },
+      "passed": true
+    },
+    {
+      "case": "moving",
+      "reference": "baseline",
+      "branch": "scipy",
+      "fields": {
+        "checkpoint.npz": {
+          "update_phase": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "physical_time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "previous_dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "checkpoint_schema",
+            "config_fingerprint",
+            "run_id",
+            "source_hashes_json"
+          ]
+        },
+        "final_field.npz": {
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "vc": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cpos": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cell_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_volume_weight": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "momentum_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_relative_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_tolerance_ratio": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "face_cells": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "face_area": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "index_cell": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "lattice_origin": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "lattice_spacing": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_center": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_radius": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "density": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "kinematic_viscosity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "config_fingerprint",
+            "result_schema",
+            "run_id",
+            "source_hashes_json"
+          ]
+        }
+      },
+      "history": {
+        "step": {
+          "passed": true
+        },
+        "time": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cd": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cy": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cz": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_indicator_volume": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_rms": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "speed_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "cfl": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "mass_residual_inf": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_balance_relerr": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "ib_force_updates": {
+          "passed": true
+        },
+        "helmholtz_iterations": {
+          "passed": true
+        },
+        "helmholtz_relative_residual": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "helmholtz_tolerance_ratio": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        }
+      },
+      "passed": true
+    },
+    {
+      "case": "moving",
+      "reference": "baseline",
+      "branch": "omp1",
+      "fields": {
+        "checkpoint.npz": {
+          "update_phase": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "physical_time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "previous_dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "checkpoint_schema",
+            "config_fingerprint",
+            "run_id",
+            "source_hashes_json"
+          ]
+        },
+        "final_field.npz": {
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "vc": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cpos": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cell_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_volume_weight": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "momentum_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_relative_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_tolerance_ratio": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "face_cells": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "face_area": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "index_cell": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "lattice_origin": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "lattice_spacing": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_center": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_radius": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "density": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "kinematic_viscosity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "config_fingerprint",
+            "result_schema",
+            "run_id",
+            "source_hashes_json"
+          ]
+        }
+      },
+      "history": {
+        "step": {
+          "passed": true
+        },
+        "time": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cd": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cy": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cz": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_indicator_volume": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_rms": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "speed_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "cfl": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "mass_residual_inf": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_balance_relerr": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "ib_force_updates": {
+          "passed": true
+        },
+        "helmholtz_iterations": {
+          "passed": true
+        },
+        "helmholtz_relative_residual": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "helmholtz_tolerance_ratio": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        }
+      },
+      "passed": true
+    },
+    {
+      "case": "moving",
+      "reference": "baseline",
+      "branch": "omp4",
+      "fields": {
+        "checkpoint.npz": {
+          "update_phase": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "physical_time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "previous_dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "checkpoint_schema",
+            "config_fingerprint",
+            "run_id",
+            "source_hashes_json"
+          ]
+        },
+        "final_field.npz": {
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "vc": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cpos": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cell_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_volume_weight": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "momentum_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_relative_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_tolerance_ratio": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "face_cells": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "face_area": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "index_cell": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "lattice_origin": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "lattice_spacing": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_center": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_radius": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "density": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "kinematic_viscosity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "config_fingerprint",
+            "result_schema",
+            "run_id",
+            "source_hashes_json"
+          ]
+        }
+      },
+      "history": {
+        "step": {
+          "passed": true
+        },
+        "time": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cd": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cy": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cz": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_indicator_volume": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_rms": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "speed_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "cfl": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "mass_residual_inf": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_balance_relerr": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "ib_force_updates": {
+          "passed": true
+        },
+        "helmholtz_iterations": {
+          "passed": true
+        },
+        "helmholtz_relative_residual": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "helmholtz_tolerance_ratio": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        }
+      },
+      "passed": true
+    },
+    {
+      "case": "moving",
+      "reference": "baseline",
+      "branch": "restart",
+      "fields": {
+        "checkpoint.npz": {
+          "update_phase": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "physical_time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "previous_dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "checkpoint_schema",
+            "config_fingerprint",
+            "run_id",
+            "source_hashes_json"
+          ]
+        },
+        "final_field.npz": {
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "vc": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cpos": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cell_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_volume_weight": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "momentum_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_relative_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_tolerance_ratio": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "face_cells": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "face_area": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "index_cell": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "lattice_origin": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "lattice_spacing": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_center": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_radius": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "density": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "kinematic_viscosity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "config_fingerprint",
+            "result_schema",
+            "run_id",
+            "source_hashes_json"
+          ]
+        }
+      },
+      "history": {
+        "step": {
+          "passed": true
+        },
+        "time": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cd": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cy": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cz": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_indicator_volume": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_rms": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "speed_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "cfl": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "mass_residual_inf": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_balance_relerr": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "ib_force_updates": {
+          "passed": true
+        },
+        "helmholtz_iterations": {
+          "passed": true
+        },
+        "helmholtz_relative_residual": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "helmholtz_tolerance_ratio": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        }
+      },
+      "passed": true
+    },
+    {
+      "case": "moving",
+      "reference": "omp4",
+      "branch": "restart",
+      "fields": {
+        "checkpoint.npz": {
+          "checkpoint_schema": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "update_phase": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "config_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "physical_time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "previous_dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "sparse_execution_json": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "source_hashes_json": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "run_id"
+          ]
+        },
+        "final_field.npz": {
+          "config_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "layout_fingerprint": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "step": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "dt": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "precision": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "device": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "sparse_execution_json": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "source_hashes_json": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "s": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "s_old": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "markers": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_velocity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_mode": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "ib_force_E": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_L": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "ib_force_update_count": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "force_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "moment_fluid": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_force": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "body_moment": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_indicator_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "interior_angular_momentum_rate": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "result_schema": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "time": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "vc": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cpos": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "cell_volume": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "marker_volume_weight": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "momentum_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_relative_residual": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "helmholtz_tolerance_ratio": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "face_cells": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "face_area": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "index_cell": {
+            "passed": true,
+            "bitwise_equal": true
+          },
+          "lattice_origin": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "lattice_spacing": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_center": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "sphere_radius": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "density": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "kinematic_viscosity": {
+            "passed": true,
+            "bitwise_equal": true,
+            "max_absolute_difference": 0.0
+          },
+          "_excluded_identity_fields": [
+            "run_id"
+          ]
+        }
+      },
+      "history": {
+        "step": {
+          "passed": true
+        },
+        "time": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cd": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cy": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "Cz": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_force_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "body_moment_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "moment_fluid_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_x": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_y": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_angular_momentum_rate_z": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "interior_indicator_volume": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "slip_rms": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "speed_max": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "cfl": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "mass_residual_inf": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "force_balance_relerr": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "ib_force_updates": {
+          "passed": true
+        },
+        "helmholtz_iterations": {
+          "passed": true
+        },
+        "helmholtz_relative_residual": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        },
+        "helmholtz_tolerance_ratio": {
+          "passed": true,
+          "bitwise_equal": true,
+          "max_absolute_difference": 0.0
+        }
+      },
+      "passed": true
+    }
+  ],
+  "scope": "CPU implementation regression, not physical benchmark validation"
+}
