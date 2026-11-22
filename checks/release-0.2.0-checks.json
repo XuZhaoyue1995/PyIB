@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "prepared_utc": "2026-11-22T12:14:57.050326+00:00",
+  "release": "0.2.0",
+  "checked_tree": "commit 52df574 (Release PyIB 0.2.0), exported with git archive into an empty directory; the tagged commit adds only this record and its row in checks/README.md",
+  "environment": {
+    "os": "Windows 11",
+    "python": "3.12.5",
+    "build": "1.6.1",
+    "twine": "7.0.0",
+    "installed_with_the_wheel": {
+      "numpy": "2.5.5",
+      "scipy": "1.18.1",
+      "h5py": "3.16.0",
+      "meshio": "5.3.5"
+    }
+  },
+  "checks": {
+    "build": "python -m build: pyib-0.2.0.tar.gz and pyib-0.2.0-py3-none-any.whl built in an isolated environment (setuptools>=77)",
+    "twine_check": "PASSED for both files",
+    "source_distribution_contents": "no PDF; paper/ contains README.md only; checks/, docs/, examples/, tests/, tools/ included",
+    "wheel_contents": "29 files: the pyib package (pure Python plus the optional _csr_openmp.c source), LICENSE and AUTHORS.md",
+    "install": "wheel installed into a new virtual environment; import pyib reports 0.2.0 from site-packages",
+    "example_run": "pyib-run examples/cpu_oscillating_sphere_smoke.json: 4 steps, COMPLETE",
+    "pyib_validate": "VALID: case=cpu_oscillating_sphere_smoke backend=cpu/numpy precision=float64 step=4 history_rows=4 coverage=full_field force_balance_max=1.297127e-16 atol=1.000000e-09",
+    "verify_source_manifest": "Verified 19 current source files: 8 preserved, 6 updated, 5 added.",
+    "check_pressure_validation": "288 of 288 checks pass",
+    "unit_tests": "66 tests, OK, 1 class skipped (OpenMP extension not built), run against the installed wheel"
+  },
+  "not_checked_for_this_release": [
+    "the optional OpenMP extension on Linux (last built and tested on 2026-11-17, see upgrade-20261117.json)",
+    "installation of the gpu extra from the wheel; the CUDA validation runs of validation-reruns-20261122.json used the same solver source from a source tree with CuPy 13.6"
+  ],
+  "distribution_files": "built from the tagged commit; their SHA-256 values are listed in the notes of the GitHub release v0.2.0"
+}
