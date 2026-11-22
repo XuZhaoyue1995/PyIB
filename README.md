@@ -28,7 +28,9 @@ using [CITATION.cff](CITATION.cff). See also [release status](RELEASE_STATUS.md)
 Helmholtz operator (2.2 times on CUDA and 3.6 times on CPU on the D16 benchmark
 case, measured), an optional K-matrix force correction (off by default) and a
 two-sided surface-pressure correction for triangulated surfaces, both ported
-from IBFast. See the [changelog](CHANGELOG.md).
+from IBFast. The six-period D32/D40 validation runs were repeated in full with
+these changes and reproduced the archived errors. See the
+[changelog](CHANGELOG.md).
 
 ## Repository layout
 
@@ -96,7 +98,7 @@ result bit for bit.
 | Option | Default | Effect |
 |---|---|---|
 | `solver.operator` (`--operator`) | `"factored"` | Helmholtz operator as three sparse factors (about 23 non-zeros per edge instead of 120): same operator up to round-off, a fifth of the memory. `"assembled"` reproduces earlier results bit for bit on CPU. |
-| `solver.cg_reference_speed` (`--cg-reference-speed`) | `0` (off) | Frame-independent floor of the CG stopping test for bodies moving through fluid at rest; fewer iterations, results change at the 1e-7 level on the benchmark case. |
+| `solver.cg_reference_speed` (`--cg-reference-speed`) | `0` (off) | Frame-independent floor of the CG stopping test for bodies moving through fluid at rest; fewer iterations (benchmark runs 1.7 to 2.9 times faster); over six periods the benchmark body force changes by 6e-7 (D16) to 7e-6 (D40) of its largest value. |
 | `ib.k_matrix.enabled` (`--k-matrix on`) | `false` | Momentum and no-slip solved together in every inner iteration (IBFast `ib_update='pcg'`). |
 | `output.residual_state` | `"auto"` | Which momentum residual a field snapshot keeps: of the last inner iteration (explicit update) or of the finished step (K-matrix). |
 
@@ -172,6 +174,9 @@ of the analytical force amplitude at both resolutions. See the
 [pressure and runtime-force results](docs/VALIDATION.md),
 [machine-readable summary](checks/pressure-validation-20260925.json) and
 [validation evidence](checks/pressure-validation-20260925.zip).
+Both runs were repeated in full with the current source in November 2026 on
+an 8 GB workstation GPU and gave the same error figures
+([record](checks/validation-reruns-20261122.json)).
 The bundled small examples provide installation and execution checks;
 the D32/D40 results provide the numerical benchmark evidence.
 

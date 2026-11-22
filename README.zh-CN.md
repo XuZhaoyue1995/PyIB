@@ -21,7 +21,8 @@ PyIB 以 [BSD 3-Clause 许可证](LICENSE) 发布。`paper/` 中保留的论文�
 
 **`0.1.0rc2` 之后的工作区改动（2026-11-17，尚未发布）：** Helmholtz 算子提速
 （D16 基准算例实测 CUDA 2.2 倍、CPU 3.6 倍）；从 IBFast 移植了可选的 K 矩阵
-修正力（默认关闭）和三角剖分面的两侧表面压力修正。详见 [变更记录](CHANGELOG.md)。
+修正力（默认关闭）和三角剖分面的两侧表面压力修正。D32/D40 六周期验证算例已用
+改动后的代码完整重跑，误差与存档一致。详见 [变更记录](CHANGELOG.md)。
 
 ## 仓库结构
 
@@ -82,7 +83,7 @@ pyib-run examples/cpu_fixed_sphere_smoke.json --outdir runs/fixed-threads --cpu-
 | 选项 | 默认 | 作用 |
 |---|---|---|
 | `solver.operator`（`--operator`） | `"factored"` | Helmholtz 算子写成三个稀疏因子（每条边约 23 个非零，原来 120 个）：同一个算子，只差舍入，内存约五分之一。`"assembled"` 在 CPU 上与以前的结果逐位相同。 |
-| `solver.cg_reference_speed`（`--cg-reference-speed`） | `0`（关） | 物体在静止流体中运动时，给 CG 停机判据加一个与参考系无关的下限；迭代数减少，基准算例上结果变化在 1e-7 量级。 |
+| `solver.cg_reference_speed`（`--cg-reference-speed`） | `0`（关） | 物体在静止流体中运动时，给 CG 停机判据加一个与参考系无关的下限；迭代数减少（基准算例整体快 1.7–2.9 倍）；六周期内基准算例受力的变化为其最大值的 6e-7（D16）至 7e-6（D40）。 |
 | `ib.k_matrix.enabled`（`--k-matrix on`） | `false` | 每个内迭代把动量方程和无滑移条件联立求解（IBFast `ib_update='pcg'`）。 |
 | `output.residual_state` | `"auto"` | 流场快照保存哪个动量残差：末次内迭代的（显式更新）或时间步结束时的（K 矩阵）。 |
 
@@ -149,7 +150,9 @@ D32/D40 振荡球使用 CUDA、float64 完成六周期计算。两个分辨率�
 受力波形差异均小于解析受力幅值的 0.035%。详见
 [压力与运行受力验证](docs/VALIDATION.md)、
 [机器可读结果](checks/pressure-validation-20260925.json) 和
-[验证数据包](checks/pressure-validation-20260925.zip)。随包的小型示例用于检查安装和
+[验证数据包](checks/pressure-validation-20260925.zip)。2026 年 11 月用当前源码在一块
+8 GB 工作站显卡上完整重跑了这两个算例，误差数字相同
+（[记录](checks/validation-reruns-20261122.json)）。随包的小型示例用于检查安装和
 运行，D32/D40 结果提供数值基准验证依据。
 
 ## 保留的论文草稿

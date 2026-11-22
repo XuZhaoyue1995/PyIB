@@ -34,8 +34,12 @@ default), a two-sided surface-pressure correction for triangulated surfaces, a
 version number is unchanged.  What was measured and what was not is in
 [CHANGELOG.md](CHANGELOG.md), [docs/PERFORMANCE.md](docs/PERFORMANCE.md),
 [docs/K_MATRIX.md](docs/K_MATRIX.md) and [docs/VALIDATION.md](docs/VALIDATION.md).
-The D32/D40 results above were produced by the released code; they were not
-rerun in full with the changed code.
+The D32/D40 results above were produced by the released code.  Both runs were
+repeated in full with the changed code between 2026-11-17 and 2026-11-21 (one
+8 GB workstation GPU, default factored operator) and reproduced the four error
+figures to the digits shown; the six-period runs with the optional stopping
+floor changed them by at most 1.3e-4 percentage points
+([record](checks/validation-reruns-20261122.json)).
 
 ## Distribution and attribution
 

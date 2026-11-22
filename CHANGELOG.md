@@ -8,7 +8,9 @@ Nothing below has been tagged or released; the package version is still
 before; the changes here are built on top of it.
 
 Numbers quoted here were measured on 2026-11-17 on one shared workstation
-(i9-9900K, RTX 2080 8 GB, float64), single runs; conditions and tables are in
+(i9-9900K, RTX 2080 8 GB, float64), single runs; the six-period validation
+reruns and the six-period runs with the stopping floor followed on the same
+machine until 2026-11-22.  Conditions and tables are in
 [docs/PERFORMANCE.md](docs/PERFORMANCE.md) and
 [docs/VALIDATION.md](docs/VALIDATION.md).
 
@@ -45,8 +47,12 @@ Numbers quoted here were measured on 2026-11-17 on one shared workstation
 - **`threads` CPU backend** (`solver.cpu_sparse_backend = "threads"`): SciPy's
   CSR kernel on a thread pool, bit-identical to SciPy, no compiled extension.
 - **Optional floor of the CG stopping test** (`solver.cg_reference_speed`, off
-  by default) for bodies moving through fluid at rest: on the D16 case 3.9 times
-  fewer CG iterations and 3.6 times less time, at a force change of 3.6e-7.
+  by default) for bodies moving through fluid at rest: over the first 40 steps
+  of the D16 case 3.9 times fewer CG iterations and 3.6 times less time, at a
+  force change of 3.6e-7.  Over the six periods of the benchmark the runs take
+  1.7 (D16), 2.9 (D32) and 2.4 (D40) times less time; the force errors are
+  unchanged at four decimals and the corrected pressure errors change by at
+  most 1.3e-4 percentage points.
 - **Step-end residual** (`output.residual_state`): field snapshots can keep the
   momentum residual of the finished step (default with the K-matrix correction)
   instead of that of the last inner iteration (default otherwise, as before).
@@ -73,6 +79,14 @@ Numbers quoted here were measured on 2026-11-17 on one shared workstation
   previous code on the three bundled CPU examples that were compared.
 - The sphere-exterior pressure correction (`pyib-postprocess` without
   `--two-sided`) has the same code path as before; its tests pass unchanged.
+- The six-period D32 and D40 validation runs were repeated in full with the new
+  code (default factored operator, CUDA, an 8 GB workstation GPU) and reproduce
+  the archived figures: force harmonic-vector error 5.2690% / 4.1190%,
+  corrected surface-pressure error 2.5300% / 2.2224%; body force within
+  6.7e-11 / 1.1e-10 of the archived histories over all sampled steps.  Both
+  reruns were resumed from checkpoints after interruptions.  See
+  [docs/VALIDATION.md](docs/VALIDATION.md) and
+  `checks/validation-reruns-20261122.json`.
 
 ### Not done
 
@@ -82,10 +96,10 @@ Numbers quoted here were measured on 2026-11-17 on one shared workstation
 - No smoothed kernel (`h3s`) in the solver; the pressure tool supports it for
   such snapshots.
 - No wall-shear recovery.
-- The full six-period D32 and D40 validation runs were not repeated (about 12
-  hours for D32 alone on the available 8 GB card).  Rerun instead: the first 10
-  steps of D32 against the archived history (body force within 3.5e-14, same
-  iteration counts) and the benchmark at D16 over six periods with both force
-  updates; see docs/VALIDATION.md.
+- The K-matrix correction was run over six periods at D16 only, not at D32 or
+  D40; see docs/VALIDATION.md.
+- The D40 case does not fit an 8 GB card with CuPy's default memory pool.  The
+  D40 reruns used a capped pool with fallback to direct allocations set up by
+  the launching script; PyIB itself has no such option.
 - `K` of the K-matrix correction is rebuilt on the host every step for a moving
   body (0.64 s per step at D16); this was not optimised.

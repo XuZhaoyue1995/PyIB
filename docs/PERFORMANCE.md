@@ -50,8 +50,9 @@ memory.
    its constrained solve describes the same effect).  With
    `cg_reference_speed = U` the term `|psi|^2` is bounded below by
    its value for a uniform stream of speed `U` on the same mesh.  This changes
-   the accepted iterate, so it changes the results at the level shown below; it
-   is a trade the user chooses, not a default.
+   the accepted iterate, so it changes the results at the level shown below
+   (first 40 steps, and whole six-period runs at D16, D32 and D40); it is a
+   trade the user chooses, not a default.
 
 ## Measured times
 
@@ -82,6 +83,40 @@ CUDA, D32 (1,179,648 cells, 3,637,824 edges): the as-found code could not run
 on this card (see above).  With the factored operator the first 12 steps took
 468 s (22–75 s per step during the start-up, where the inner solves need up to
 2,220 iterations).
+
+## The stopping floor over whole runs
+
+Measured from 2026-11-17 to 2026-11-22 on the same workstation: the six-period
+benchmark runs of [VALIDATION.md](VALIDATION.md) with the factored operator on
+CUDA, without and with `cg_reference_speed = 0.02`.  Times are again sums of
+the per-step times in `history.csv`.
+
+| | D16 (1,680 steps) | D32 (3,360 steps) | D40 (4,200 steps) |
+|---|---:|---:|---:|
+| Without the floor | 2,135 s (1.27 s per step) | 43,698 s (13.0 s per step) | 100,142 s (23.8 s per step) |
+| With the floor | 1,254 s (0.75 s per step) | 13,502 s (4.02 s per step) | 37,442 s (8.91 s per step) |
+| Speed-up, total time | 1.70 | 3.24 | 2.67 |
+| Speed-up, median time per step | 1.83 | 2.89 | 2.44 |
+| Speed-up, first 10 steps | 2.87 | 6.60 | 6.28 |
+| Iterations of the largest inner solve, sum over the sampled steps | 151,300 → 47,240 | 439,120 → 183,900 | 603,600 → 283,020 |
+| Body force against the run without the floor (largest difference over the run, relative to the largest force) | 5.6e-7 | 4.0e-6 | 6.9e-6 |
+
+- The floor saves most during the start-up, where the inner solves need most
+  iterations; the 40-step figure of the table above (81.5 s against 22.4 s) is
+  such a start-up figure.  Over a whole run the gain is 1.7 at D16 and between
+  2.4 and 3.2 at D32 and D40.
+- The two D16 runs were made on the same day, each alone on the GPU.  The D32
+  and D40 runs without the floor are the validation reruns; they ran in several
+  legs while the workstation was in other use and contain slow stretches, so
+  for them the ratio of the median times per step is the safer figure.
+- D40 does not fit the 8 GB card with CuPy's default memory pool.  Both D40
+  runs used a capped pool with fallback to direct allocations, set up by the
+  launching script and not part of PyIB.  Whether that is why the gain at D40
+  is smaller than at D32 was not measured.
+- The error figures of the benchmark change by at most 1.3e-4 percentage points
+  with the floor (table in [VALIDATION.md](VALIDATION.md)).
+
+The runs are recorded in `checks/validation-reruns-20261122.json`.
 
 ## Results unchanged?
 

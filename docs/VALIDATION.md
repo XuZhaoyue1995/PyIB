@@ -1,7 +1,9 @@
 # Solver and pressure validation: D32/D40 oscillating sphere
 
 Author: **Zhaoyue Xu**. Results retrieved and independently reviewed on
-2026-09-25. The D32 and D40 simulations completed by 2026-09-23.
+2026-09-25. The D32 and D40 simulations completed by 2026-09-23. Both were
+repeated in full with the changed source in November 2026 and reproduced the
+figures below ([reruns](#full-six-period-reruns-of-d32-and-d40)).
 
 **The solver and pressure modules have completed documented numerical
 validation for this benchmark.** The checks combine analytical comparison,
@@ -83,41 +85,90 @@ For the distinction between unsteady-Stokes and finite-Re oscillating-sphere
 references, see Mei (1994), [Flow due to an oscillating sphere and an expression
 for unsteady drag on the sphere at finite Reynolds number](https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/flow-due-to-an-oscillating-sphere-and-an-expression-for-unsteady-drag-on-the-sphere-at-finite-reynolds-number/13386D6EC497ADA02ADDDD5A750B2609).
 
-## Checks of the 2026-11-17 working tree (unreleased changes)
+## Checks of the changes after `0.1.0rc2` (2026-11-17 to 2026-11-22, not yet released)
 
 The results above were produced by the released `0.1.0rc2` code on a cluster
-GPU.  The working tree of 2026-11-17 changes how the Helmholtz operator is
-applied (three factors instead of one assembled matrix, in-place CG updates) and
-adds an optional K-matrix force correction and a two-sided pressure correction
-([CHANGELOG.md](../CHANGELOG.md)).  The full six-period D32 and D40 runs were
-**not** repeated with the changed code: on the available workstation (RTX 2080,
-8 GB) D32 alone takes about 12 hours.  What was run instead, all on that
-workstation in float64, single runs, is listed here; the machine-readable record
-is [checks/upgrade-20261117.json](../checks/upgrade-20261117.json).
+GPU.  The source has since changed how the Helmholtz operator is applied (three
+factors instead of one assembled matrix, in-place CG updates) and adds an
+optional K-matrix force correction, a two-sided pressure correction and an
+optional floor of the CG stopping test ([CHANGELOG.md](../CHANGELOG.md)).  Both
+archived cases were run again in full with the changed code, and the benchmark
+was also run with the optional floor.  Everything in this section was run on
+one workstation (RTX 2080, 8 GB, CuPy 13.6) in float64, single runs.  The
+machine-readable records are
+[checks/upgrade-20261117.json](../checks/upgrade-20261117.json) and
+[checks/validation-reruns-20261122.json](../checks/validation-reruns-20261122.json).
 
-### The changed code against the archived D32 run
+### Full six-period reruns of D32 and D40
 
-The D32 case of the evidence archive was started again with the changed code
-(default factored operator, CUDA, CuPy 13.6; the archived run used CuPy 14.1 on
-another GPU) and compared with the archived `history.csv` at the steps both
-contain.
+The D32 and D40 cases of the evidence archive were run from t = 0 to six
+periods with the source of commit `046b6f5` (default factored operator, CUDA)
+and evaluated with the definitions of the tables above.  The archived runs used
+the single assembled operator, CuPy 14.1 and another GPU.
 
-| Quantity at the common steps 1, 2, 3, 5, 10 | Largest difference / largest archived value |
-|---|---:|
-| Body force (x) | 3.5e-14 |
-| Force on the fluid (x) | 5.2e-15 |
-| Interior-fluid momentum (x) | 2.7e-15 |
-| Marker slip (rms) | 5.4e-15 |
-| Largest speed | 1.3e-13 |
-| CG iterations of the largest inner solve | identical (2220, 2220, 2220, 2220, 1820) |
+| Quantity | D32 archived | D32 rerun | D40 archived | D40 rerun |
+|---|---:|---:|---:|---:|
+| Runtime body-force harmonic-vector error | 5.2690% | 5.2690% | 4.1190% | 4.1190% |
+| Runtime body-force amplitude error | +5.0513% | +5.0513% | +3.9570% | +3.9570% |
+| Phase error | −0.8380° | −0.8380° | −0.6428° | −0.6428° |
+| Cycle 5→6 waveform RMS difference | 0.034108% | 0.034108% | 0.033814% | 0.033814% |
+| Corrected surface-pressure relative area/time L2 error | 2.5300% | 2.5300% | 2.2224% | 2.2224% |
+| Raw surface-pressure relative area/time L2 error | 67.2063% | 67.2063% | 69.6260% | 69.6260% |
+| Body force (x) at the sampled steps, largest difference from the archived history / largest force | | 6.7e-11 (675 steps) | | 1.1e-10 (843 steps) |
+| CG iterations of the largest inner solve, sampled steps with the archived count | | 674 of 675 | | 843 of 843 |
 
-The run was stopped by hand after step 10: it shared the GPU with two other
-validation runs and needed about two minutes per step.  An earlier 12-step run
-of the same case alone on the GPU (468 s) gave the same agreement (1.9e-14 in
-the body force).  This shows that the changed code follows the archived
-trajectory through the start-up; it does **not** show the six-period error
-figures of the tables above for the changed code.  Those would follow if the
-agreement persisted over all 3,360 steps, which was not run.
+The fitted force coefficients agree with the archived ones to 1.0e-13 (D32) and
+4.9e-13 (D40) relative, the corrected pressure errors to 1e-10 relative.  Both
+result directories pass `pyib-validate`.
+
+Neither run was uninterrupted.  D32 was paused once by hand and interrupted
+once by a restart of the computer; it was resumed from the checkpoints at steps
+560 and 1,680.  D40 was interrupted at step 1,155 by a restart of the computer
+and resumed from the checkpoint at step 700.  The agreement above therefore
+includes restarts from checkpoints.  Stepping took 43,698 s for D32 (13.0 s per
+step) and 100,142 s for D40 (23.8 s per step) on a workstation that was in
+other use during the runs.  D32 fits the 8 GB card.  D40 does not fit it with
+CuPy's default memory pool; the D40 runs of this section used a capped pool
+with fallback to direct allocations, set up by the launching script, which is
+not part of PyIB.
+
+A first comparison on 2026-11-17 covered only steps 1–10 of D32 (body force
+within 3.5e-14 of the archived history, same iteration counts); it is kept in
+`upgrade-20261117.json`.
+
+### Optional floor of the CG stopping test over six periods
+
+`solver.cg_reference_speed` is off by default.  When set it changes the iterate
+at which the Helmholtz CG stops ([PERFORMANCE.md](PERFORMANCE.md)), so it
+changes the results slightly.  The benchmark was run over six periods with
+`cg_reference_speed = 0.02` (the peak body speed) and otherwise identical
+cases, and compared with the runs without the floor: at D16 the explicit-update
+run of the last table of this document, at D32 and D40 the reruns above.
+Entries read "without floor → with floor".  The time and iteration counts of the
+D16 run without floor are from a repeat of that run on 2026-11-21, alone on
+the GPU like the run with the floor; the repeat follows the first run to
+2.1e-11 in the body force.
+
+| Quantity | D16 | D32 | D40 |
+|---|---:|---:|---:|
+| Runtime body-force harmonic-vector error | 11.6866% → 11.6866% | 5.2690% → 5.2690% | 4.1190% → 4.1190% |
+| Change of that error, percentage points | +1.0e-5 | +1.8e-5 | +2.0e-5 |
+| Corrected surface pressure, relative area/time L2 (sphere-exterior path) | 3.5912% → 3.5912% | 2.5300% → 2.5299% | 2.2224% → 2.2223% |
+| Same with the two-sided path, outer side | 3.6675% → 3.6675% | 2.4164% → 2.4163% | 2.2248% → 2.2246% |
+| Change of the corrected pressure error (sphere-exterior path), percentage points | −1.2e-5 | −1.3e-4 | −1.3e-4 |
+| Corrected pressure RMS of a field (sphere-exterior path), relative change, range over the five fields | −5.0e-6 to +3.7e-6 | −5.7e-5 to −4.8e-5 | −7.3e-5 to −4.4e-5 |
+| Body force (x) at the sampled steps, largest difference / largest force | 5.6e-7 | 4.0e-6 | 6.9e-6 |
+| CG iterations of the largest inner solve, sum over the sampled steps | 151,300 → 47,240 | 439,120 → 183,900 | 603,600 → 283,020 |
+| Stepping time | 2,135 s → 1,254 s | 43,698 s → 13,502 s | 100,142 s → 37,442 s |
+
+With the floor the force errors are unchanged at the four decimals shown and
+the corrected pressure errors change by at most 1.3e-4 percentage points.  The
+D40 two-sided entry (2.2248% → 2.2246%) is the same change of 1.3e-4 points
+crossing two rounding boundaries.  The change is ten times larger at D32 than
+at D16 and did not grow further from D32 to D40.  All three runs with the floor
+pass `pyib-validate`.  The floor stays off by default and the figures of this
+document are those without it.  Timing conditions and speed-ups are discussed
+in [PERFORMANCE.md](PERFORMANCE.md).
 
 ### Same discrete case in IBFast
 
@@ -175,7 +226,8 @@ constraint per marker).  Same definitions as in the tables above: force fit over
 the last two periods, surface pressure at 5T, 5.25T, 5.5T, 5.75T (and 6T as the
 repeated phase), pressure zero from the exterior shell 4h–6h recomputed from the
 recovered field.  There is no archived D16 run to compare with; the D32 and D40
-figures of the released code are repeated for the trend.
+figures of the released code are repeated for the trend (the two-sided values
+are from the field snapshots of the reruns above).
 
 | Quantity | D16 explicit | D16 K-matrix | D32 (archived) | D40 (archived) |
 |---|---:|---:|---:|---:|
@@ -184,7 +236,7 @@ figures of the released code are repeated for the trend.
 | Phase error | −1.92° | −2.12° | −0.8380° | −0.6428° |
 | Cycle 5→6 waveform RMS difference | 0.0356% | 0.0360% | 0.034108% | 0.033814% |
 | Corrected surface pressure, relative area/time L2 (sphere-exterior path) | 3.59% | 4.41% | 2.5300% | 2.2224% |
-| Same with the two-sided path, outer side | 3.67% | 4.41% | — | — |
+| Same with the two-sided path, outer side | 3.67% | 4.41% | 2.4164% (rerun) | 2.2248% (rerun) |
 | Raw surface pressure, relative area/time L2 | 54.9% | 53.9% | 67.2% | 69.6% |
 | Corrected pressure RMS / phase maximum, range over the five fields | 1.43–2.47% | 2.48–2.64% | 1.40–1.50% | 1.21–1.36% |
 | Marker slip after a step (rms), largest over the run | 6.5e-4 | 3.7e-18 | — | — |

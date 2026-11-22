@@ -1,0 +1,1815 @@
+{
+  "schema_version": 1,
+  "prepared_utc": "2026-11-22T11:16:36.504393+00:00",
+  "scope": "Six-period runs of the oscillating-sphere benchmark of docs/VALIDATION.md with the source of commit 046b6f5 (the changes after 0.1.0rc2): full reruns of the archived D32 and D40 cases, and the same benchmark at D16, D32 and D40 with the optional floor of the CG stopping test (solver.cg_reference_speed = 0.02, the peak body speed). Runs of 2026-11-17 to 2026-11-22.",
+  "machine": {
+    "cpu": "Intel i9-9900K (8 cores)",
+    "gpu": "NVIDIA RTX 2080 8 GB",
+    "os": "Windows 11",
+    "python": "3.12.5",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "cupy": "13.6.0",
+    "precision": "float64",
+    "note": "one workstation, single runs; the machine was in other use during parts of the multi-day runs"
+  },
+  "work_directory": "local work directory of the author (not distributed); run labels below are relative to it",
+  "definitions": "As in docs/VALIDATION.md and tools/check_pressure_validation.py: runtime body force fitted by a cos + b sin + c over the last two periods, harmonic-vector error against the unsteady-Stokes force; surface pressure post-processed from the field snapshots at 5T, 5.25T, 5.5T, 5.75T and 6T, pressure zero from the exterior shell 4h-6h, relative area/time L2 error over the four distinct phases. 'two_sided' is the two-sided correction (outer side); 'sphere_exterior' the default path. Stepping seconds are the sums of the per-step times in history.csv (pauses between the legs of an interrupted run are not counted; mesh construction and operator assembly are not included).",
+  "full_reruns_without_floor": {
+    "d32": {
+      "case": "cases/D32.json of checks/pressure-validation-20260925.zip, run from t = 0 with the default factored operator",
+      "identity": {
+        "run": "reruns/D32",
+        "case_name": "D32_N560_inner4",
+        "backend": "cuda/cupy",
+        "precision": "float64",
+        "python": "3.12.5",
+        "cupy": "13.6.0",
+        "config_fingerprint": "a5a854b3aa138c876eb93354dd6fd7b270e8e626fc474d092f83e70ab688b799",
+        "created_utc": "2026-11-17T15:15:07.998335+00:00",
+        "completed_utc": "2026-11-18T22:50:32.040870+00:00",
+        "completed_step": 3360,
+        "resume_count": 2,
+        "cg_reference_speed": 0.0,
+        "operator": "factored",
+        "cg_check_interval": 20
+      },
+      "pyib_validate": {
+        "exit_code": 0,
+        "output": "VALID: case=D32_N560_inner4 backend=cuda/cupy precision=float64 step=3360 history_rows=675 coverage=full_field force_balance_max=3.781227e-16 atol=1.000000e-09"
+      },
+      "history_against_archived_run": {
+        "sampled_steps_new": 675,
+        "sampled_steps_reference": 675,
+        "common_sampled_steps": 675,
+        "first_step": 1,
+        "last_step": 3360,
+        "body_force_x": {
+          "max_abs_diff_over_max_abs": 6.718139330907861e-11,
+          "at_step": 425
+        },
+        "force_fluid_x": {
+          "max_abs_diff_over_max_abs": 9.336981056235382e-11,
+          "at_step": 425
+        },
+        "largest_inner_solve_cg_iterations": {
+          "equal_at_sampled_steps": 674,
+          "sum_new": 439120,
+          "sum_reference": 438940,
+          "differing_steps_new_reference": [
+            [
+              425,
+              740,
+              560
+            ]
+          ]
+        }
+      },
+      "metrics_against_archive": {
+        "harmonic_vector_error_archived": 0.05269012001886821,
+        "harmonic_vector_error_now": 0.05269012001877627,
+        "cosine_rel_diff": 8.056655111795148e-14,
+        "sine_rel_diff": 1.0015168406341429e-13,
+        "pressure_corrected_L2_archived": 0.025300313884284206,
+        "pressure_corrected_L2_now": 0.025300313883635555,
+        "pressure_raw_L2_archived": 0.6720632579755822,
+        "pressure_raw_L2_now": 0.6720632579754744,
+        "common_history_steps": 675,
+        "last_common_step": 3360,
+        "body_force_x_max_abs_diff_over_max": 6.718139330907861e-11,
+        "helmholtz_iterations_equal_fraction": 0.9985185185185185
+      },
+      "metrics_sphere_exterior": {
+        "run": "reruns/D32",
+        "steps": 3360,
+        "R_over_delta": 1.5,
+        "Re0": 0.2,
+        "body_force": {
+          "fit_window_periods": [
+            4.0,
+            6.0
+          ],
+          "samples": 224,
+          "cosine": -0.012229925703437512,
+          "sine": 0.010080799663629559,
+          "mean": 1.6898768711538434e-05,
+          "amplitude_error_relative": 0.05051250031506238,
+          "phase_error_degrees": -0.8380352223521856,
+          "harmonic_vector_error_over_theory_amplitude": 0.05269012001877627,
+          "fit_residual_rms_over_theory_amplitude": 0.0002250486132434766
+        },
+        "cycle_waveform_repeat_rms_over_theory_amplitude": 0.0003410763190504913,
+        "phases": [
+          {
+            "file": "field_000002800.npz",
+            "step": 2800,
+            "time_over_period": 5.0,
+            "pressure_gauge_shift": 3.3739186737845053e-06,
+            "phase_max_analytic": 0.017999551226470702,
+            "pressure_band_cells": 5240,
+            "raw": {
+              "absolute_rms": 0.008543315097386216,
+              "sum_area_error2": 5.7324824032549975e-05,
+              "rms_over_phase_max_analytic": 0.4746404501920109
+            },
+            "corrected": {
+              "absolute_rms": 0.0002515571728009708,
+              "sum_area_error2": 4.970078996468817e-08,
+              "rms_over_phase_max_analytic": 0.013975746930346962
+            },
+            "sum_area_exact2": 8.482299873075892e-05,
+            "archived_gauge_shift": 3.3739186737489227e-06,
+            "archived_corrected_absolute_rms": 0.0002515571728033551
+          },
+          {
+            "file": "field_000002940.npz",
+            "step": 2940,
+            "time_over_period": 5.25,
+            "pressure_gauge_shift": 5.08379297267035e-05,
+            "phase_max_analytic": 0.014999626022058886,
+            "pressure_band_cells": 5144,
+            "raw": {
+              "absolute_rms": 0.0031352310882979484,
+              "sum_area_error2": 7.720207888355003e-06,
+              "rms_over_phase_max_analytic": 0.20902061715986694
+            },
+            "corrected": {
+              "absolute_rms": 0.0002188675849879641,
+              "sum_area_error2": 3.762294373948905e-08,
+              "rms_over_phase_max_analytic": 0.014591536126706831
+            },
+            "sum_area_exact2": 5.890486022969346e-05,
+            "archived_gauge_shift": 5.0837929727067463e-05,
+            "archived_corrected_absolute_rms": 0.00021886758501045675
+          },
+          {
+            "file": "field_000003080.npz",
+            "step": 3080,
+            "time_over_period": 5.5,
+            "pressure_gauge_shift": 3.3768230834093164e-06,
+            "phase_max_analytic": 0.017999551226470647,
+            "pressure_band_cells": 5240,
+            "raw": {
+              "absolute_rms": 0.008527655381376884,
+              "sum_area_error2": 5.711486625138735e-05,
+              "rms_over_phase_max_analytic": 0.47377044427840365
+            },
+            "corrected": {
+              "absolute_rms": 0.0002705075480120859,
+              "sum_area_error2": 5.747098716348103e-08,
+              "rms_over_phase_max_analytic": 0.015028571802071927
+            },
+            "sum_area_exact2": 8.482299873075841e-05,
+            "archived_gauge_shift": 3.376823083323822e-06,
+            "archived_corrected_absolute_rms": 0.0002705075480143408
+          },
+          {
+            "file": "field_000003220.npz",
+            "step": 3220,
+            "time_over_period": 5.750000000000001,
+            "pressure_gauge_shift": 5.1147249106388366e-05,
+            "phase_max_analytic": 0.014999626022058824,
+            "pressure_band_cells": 5144,
+            "raw": {
+              "absolute_rms": 0.0031260267910987846,
+              "sum_area_error2": 7.674945016493324e-06,
+              "rms_over_phase_max_analytic": 0.20840698204752384
+            },
+            "corrected": {
+              "absolute_rms": 0.00022342869221180094,
+              "sum_area_error2": 3.9207375163531594e-08,
+              "rms_over_phase_max_analytic": 0.014895617522944982
+            },
+            "sum_area_exact2": 5.890486022969297e-05,
+            "archived_gauge_shift": 5.1147249106557434e-05,
+            "archived_corrected_absolute_rms": 0.00022342869221123472
+          },
+          {
+            "file": "final_field.npz",
+            "step": 3360,
+            "time_over_period": 6.0,
+            "pressure_gauge_shift": 3.375076457339562e-06,
+            "phase_max_analytic": 0.01799955122647059,
+            "pressure_band_cells": 5240,
+            "raw": {
+              "absolute_rms": 0.008542186713561876,
+              "sum_area_error2": 5.730968233831505e-05,
+              "rms_over_phase_max_analytic": 0.4745777606388054
+            },
+            "corrected": {
+              "absolute_rms": 0.00025292579536767806,
+              "sum_area_error2": 5.024306559350448e-08,
+              "rms_over_phase_max_analytic": 0.014051783413117492
+            },
+            "sum_area_exact2": 8.48229987307579e-05,
+            "archived_gauge_shift": 3.3750764571326895e-06,
+            "archived_corrected_absolute_rms": 0.00025292579536826234
+          }
+        ],
+        "pressure_raw_relative_area_time_L2": 0.6720632579754744,
+        "pressure_corrected_relative_area_time_L2": 0.025300313883635555,
+        "pressure_phases_used": 4
+      },
+      "metrics_two_sided": {
+        "run": "reruns/D32",
+        "steps": 3360,
+        "R_over_delta": 1.5,
+        "Re0": 0.2,
+        "body_force": {
+          "fit_window_periods": [
+            4.0,
+            6.0
+          ],
+          "samples": 224,
+          "cosine": -0.012229925703437512,
+          "sine": 0.010080799663629559,
+          "mean": 1.6898768711538434e-05,
+          "amplitude_error_relative": 0.05051250031506238,
+          "phase_error_degrees": -0.8380352223521856,
+          "harmonic_vector_error_over_theory_amplitude": 0.05269012001877627,
+          "fit_residual_rms_over_theory_amplitude": 0.0002250486132434766
+        },
+        "cycle_waveform_repeat_rms_over_theory_amplitude": 0.0003410763190504913,
+        "phases": [
+          {
+            "file": "field_000002800.npz",
+            "step": 2800,
+            "time_over_period": 5.0,
+            "pressure_gauge_shift": 3.3739186737845053e-06,
+            "phase_max_analytic": 0.017999551226470702,
+            "pressure_band_cells": 9667,
+            "raw": {
+              "absolute_rms": 0.008556629446865846,
+              "sum_area_error2": 5.7503639274886684e-05,
+              "rms_over_phase_max_analytic": 0.47538015471642425
+            },
+            "corrected": {
+              "absolute_rms": 0.00025165069085604166,
+              "sum_area_error2": 4.973775003312158e-08,
+              "rms_over_phase_max_analytic": 0.013980942507386311
+            },
+            "sum_area_exact2": 8.482299873075892e-05
+          },
+          {
+            "file": "field_000002940.npz",
+            "step": 2940,
+            "time_over_period": 5.25,
+            "pressure_gauge_shift": 5.08379297267035e-05,
+            "phase_max_analytic": 0.014999626022058886,
+            "pressure_band_cells": 9688,
+            "raw": {
+              "absolute_rms": 0.0032372580837963546,
+              "sum_area_error2": 8.230847011027042e-06,
+              "rms_over_phase_max_analytic": 0.2158225864455253
+            },
+            "corrected": {
+              "absolute_rms": 0.0001934766818232837,
+              "sum_area_error2": 2.9399987271942897e-08,
+              "rms_over_phase_max_analytic": 0.012898767045175077
+            },
+            "sum_area_exact2": 5.890486022969346e-05
+          },
+          {
+            "file": "field_000003080.npz",
+            "step": 3080,
+            "time_over_period": 5.5,
+            "pressure_gauge_shift": 3.3768230834093164e-06,
+            "phase_max_analytic": 0.017999551226470647,
+            "pressure_band_cells": 9661,
+            "raw": {
+              "absolute_rms": 0.00854411940617122,
+              "sum_area_error2": 5.733561821008019e-05,
+              "rms_over_phase_max_analytic": 0.4746851351274801
+            },
+            "corrected": {
+              "absolute_rms": 0.0002699648265996288,
+              "sum_area_error2": 5.7240609516355454e-08,
+              "rms_over_phase_max_analytic": 0.014998419860746912
+            },
+            "sum_area_exact2": 8.482299873075841e-05
+          },
+          {
+            "file": "field_000003220.npz",
+            "step": 3220,
+            "time_over_period": 5.750000000000001,
+            "pressure_gauge_shift": 5.1147249106388366e-05,
+            "phase_max_analytic": 0.014999626022058824,
+            "pressure_band_cells": 9688,
+            "raw": {
+              "absolute_rms": 0.0032265171762604315,
+              "sum_area_error2": 8.176319320076556e-06,
+              "rms_over_phase_max_analytic": 0.21510650808996404
+            },
+            "corrected": {
+              "absolute_rms": 0.00020016851011261716,
+              "sum_area_error2": 3.1468887850980984e-08,
+              "rms_over_phase_max_analytic": 0.013344900054057638
+            },
+            "sum_area_exact2": 5.890486022969297e-05
+          },
+          {
+            "file": "final_field.npz",
+            "step": 3360,
+            "time_over_period": 6.0,
+            "pressure_gauge_shift": 3.375076457339562e-06,
+            "phase_max_analytic": 0.01799955122647059,
+            "pressure_band_cells": 9667,
+            "raw": {
+              "absolute_rms": 0.008555503855568986,
+              "sum_area_error2": 5.7488511510126636e-05,
+              "rms_over_phase_max_analytic": 0.4753176203075023
+            },
+            "corrected": {
+              "absolute_rms": 0.0002529754789879412,
+              "sum_area_error2": 5.026280658168669e-08,
+              "rms_over_phase_max_analytic": 0.014054543683061894
+            },
+            "sum_area_exact2": 8.48229987307579e-05
+          }
+        ],
+        "pressure_raw_relative_area_time_L2": 0.6757067594262719,
+        "pressure_corrected_relative_area_time_L2": 0.02416415536263398,
+        "pressure_phases_used": 4
+      },
+      "stepping": {
+        "steps": 3360,
+        "stepping_seconds": 43697.7,
+        "seconds_per_step_mean": 13.0053,
+        "seconds_per_step_median_of_sample_intervals": 11.7015,
+        "seconds_first_10_steps": 289.7,
+        "seconds_per_period": [
+          7480.2,
+          7040.7,
+          8544.7,
+          6888.6,
+          7403.2,
+          6340.2
+        ]
+      },
+      "run_note": "three legs (paused once by hand, interrupted once by a restart of the computer; resumed from checkpoints at steps 560 and 1680); the workstation was in other use during the run and some stretches ran at about half the usual rate"
+    },
+    "d40": {
+      "case": "cases/D40.json of checks/pressure-validation-20260925.zip, run from t = 0 with the default factored operator",
+      "identity": {
+        "run": "reruns/D40",
+        "case_name": "D40_N700_inner4",
+        "backend": "cuda/cupy",
+        "precision": "float64",
+        "python": "3.12.5",
+        "cupy": "13.6.0",
+        "config_fingerprint": "dddcf8e110f50a6f1793ae971c3741d39e382299417d47743b9397301e462a3c",
+        "created_utc": "2026-11-19T16:31:43.377584+00:00",
+        "completed_utc": "2026-11-21T09:13:54.072370+00:00",
+        "completed_step": 4200,
+        "resume_count": 2,
+        "cg_reference_speed": 0.0,
+        "operator": "factored",
+        "cg_check_interval": 20
+      },
+      "pyib_validate": {
+        "exit_code": 0,
+        "output": "VALID: case=D40_N700_inner4 backend=cuda/cupy precision=float64 step=4200 history_rows=843 coverage=full_field force_balance_max=1.743049e-15 atol=1.000000e-09"
+      },
+      "history_against_archived_run": {
+        "sampled_steps_new": 843,
+        "sampled_steps_reference": 843,
+        "common_sampled_steps": 843,
+        "first_step": 1,
+        "last_step": 4200,
+        "body_force_x": {
+          "max_abs_diff_over_max_abs": 1.1473128697696991e-10,
+          "at_step": 245
+        },
+        "force_fluid_x": {
+          "max_abs_diff_over_max_abs": 1.223183757413563e-10,
+          "at_step": 245
+        },
+        "largest_inner_solve_cg_iterations": {
+          "equal_at_sampled_steps": 843,
+          "sum_new": 603600,
+          "sum_reference": 603600
+        }
+      },
+      "metrics_against_archive": {
+        "harmonic_vector_error_archived": 0.04118998000187262,
+        "harmonic_vector_error_now": 0.04118998000181213,
+        "cosine_rel_diff": 4.859787772567423e-13,
+        "sine_rel_diff": 3.017367465265853e-13,
+        "pressure_corrected_L2_archived": 0.022223806278802972,
+        "pressure_corrected_L2_now": 0.022223806276843353,
+        "pressure_raw_L2_archived": 0.6962601611110649,
+        "pressure_raw_L2_now": 0.6962601611110024,
+        "common_history_steps": 843,
+        "last_common_step": 4200,
+        "body_force_x_max_abs_diff_over_max": 1.1473128697696991e-10,
+        "helmholtz_iterations_equal_fraction": 1.0
+      },
+      "metrics_sphere_exterior": {
+        "run": "reruns/D40",
+        "steps": 4200,
+        "R_over_delta": 1.5,
+        "Re0": 0.2,
+        "body_force": {
+          "fit_window_periods": [
+            4.0,
+            6.0
+          ],
+          "samples": 280,
+          "cosine": -0.012136455529214059,
+          "sine": 0.009934494889984226,
+          "mean": 1.6791327890523268e-05,
+          "amplitude_error_relative": 0.03956983251865687,
+          "phase_error_degrees": -0.6427957582059364,
+          "harmonic_vector_error_over_theory_amplitude": 0.04118998000181213,
+          "fit_residual_rms_over_theory_amplitude": 0.0001944911345416064
+        },
+        "cycle_waveform_repeat_rms_over_theory_amplitude": 0.000338138706792741,
+        "phases": [
+          {
+            "file": "field_000003500.npz",
+            "step": 3500,
+            "time_over_period": 5.0,
+            "pressure_gauge_shift": 4.2394860769319265e-06,
+            "phase_max_analytic": 0.017999322190632664,
+            "pressure_band_cells": 8020,
+            "raw": {
+              "absolute_rms": 0.008816520235264132,
+              "sum_area_error2": 6.104980746179242e-05,
+              "rms_over_phase_max_analytic": 0.4898251246289979
+            },
+            "corrected": {
+              "absolute_rms": 0.00021719640730110697,
+              "sum_area_error2": 3.705059235677504e-08,
+              "rms_over_phase_max_analytic": 0.012066921465195056
+            },
+            "sum_area_exact2": 8.48230040355598e-05,
+            "archived_gauge_shift": 4.2394860768331e-06,
+            "archived_corrected_absolute_rms": 0.00021719640730559408
+          },
+          {
+            "file": "field_000003675.npz",
+            "step": 3675,
+            "time_over_period": 5.25,
+            "pressure_gauge_shift": 5.427817990260269e-05,
+            "phase_max_analytic": 0.01499943515886052,
+            "pressure_band_cells": 7920,
+            "raw": {
+              "absolute_rms": 0.003347244723623473,
+              "sum_area_error2": 8.799638124776947e-06,
+              "rms_over_phase_max_analytic": 0.22315805149810433
+            },
+            "corrected": {
+              "absolute_rms": 0.00020377052673896815,
+              "sum_area_error2": 3.261163835129965e-08,
+              "rms_over_phase_max_analytic": 0.01358521334842373
+            },
+            "sum_area_exact2": 5.890486391358295e-05,
+            "archived_gauge_shift": 5.4278179894508006e-05,
+            "archived_corrected_absolute_rms": 0.0002037705267840985
+          },
+          {
+            "file": "field_000003850.npz",
+            "step": 3850,
+            "time_over_period": 5.500000000000001,
+            "pressure_gauge_shift": 4.281826741384981e-06,
+            "phase_max_analytic": 0.01799932219063261,
+            "pressure_band_cells": 8020,
+            "raw": {
+              "absolute_rms": 0.008796568674954089,
+              "sum_area_error2": 6.0773811788321984e-05,
+              "rms_over_phase_max_analytic": 0.4887166628714546
+            },
+            "corrected": {
+              "absolute_rms": 0.00022468589164383106,
+              "sum_area_error2": 3.964984445584758e-08,
+              "rms_over_phase_max_analytic": 0.012483019597302636
+            },
+            "sum_area_exact2": 8.482300403555928e-05,
+            "archived_gauge_shift": 4.281826741493055e-06,
+            "archived_corrected_absolute_rms": 0.0002246858916453141
+          },
+          {
+            "file": "field_000004025.npz",
+            "step": 4025,
+            "time_over_period": 5.750000000000001,
+            "pressure_gauge_shift": 5.460409868533658e-05,
+            "phase_max_analytic": 0.014999435158860458,
+            "pressure_band_cells": 7920,
+            "raw": {
+              "absolute_rms": 0.0033337867085976008,
+              "sum_area_error2": 8.729020288742128e-06,
+              "rms_over_phase_max_analytic": 0.2222608167100391
+            },
+            "corrected": {
+              "absolute_rms": 0.00020392659763326574,
+              "sum_area_error2": 3.26616129653198e-08,
+              "rms_over_phase_max_analytic": 0.01359561846652621
+            },
+            "sum_area_exact2": 5.890486391358246e-05,
+            "archived_gauge_shift": 5.4604098685368126e-05,
+            "archived_corrected_absolute_rms": 0.00020392659765991808
+          },
+          {
+            "file": "final_field.npz",
+            "step": 4200,
+            "time_over_period": 6.0,
+            "pressure_gauge_shift": 4.24382631594492e-06,
+            "phase_max_analytic": 0.017999322190632553,
+            "pressure_band_cells": 8020,
+            "raw": {
+              "absolute_rms": 0.008814959658144125,
+              "sum_area_error2": 6.10281970081843e-05,
+              "rms_over_phase_max_analytic": 0.48973842263525474
+            },
+            "corrected": {
+              "absolute_rms": 0.00021866333719611257,
+              "sum_area_error2": 3.75527568488192e-08,
+              "rms_over_phase_max_analytic": 0.012148420639412315
+            },
+            "sum_area_exact2": 8.482300403555876e-05,
+            "archived_gauge_shift": 4.243826315962523e-06,
+            "archived_corrected_absolute_rms": 0.00021866333719836107
+          }
+        ],
+        "pressure_raw_relative_area_time_L2": 0.6962601611110024,
+        "pressure_corrected_relative_area_time_L2": 0.022223806276843353,
+        "pressure_phases_used": 4
+      },
+      "metrics_two_sided": {
+        "run": "reruns/D40",
+        "steps": 4200,
+        "R_over_delta": 1.5,
+        "Re0": 0.2,
+        "body_force": {
+          "fit_window_periods": [
+            4.0,
+            6.0
+          ],
+          "samples": 280,
+          "cosine": -0.012136455529214059,
+          "sine": 0.009934494889984226,
+          "mean": 1.6791327890523268e-05,
+          "amplitude_error_relative": 0.03956983251865687,
+          "phase_error_degrees": -0.6427957582059364,
+          "harmonic_vector_error_over_theory_amplitude": 0.04118998000181213,
+          "fit_residual_rms_over_theory_amplitude": 0.0001944911345416064
+        },
+        "cycle_waveform_repeat_rms_over_theory_amplitude": 0.000338138706792741,
+        "phases": [
+          {
+            "file": "field_000003500.npz",
+            "step": 3500,
+            "time_over_period": 5.0,
+            "pressure_gauge_shift": 4.2394860769319265e-06,
+            "phase_max_analytic": 0.017999322190632664,
+            "pressure_band_cells": 15112,
+            "raw": {
+              "absolute_rms": 0.008843086835562558,
+              "sum_area_error2": 6.141828150457399e-05,
+              "rms_over_phase_max_analytic": 0.4913011024473322
+            },
+            "corrected": {
+              "absolute_rms": 0.00021721815130784885,
+              "sum_area_error2": 3.705801115956845e-08,
+              "rms_over_phase_max_analytic": 0.01206812951105987
+            },
+            "sum_area_exact2": 8.48230040355598e-05
+          },
+          {
+            "file": "field_000003675.npz",
+            "step": 3675,
+            "time_over_period": 5.25,
+            "pressure_gauge_shift": 5.427817990260269e-05,
+            "phase_max_analytic": 0.01499943515886052,
+            "pressure_band_cells": 15128,
+            "raw": {
+              "absolute_rms": 0.003347244723623473,
+              "sum_area_error2": 8.799638124776947e-06,
+              "rms_over_phase_max_analytic": 0.22315805149810433
+            },
+            "corrected": {
+              "absolute_rms": 0.0002041455072356901,
+              "sum_area_error2": 3.2731773291871634e-08,
+              "rms_over_phase_max_analytic": 0.013610212989593579
+            },
+            "sum_area_exact2": 5.890486391358295e-05
+          },
+          {
+            "file": "field_000003850.npz",
+            "step": 3850,
+            "time_over_period": 5.500000000000001,
+            "pressure_gauge_shift": 4.281826741384981e-06,
+            "phase_max_analytic": 0.01799932219063261,
+            "pressure_band_cells": 15110,
+            "raw": {
+              "absolute_rms": 0.00882607596645158,
+              "sum_area_error2": 6.118221609412667e-05,
+              "rms_over_phase_max_analytic": 0.49035601857524036
+            },
+            "corrected": {
+              "absolute_rms": 0.00022492421170709813,
+              "sum_area_error2": 3.973400073949364e-08,
+              "rms_over_phase_max_analytic": 0.012496260099402827
+            },
+            "sum_area_exact2": 8.482300403555928e-05
+          },
+          {
+            "file": "field_000004025.npz",
+            "step": 4025,
+            "time_over_period": 5.750000000000001,
+            "pressure_gauge_shift": 5.460409868533658e-05,
+            "phase_max_analytic": 0.014999435158860458,
+            "pressure_band_cells": 15128,
+            "raw": {
+              "absolute_rms": 0.0033337867085976008,
+              "sum_area_error2": 8.729020288742128e-06,
+              "rms_over_phase_max_analytic": 0.2222608167100391
+            },
+            "corrected": {
+              "absolute_rms": 0.00020422206044546162,
+              "sum_area_error2": 3.2756326289932254e-08,
+              "rms_over_phase_max_analytic": 0.01361531672909854
+            },
+            "sum_area_exact2": 5.890486391358246e-05
+          },
+          {
+            "file": "final_field.npz",
+            "step": 4200,
+            "time_over_period": 6.0,
+            "pressure_gauge_shift": 4.24382631594492e-06,
+            "phase_max_analytic": 0.017999322190632553,
+            "pressure_band_cells": 15112,
+            "raw": {
+              "absolute_rms": 0.008841521455937723,
+              "sum_area_error2": 6.139653922865488e-05,
+              "rms_over_phase_max_analytic": 0.49121413363771804
+            },
+            "corrected": {
+              "absolute_rms": 0.000218717649739381,
+              "sum_area_error2": 3.7571414197215236e-08,
+              "rms_over_phase_max_analytic": 0.012151438116553575
+            },
+            "sum_area_exact2": 8.482300403555876e-05
+          }
+        ],
+        "pressure_raw_relative_area_time_L2": 0.6981982623931592,
+        "pressure_corrected_relative_area_time_L2": 0.022247776291246215,
+        "pressure_phases_used": 4
+      },
+      "stepping": {
+        "steps": 4200,
+        "stepping_seconds": 100142.1,
+        "seconds_per_step_mean": 23.8434,
+        "seconds_per_step_median_of_sample_intervals": 21.4557,
+        "seconds_first_10_steps": 631.7,
+        "seconds_per_period": [
+          15594.2,
+          16570.8,
+          15810.4,
+          17329.7,
+          17385.2,
+          17451.7
+        ]
+      },
+      "run_note": "interrupted once at step 1155 by a restart of the computer and resumed from the checkpoint at step 700. The case does not fit the 8 GB card with the default CuPy memory pool; these runs used a launcher-side allocator (capped pool with fallback to direct allocations) that is not part of PyIB. A card with more memory needs no such launcher."
+    }
+  },
+  "cg_floor_six_periods": {
+    "setting": "solver.cg_reference_speed = 0.02; everything else as in the run without the floor (cg_check_interval = 20, four inner iterations, factored operator, CUDA, float64)",
+    "d16": {
+      "floor_run": {
+        "run": "cgfloor/D16_floor",
+        "case_name": "D16_N280_inner4_cgfloor",
+        "backend": "cuda/cupy",
+        "precision": "float64",
+        "python": "3.12.5",
+        "cupy": "13.6.0",
+        "config_fingerprint": "62ca2bd7429251e16ebd2934679fa800454ce360d50d82b29972816c21cfdedc",
+        "created_utc": "2026-11-21T09:53:46.118481+00:00",
+        "completed_utc": "2026-11-21T10:14:40.787945+00:00",
+        "completed_step": 1680,
+        "resume_count": 0,
+        "cg_reference_speed": 0.02,
+        "operator": "factored",
+        "cg_check_interval": 20
+      },
+      "no_floor_run": {
+        "run": "cgfloor/D16_base",
+        "case_name": "D16_N280_inner4",
+        "backend": "cuda/cupy",
+        "precision": "float64",
+        "python": "3.12.5",
+        "cupy": "13.6.0",
+        "config_fingerprint": "f609aebe9f854f7ca17ac2745cf14dd644711c821b2d1c2958d341e690defaf7",
+        "created_utc": "2026-11-21T14:01:06.289082+00:00",
+        "completed_utc": "2026-11-21T14:36:41.072638+00:00",
+        "completed_step": 1680,
+        "resume_count": 0,
+        "cg_reference_speed": 0.0,
+        "operator": "factored",
+        "cg_check_interval": 20
+      },
+      "pyib_validate_floor_run": {
+        "exit_code": 0,
+        "output": "VALID: case=D16_N280_inner4_cgfloor backend=cuda/cupy precision=float64 step=1680 history_rows=339 coverage=full_field force_balance_max=8.160389e-16 atol=1.000000e-09"
+      },
+      "history_floor_against_no_floor": {
+        "sampled_steps_new": 339,
+        "sampled_steps_reference": 339,
+        "common_sampled_steps": 339,
+        "first_step": 1,
+        "last_step": 1680,
+        "body_force_x": {
+          "max_abs_diff_over_max_abs": 5.555716943962748e-07,
+          "at_step": 1430
+        },
+        "force_fluid_x": {
+          "max_abs_diff_over_max_abs": 4.140160845025527e-07,
+          "at_step": 85
+        },
+        "largest_inner_solve_cg_iterations": {
+          "equal_at_sampled_steps": 0,
+          "sum_new": 47240,
+          "sum_reference": 151300
+        }
+      },
+      "metrics_floor_sphere_exterior": {
+        "run": "cgfloor/D16_floor",
+        "steps": 1680,
+        "R_over_delta": 1.5,
+        "Re0": 0.2,
+        "body_force": {
+          "fit_window_periods": [
+            4.0,
+            6.0
+          ],
+          "samples": 112,
+          "cosine": -0.012735773423215692,
+          "sine": 0.010907038617695056,
+          "mean": 1.7718104464912315e-05,
+          "amplitude_error_relative": 0.1114152235123651,
+          "phase_error_degrees": -1.9172586069179787,
+          "harmonic_vector_error_over_theory_amplitude": 0.11686628657988393,
+          "fit_residual_rms_over_theory_amplitude": 0.00022921110500515932
+        },
+        "cycle_waveform_repeat_rms_over_theory_amplitude": 0.00035561197022246355,
+        "phases": [
+          {
+            "file": "field_000001400.npz",
+            "step": 1400,
+            "time_over_period": 5.0,
+            "pressure_gauge_shift": -4.296930007069643e-06,
+            "phase_max_analytic": 0.017986541471974392,
+            "pressure_band_cells": 1428,
+            "raw": {
+              "absolute_rms": 0.007032037189598852,
+              "sum_area_error2": 3.8837583422832636e-05,
+              "rms_over_phase_max_analytic": 0.3909610527713609
+            },
+            "corrected": {
+              "absolute_rms": 0.0004239117007261552,
+              "sum_area_error2": 1.4113693747229605e-07,
+              "rms_over_phase_max_analytic": 0.023568271943034205
+            },
+            "sum_area_exact2": 8.482296688237027e-05
+          },
+          {
+            "file": "field_000001470.npz",
+            "step": 1470,
+            "time_over_period": 5.25,
+            "pressure_gauge_shift": 3.1833758691294215e-05,
+            "phase_max_analytic": 0.01498878455997863,
+            "pressure_band_cells": 1368,
+            "raw": {
+              "absolute_rms": 0.0024282919425232807,
+              "sum_area_error2": 4.631180191116352e-06,
+              "rms_over_phase_max_analytic": 0.16200726168331442
+            },
+            "corrected": {
+              "absolute_rms": 0.00021446617385862844,
+              "sum_area_error2": 3.612496950770303e-08,
+              "rms_over_phase_max_analytic": 0.014308443289742916
+            },
+            "sum_area_exact2": 5.890483811275688e-05
+          },
+          {
+            "file": "field_000001540.npz",
+            "step": 1540,
+            "time_over_period": 5.5,
+            "pressure_gauge_shift": -4.444393212006419e-06,
+            "phase_max_analytic": 0.017986541471974336,
+            "pressure_band_cells": 1428,
+            "raw": {
+              "absolute_rms": 0.007017775127215827,
+              "sum_area_error2": 3.8680205888840084e-05,
+              "rms_over_phase_max_analytic": 0.39016812310196197
+            },
+            "corrected": {
+              "absolute_rms": 0.0004442137444225023,
+              "sum_area_error2": 1.5497936075721287e-07,
+              "rms_over_phase_max_analytic": 0.02469700721034404
+            },
+            "sum_area_exact2": 8.482296688236975e-05
+          },
+          {
+            "file": "field_000001610.npz",
+            "step": 1610,
+            "time_over_period": 5.750000000000001,
+            "pressure_gauge_shift": 3.203335496004884e-05,
+            "phase_max_analytic": 0.014988784559978567,
+            "pressure_band_cells": 1368,
+            "raw": {
+              "absolute_rms": 0.0024146867497697585,
+              "sum_area_error2": 4.579430574257292e-06,
+              "rms_over_phase_max_analytic": 0.1610995701557546
+            },
+            "corrected": {
+              "absolute_rms": 0.0002213261105279228,
+              "sum_area_error2": 3.8472923185563923e-08,
+              "rms_over_phase_max_analytic": 0.014766114600037942
+            },
+            "sum_area_exact2": 5.890483811275639e-05
+          },
+          {
+            "file": "final_field.npz",
+            "step": 1680,
+            "time_over_period": 6.0,
+            "pressure_gauge_shift": -4.315394047576662e-06,
+            "phase_max_analytic": 0.01798654147197428,
+            "pressure_band_cells": 1428,
+            "raw": {
+              "absolute_rms": 0.007030189045899666,
+              "sum_area_error2": 3.881717169832948e-05,
+              "rms_over_phase_max_analytic": 0.3908583012945402
+            },
+            "corrected": {
+              "absolute_rms": 0.00042599132678150444,
+              "sum_area_error2": 1.4252511339554136e-07,
+              "rms_over_phase_max_analytic": 0.023683893173418725
+            },
+            "sum_area_exact2": 8.482296688236922e-05
+          }
+        ],
+        "pressure_raw_relative_area_time_L2": 0.5492818806336561,
+        "pressure_corrected_relative_area_time_L2": 0.03591155502767416,
+        "pressure_phases_used": 4
+      },
+      "metrics_floor_two_sided": {
+        "run": "cgfloor/D16_floor",
+        "steps": 1680,
+        "R_over_delta": 1.5,
+        "Re0": 0.2,
+        "body_force": {
+          "fit_window_periods": [
+            4.0,
+            6.0
+          ],
+          "samples": 112,
+          "cosine": -0.012735773423215692,
+          "sine": 0.010907038617695056,
+          "mean": 1.7718104464912315e-05,
+          "amplitude_error_relative": 0.1114152235123651,
+          "phase_error_degrees": -1.9172586069179787,
+          "harmonic_vector_error_over_theory_amplitude": 0.11686628657988393,
+          "fit_residual_rms_over_theory_amplitude": 0.00022921110500515932
+        },
+        "cycle_waveform_repeat_rms_over_theory_amplitude": 0.00035561197022246355,
+        "phases": [
+          {
+            "file": "field_000001400.npz",
+            "step": 1400,
+            "time_over_period": 5.0,
+            "pressure_gauge_shift": -4.296930007069643e-06,
+            "phase_max_analytic": 0.017986541471974392,
+            "pressure_band_cells": 2440,
+            "raw": {
+              "absolute_rms": 0.007188655624002701,
+              "sum_area_error2": 4.058683999738209e-05,
+              "rms_over_phase_max_analytic": 0.3996685874938023
+            },
+            "corrected": {
+              "absolute_rms": 0.0004342801443709942,
+              "sum_area_error2": 1.4812549969465545e-07,
+              "rms_over_phase_max_analytic": 0.02414472760356208
+            },
+            "sum_area_exact2": 8.482296688237027e-05
+          },
+          {
+            "file": "field_000001470.npz",
+            "step": 1470,
+            "time_over_period": 5.25,
+            "pressure_gauge_shift": 3.1833758691294215e-05,
+            "phase_max_analytic": 0.01498878455997863,
+            "pressure_band_cells": 2456,
+            "raw": {
+              "absolute_rms": 0.0024282919425232807,
+              "sum_area_error2": 4.6311801911163515e-06,
+              "rms_over_phase_max_analytic": 0.16200726168331442
+            },
+            "corrected": {
+              "absolute_rms": 0.00021591039536691335,
+              "sum_area_error2": 3.6613140881666037e-08,
+              "rms_over_phase_max_analytic": 0.014404796766738049
+            },
+            "sum_area_exact2": 5.890483811275688e-05
+          },
+          {
+            "file": "field_000001540.npz",
+            "step": 1540,
+            "time_over_period": 5.5,
+            "pressure_gauge_shift": -4.444393212006419e-06,
+            "phase_max_analytic": 0.017986541471974336,
+            "pressure_band_cells": 2433,
+            "raw": {
+              "absolute_rms": 0.007190349456832548,
+              "sum_area_error2": 4.060596886513299e-05,
+              "rms_over_phase_max_analytic": 0.3997627597298883
+            },
+            "corrected": {
+              "absolute_rms": 0.0004556879417115006,
+              "sum_area_error2": 1.6308910690050555e-07,
+              "rms_over_phase_max_analytic": 0.025334939594781412
+            },
+            "sum_area_exact2": 8.482296688236975e-05
+          },
+          {
+            "file": "field_000001610.npz",
+            "step": 1610,
+            "time_over_period": 5.750000000000001,
+            "pressure_gauge_shift": 3.203335496004884e-05,
+            "phase_max_analytic": 0.014988784559978567,
+            "pressure_band_cells": 2456,
+            "raw": {
+              "absolute_rms": 0.0024146867497697585,
+              "sum_area_error2": 4.579430574257292e-06,
+              "rms_over_phase_max_analytic": 0.1610995701557546
+            },
+            "corrected": {
+              "absolute_rms": 0.00022232184059532413,
+              "sum_area_error2": 3.881987565503525e-08,
+              "rms_over_phase_max_analytic": 0.014832546275229274
+            },
+            "sum_area_exact2": 5.890483811275639e-05
+          },
+          {
+            "file": "final_field.npz",
+            "step": 1680,
+            "time_over_period": 6.0,
+            "pressure_gauge_shift": -4.315394047576662e-06,
+            "phase_max_analytic": 0.01798654147197428,
+            "pressure_band_cells": 2440,
+            "raw": {
+              "absolute_rms": 0.007186847141098086,
+              "sum_area_error2": 4.0566421332957595e-05,
+              "rms_over_phase_max_analytic": 0.399568041043147
+            },
+            "corrected": {
+              "absolute_rms": 0.0004363333730284618,
+              "sum_area_error2": 1.4952945280850175e-07,
+              "rms_over_phase_max_analytic": 0.024258881214508882
+            },
+            "sum_area_exact2": 8.482296688236922e-05
+          }
+        ],
+        "pressure_raw_relative_area_time_L2": 0.5607987473608708,
+        "pressure_corrected_relative_area_time_L2": 0.03667518202470895,
+        "pressure_phases_used": 4
+      },
+      "floor_vs_no_floor_sphere_exterior": {
+        "body_force_harmonic_vector_error_over_theory_amplitude_floor_minus_no_floor": 1.0114894292978516e-07,
+        "body_force_amplitude_error_relative_floor_minus_no_floor": 8.766623871281354e-08,
+        "body_force_phase_error_degrees_floor_minus_no_floor": -3.0886529609475133e-06,
+        "pressure_corrected_relative_area_time_L2_floor_minus_no_floor": -1.1859418313359127e-07,
+        "pressure_raw_relative_area_time_L2_floor_minus_no_floor": -7.294421588976974e-08,
+        "corrected_absolute_rms_relative_change_per_field": [
+          -5.0112848860003755e-06,
+          3.6698760935539166e-06,
+          -4.915145313350133e-06,
+          2.9167087608897894e-06,
+          -5.005917014628829e-06
+        ]
+      },
+      "floor_vs_no_floor_two_sided": {
+        "body_force_harmonic_vector_error_over_theory_amplitude_floor_minus_no_floor": 1.0114894292978516e-07,
+        "body_force_amplitude_error_relative_floor_minus_no_floor": 8.766623871281354e-08,
+        "body_force_phase_error_degrees_floor_minus_no_floor": -3.0886529609475133e-06,
+        "pressure_corrected_relative_area_time_L2_floor_minus_no_floor": -1.2806582077445894e-07,
+        "pressure_raw_relative_area_time_L2_floor_minus_no_floor": -8.307619869807326e-08,
+        "corrected_absolute_rms_relative_change_per_field": [
+          -5.181968054954786e-06,
+          3.618468953656429e-06,
+          -5.072802072114136e-06,
+          2.892738181045095e-06,
+          -5.1711557775345105e-06
+        ]
+      },
+      "stepping_floor": {
+        "steps": 1680,
+        "stepping_seconds": 1254.4,
+        "seconds_per_step_mean": 0.7467,
+        "seconds_per_step_median_of_sample_intervals": 0.7005,
+        "seconds_first_10_steps": 7.5,
+        "seconds_per_period": [
+          194.2,
+          194.6,
+          242.9,
+          240.3,
+          194.2,
+          188.2
+        ]
+      },
+      "stepping_no_floor": {
+        "steps": 1680,
+        "stepping_seconds": 2134.5,
+        "seconds_per_step_mean": 1.2705,
+        "seconds_per_step_median_of_sample_intervals": 1.2821,
+        "seconds_first_10_steps": 21.5,
+        "seconds_per_period": [
+          369.0,
+          358.4,
+          352.9,
+          349.8,
+          350.8,
+          353.5
+        ]
+      },
+      "speed_up_stepping_seconds": 1.702,
+      "speed_up_median_rate": 1.83,
+      "speed_up_first_10_steps": 2.867,
+      "no_floor_note": "the no-floor run is a rerun on 2026-11-21 of the D16 explicit case of checks/upgrade-20261117.json, alone on the GPU like the floor run, for the timing; the no-floor metrics are those of that record (validation_reruns.d16_six_periods_explicit)",
+      "pyib_validate_no_floor_run": {
+        "exit_code": 0,
+        "output": "VALID: case=D16_N280_inner4 backend=cuda/cupy precision=float64 step=1680 history_rows=339 coverage=full_field force_balance_max=5.995286e-16 atol=1.000000e-09"
+      },
+      "no_floor_rerun_against_the_20261117_run": {
+        "sampled_steps_new": 339,
+        "sampled_steps_reference": 339,
+        "common_sampled_steps": 339,
+        "first_step": 1,
+        "last_step": 1680,
+        "body_force_x": {
+          "max_abs_diff_over_max_abs": 2.0849780593003397e-11,
+          "at_step": 605
+        },
+        "force_fluid_x": {
+          "max_abs_diff_over_max_abs": 6.010122352773265e-11,
+          "at_step": 605
+        },
+        "largest_inner_solve_cg_iterations": {
+          "equal_at_sampled_steps": 338,
+          "sum_new": 151300,
+          "sum_reference": 151360,
+          "differing_steps_new_reference": [
+            [
+              1365,
+              380,
+              440
+            ]
+          ]
+        }
+      }
+    },
+    "d32": {
+      "floor_run": {
+        "run": "cgfloor/D32_floor",
+        "case_name": "D32_N560_inner4_cgfloor",
+        "backend": "cuda/cupy",
+        "precision": "float64",
+        "python": "3.12.5",
+        "cupy": "13.6.0",
+        "config_fingerprint": "9ddf39eff61a5141315c9bfb6d952fb950ac1c4988db477e478bccddad97e3ef",
+        "created_utc": "2026-11-21T10:15:53.769159+00:00",
+        "completed_utc": "2026-11-21T14:00:57.992230+00:00",
+        "completed_step": 3360,
+        "resume_count": 0,
+        "cg_reference_speed": 0.02,
+        "operator": "factored",
+        "cg_check_interval": 20
+      },
+      "no_floor_run": {
+        "run": "reruns/D32",
+        "case_name": "D32_N560_inner4",
+        "backend": "cuda/cupy",
+        "precision": "float64",
+        "python": "3.12.5",
+        "cupy": "13.6.0",
+        "config_fingerprint": "a5a854b3aa138c876eb93354dd6fd7b270e8e626fc474d092f83e70ab688b799",
+        "created_utc": "2026-11-17T15:15:07.998335+00:00",
+        "completed_utc": "2026-11-18T22:50:32.040870+00:00",
+        "completed_step": 3360,
+        "resume_count": 2,
+        "cg_reference_speed": 0.0,
+        "operator": "factored",
+        "cg_check_interval": 20
+      },
+      "pyib_validate_floor_run": {
+        "exit_code": 0,
+        "output": "VALID: case=D32_N560_inner4_cgfloor backend=cuda/cupy precision=float64 step=3360 history_rows=675 coverage=full_field force_balance_max=4.427875e-16 atol=1.000000e-09"
+      },
+      "history_floor_against_no_floor": {
+        "sampled_steps_new": 675,
+        "sampled_steps_reference": 675,
+        "common_sampled_steps": 675,
+        "first_step": 1,
+        "last_step": 3360,
+        "body_force_x": {
+          "max_abs_diff_over_max_abs": 4.010826750770501e-06,
+          "at_step": 1450
+        },
+        "force_fluid_x": {
+          "max_abs_diff_over_max_abs": 3.219702427424704e-06,
+          "at_step": 1180
+        },
+        "largest_inner_solve_cg_iterations": {
+          "equal_at_sampled_steps": 0,
+          "sum_new": 183900,
+          "sum_reference": 439120
+        }
+      },
+      "metrics_floor_sphere_exterior": {
+        "run": "cgfloor/D32_floor",
+        "steps": 3360,
+        "R_over_delta": 1.5,
+        "Re0": 0.2,
+        "body_force": {
+          "fit_window_periods": [
+            4.0,
+            6.0
+          ],
+          "samples": 224,
+          "cosine": -0.012229926673431663,
+          "sine": 0.010080802282212297,
+          "mean": 1.6899045131378576e-05,
+          "amplitude_error_relative": 0.050512660323085434,
+          "phase_error_degrees": -0.8380402967051518,
+          "harmonic_vector_error_over_theory_amplitude": 0.05269029956453326,
+          "fit_residual_rms_over_theory_amplitude": 0.00022505974868853248
+        },
+        "cycle_waveform_repeat_rms_over_theory_amplitude": 0.000341067857450089,
+        "phases": [
+          {
+            "file": "field_000002800.npz",
+            "step": 2800,
+            "time_over_period": 5.0,
+            "pressure_gauge_shift": 3.373845680586673e-06,
+            "phase_max_analytic": 0.017999551226470702,
+            "pressure_band_cells": 5240,
+            "raw": {
+              "absolute_rms": 0.008543308776155063,
+              "sum_area_error2": 5.732473920287313e-05,
+              "rms_over_phase_max_analytic": 0.47464009900374665
+            },
+            "corrected": {
+              "absolute_rms": 0.0002515439475845895,
+              "sum_area_error2": 4.9695564222834374e-08,
+              "rms_over_phase_max_analytic": 0.013975012177784804
+            },
+            "sum_area_exact2": 8.482299873075892e-05
+          },
+          {
+            "file": "field_000002940.npz",
+            "step": 2940,
+            "time_over_period": 5.25,
+            "pressure_gauge_shift": 5.083793847902824e-05,
+            "phase_max_analytic": 0.014999626022058886,
+            "pressure_band_cells": 5144,
+            "raw": {
+              "absolute_rms": 0.0031352395788281856,
+              "sum_area_error2": 7.720249702655402e-06,
+              "rms_over_phase_max_analytic": 0.20902118320932875
+            },
+            "corrected": {
+              "absolute_rms": 0.00021885518376810813,
+              "sum_area_error2": 3.761868036555149e-08,
+              "rms_over_phase_max_analytic": 0.01459070935810355
+            },
+            "sum_area_exact2": 5.890486022969346e-05
+          },
+          {
+            "file": "field_000003080.npz",
+            "step": 3080,
+            "time_over_period": 5.5,
+            "pressure_gauge_shift": 3.3767494713604864e-06,
+            "phase_max_analytic": 0.017999551226470647,
+            "pressure_band_cells": 5240,
+            "raw": {
+              "absolute_rms": 0.00852764865865854,
+              "sum_area_error2": 5.711477619920053e-05,
+              "rms_over_phase_max_analytic": 0.4737700707847393
+            },
+            "corrected": {
+              "absolute_rms": 0.000270494698554326,
+              "sum_area_error2": 5.746552740098463e-08,
+              "rms_over_phase_max_analytic": 0.015027857925509215
+            },
+            "sum_area_exact2": 8.482299873075841e-05
+          },
+          {
+            "file": "field_000003220.npz",
+            "step": 3220,
+            "time_over_period": 5.750000000000001,
+            "pressure_gauge_shift": 5.1147268795280125e-05,
+            "phase_max_analytic": 0.014999626022058824,
+            "pressure_band_cells": 5144,
+            "raw": {
+              "absolute_rms": 0.0031260347463785525,
+              "sum_area_error2": 7.674984079762182e-06,
+              "rms_over_phase_max_analytic": 0.20840751241273134
+            },
+            "corrected": {
+              "absolute_rms": 0.0002234177556671136,
+              "sum_area_error2": 3.920353695715022e-08,
+              "rms_over_phase_max_analytic": 0.014894888401787477
+            },
+            "sum_area_exact2": 5.890486022969297e-05
+          },
+          {
+            "file": "final_field.npz",
+            "step": 3360,
+            "time_over_period": 6.0,
+            "pressure_gauge_shift": 3.3750036746267094e-06,
+            "phase_max_analytic": 0.01799955122647059,
+            "pressure_band_cells": 5240,
+            "raw": {
+              "absolute_rms": 0.00854218043102161,
+              "sum_area_error2": 5.7309598038997646e-05,
+              "rms_over_phase_max_analytic": 0.47457741160008843
+            },
+            "corrected": {
+              "absolute_rms": 0.00025291251421617387,
+              "sum_area_error2": 5.023778919814432e-08,
+              "rms_over_phase_max_analytic": 0.014051045552971032
+            },
+            "sum_area_exact2": 8.48229987307579e-05
+          }
+        ],
+        "pressure_raw_relative_area_time_L2": 0.6720630146785201,
+        "pressure_corrected_relative_area_time_L2": 0.025299022237282646,
+        "pressure_phases_used": 4
+      },
+      "metrics_floor_two_sided": {
+        "run": "cgfloor/D32_floor",
+        "steps": 3360,
+        "R_over_delta": 1.5,
+        "Re0": 0.2,
+        "body_force": {
+          "fit_window_periods": [
+            4.0,
+            6.0
+          ],
+          "samples": 224,
+          "cosine": -0.012229926673431663,
+          "sine": 0.010080802282212297,
+          "mean": 1.6899045131378576e-05,
+          "amplitude_error_relative": 0.050512660323085434,
+          "phase_error_degrees": -0.8380402967051518,
+          "harmonic_vector_error_over_theory_amplitude": 0.05269029956453326,
+          "fit_residual_rms_over_theory_amplitude": 0.00022505974868853248
+        },
+        "cycle_waveform_repeat_rms_over_theory_amplitude": 0.000341067857450089,
+        "phases": [
+          {
+            "file": "field_000002800.npz",
+            "step": 2800,
+            "time_over_period": 5.0,
+            "pressure_gauge_shift": 3.373845680586673e-06,
+            "phase_max_analytic": 0.017999551226470702,
+            "pressure_band_cells": 9667,
+            "raw": {
+              "absolute_rms": 0.008556623093891583,
+              "sum_area_error2": 5.750355388635675e-05,
+              "rms_over_phase_max_analytic": 0.47537980176460987
+            },
+            "corrected": {
+              "absolute_rms": 0.00025163756242039127,
+              "sum_area_error2": 4.973256060315606e-08,
+              "rms_over_phase_max_analytic": 0.013980213131665484
+            },
+            "sum_area_exact2": 8.482299873075892e-05
+          },
+          {
+            "file": "field_000002940.npz",
+            "step": 2940,
+            "time_over_period": 5.25,
+            "pressure_gauge_shift": 5.083793847902824e-05,
+            "phase_max_analytic": 0.014999626022058886,
+            "pressure_band_cells": 9688,
+            "raw": {
+              "absolute_rms": 0.0032372671741252726,
+              "sum_area_error2": 8.230893236079057e-06,
+              "rms_over_phase_max_analytic": 0.2158231924825628
+            },
+            "corrected": {
+              "absolute_rms": 0.00019346475886821413,
+              "sum_area_error2": 2.939636384897352e-08,
+              "rms_over_phase_max_analytic": 0.012897972161685848
+            },
+            "sum_area_exact2": 5.890486022969346e-05
+          },
+          {
+            "file": "field_000003080.npz",
+            "step": 3080,
+            "time_over_period": 5.5,
+            "pressure_gauge_shift": 3.3767494713604864e-06,
+            "phase_max_analytic": 0.017999551226470647,
+            "pressure_band_cells": 9661,
+            "raw": {
+              "absolute_rms": 0.008544112644046795,
+              "sum_area_error2": 5.733552745516154e-05,
+              "rms_over_phase_max_analytic": 0.4746847594445345
+            },
+            "corrected": {
+              "absolute_rms": 0.000269952078437151,
+              "sum_area_error2": 5.7235203661299815e-08,
+              "rms_over_phase_max_analytic": 0.014997711611840181
+            },
+            "sum_area_exact2": 8.482299873075841e-05
+          },
+          {
+            "file": "field_000003220.npz",
+            "step": 3220,
+            "time_over_period": 5.750000000000001,
+            "pressure_gauge_shift": 5.1147268795280125e-05,
+            "phase_max_analytic": 0.014999626022058824,
+            "pressure_band_cells": 9688,
+            "raw": {
+              "absolute_rms": 0.0032265257190058306,
+              "sum_area_error2": 8.176362616487455e-06,
+              "rms_over_phase_max_analytic": 0.21510707762052345
+            },
+            "corrected": {
+              "absolute_rms": 0.00020015806654636456,
+              "sum_area_error2": 3.1465604229180756e-08,
+              "rms_over_phase_max_analytic": 0.013344203798948528
+            },
+            "sum_area_exact2": 5.890486022969297e-05
+          },
+          {
+            "file": "final_field.npz",
+            "step": 3360,
+            "time_over_period": 6.0,
+            "pressure_gauge_shift": 3.3750036746267094e-06,
+            "phase_max_analytic": 0.01799955122647059,
+            "pressure_band_cells": 9667,
+            "raw": {
+              "absolute_rms": 0.008555497541132419,
+              "sum_area_error2": 5.748842665073519e-05,
+              "rms_over_phase_max_analytic": 0.4753172694967244
+            },
+            "corrected": {
+              "absolute_rms": 0.00025296229245402245,
+              "sum_area_error2": 5.02575667463301e-08,
+              "rms_over_phase_max_analytic": 0.014053811079579015
+            },
+            "sum_area_exact2": 8.48229987307579e-05
+          }
+        ],
+        "pressure_raw_relative_area_time_L2": 0.6757065364446881,
+        "pressure_corrected_relative_area_time_L2": 0.02416289546686346,
+        "pressure_phases_used": 4
+      },
+      "floor_vs_no_floor_sphere_exterior": {
+        "body_force_harmonic_vector_error_over_theory_amplitude_floor_minus_no_floor": 1.7954575699113962e-07,
+        "body_force_amplitude_error_relative_floor_minus_no_floor": 1.6000802305349282e-07,
+        "body_force_phase_error_degrees_floor_minus_no_floor": -5.0743529661501086e-06,
+        "pressure_corrected_relative_area_time_L2_floor_minus_no_floor": -1.2916463529091815e-06,
+        "pressure_raw_relative_area_time_L2_floor_minus_no_floor": -2.4329695424984976e-07,
+        "corrected_absolute_rms_relative_change_per_field": [
+          -5.2573402038522245e-05,
+          -5.6660833794361384e-05,
+          -4.750129101512483e-05,
+          -4.8948702957854543e-05,
+          -5.251007112534966e-05
+        ]
+      },
+      "floor_vs_no_floor_two_sided": {
+        "body_force_harmonic_vector_error_over_theory_amplitude_floor_minus_no_floor": 1.7954575699113962e-07,
+        "body_force_amplitude_error_relative_floor_minus_no_floor": 1.6000802305349282e-07,
+        "body_force_phase_error_degrees_floor_minus_no_floor": -5.0743529661501086e-06,
+        "pressure_corrected_relative_area_time_L2_floor_minus_no_floor": -1.2598957705202418e-06,
+        "pressure_raw_relative_area_time_L2_floor_minus_no_floor": -2.2298158375289034e-07,
+        "corrected_absolute_rms_relative_change_per_field": [
+          -5.216928117993977e-05,
+          -6.162476509933892e-05,
+          -4.7221568225640715e-05,
+          -5.217387213764065e-05,
+          -5.212573950460716e-05
+        ]
+      },
+      "stepping_floor": {
+        "steps": 3360,
+        "stepping_seconds": 13502.1,
+        "seconds_per_step_mean": 4.0185,
+        "seconds_per_step_median_of_sample_intervals": 4.0448,
+        "seconds_first_10_steps": 43.9,
+        "seconds_per_period": [
+          2325.1,
+          2290.9,
+          2273.7,
+          2218.5,
+          2201.7,
+          2192.2
+        ]
+      },
+      "stepping_no_floor": {
+        "steps": 3360,
+        "stepping_seconds": 43697.7,
+        "seconds_per_step_mean": 13.0053,
+        "seconds_per_step_median_of_sample_intervals": 11.7015,
+        "seconds_first_10_steps": 289.7,
+        "seconds_per_period": [
+          7480.2,
+          7040.7,
+          8544.7,
+          6888.6,
+          7403.2,
+          6340.2
+        ]
+      },
+      "speed_up_stepping_seconds": 3.236,
+      "speed_up_median_rate": 2.893,
+      "speed_up_first_10_steps": 6.599,
+      "no_floor_note": "the no-floor run is the full rerun above; it ran in several legs on a workstation in other use and has slow stretches, so the median-rate ratio is the safer speed-up figure"
+    },
+    "d40": {
+      "floor_run": {
+        "run": "cgfloor/D40_floor",
+        "case_name": "D40_N700_inner4_cgfloor",
+        "backend": "cuda/cupy",
+        "precision": "float64",
+        "python": "3.12.5",
+        "cupy": "13.6.0",
+        "config_fingerprint": "18e91ed3fdde29815d9399601355c9ad421040122fbbeaa964f372224917d1ff",
+        "created_utc": "2026-11-21T21:55:47.066726+00:00",
+        "completed_utc": "2026-11-22T08:19:52.086049+00:00",
+        "completed_step": 4200,
+        "resume_count": 0,
+        "cg_reference_speed": 0.02,
+        "operator": "factored",
+        "cg_check_interval": 20
+      },
+      "no_floor_run": {
+        "run": "reruns/D40",
+        "case_name": "D40_N700_inner4",
+        "backend": "cuda/cupy",
+        "precision": "float64",
+        "python": "3.12.5",
+        "cupy": "13.6.0",
+        "config_fingerprint": "dddcf8e110f50a6f1793ae971c3741d39e382299417d47743b9397301e462a3c",
+        "created_utc": "2026-11-19T16:31:43.377584+00:00",
+        "completed_utc": "2026-11-21T09:13:54.072370+00:00",
+        "completed_step": 4200,
+        "resume_count": 2,
+        "cg_reference_speed": 0.0,
+        "operator": "factored",
+        "cg_check_interval": 20
+      },
+      "pyib_validate_floor_run": {
+        "exit_code": 0,
+        "output": "VALID: case=D40_N700_inner4_cgfloor backend=cuda/cupy precision=float64 step=4200 history_rows=843 coverage=full_field force_balance_max=1.355731e-15 atol=1.000000e-09"
+      },
+      "history_floor_against_no_floor": {
+        "sampled_steps_new": 843,
+        "sampled_steps_reference": 843,
+        "common_sampled_steps": 843,
+        "first_step": 1,
+        "last_step": 4200,
+        "body_force_x": {
+          "max_abs_diff_over_max_abs": 6.8504899692955216e-06,
+          "at_step": 420
+        },
+        "force_fluid_x": {
+          "max_abs_diff_over_max_abs": 8.73956803477108e-06,
+          "at_step": 415
+        },
+        "largest_inner_solve_cg_iterations": {
+          "equal_at_sampled_steps": 0,
+          "sum_new": 283020,
+          "sum_reference": 603600
+        }
+      },
+      "metrics_floor_sphere_exterior": {
+        "run": "cgfloor/D40_floor",
+        "steps": 4200,
+        "R_over_delta": 1.5,
+        "Re0": 0.2,
+        "body_force": {
+          "fit_window_periods": [
+            4.0,
+            6.0
+          ],
+          "samples": 280,
+          "cosine": -0.012136458763590808,
+          "sine": 0.00993449625936537,
+          "mean": 1.679406507635716e-05,
+          "amplitude_error_relative": 0.039570055901989365,
+          "phase_error_degrees": -0.6427921450233016,
+          "harmonic_vector_error_over_theory_amplitude": 0.041190177084717824,
+          "fit_residual_rms_over_theory_amplitude": 0.00019434201772348784
+        },
+        "cycle_waveform_repeat_rms_over_theory_amplitude": 0.00033815007171208604,
+        "phases": [
+          {
+            "file": "field_000003500.npz",
+            "step": 3500,
+            "time_over_period": 5.0,
+            "pressure_gauge_shift": 4.239469608171311e-06,
+            "phase_max_analytic": 0.017999322190632664,
+            "pressure_band_cells": 8020,
+            "raw": {
+              "absolute_rms": 0.008816491515604015,
+              "sum_area_error2": 6.104940972508495e-05,
+              "rms_over_phase_max_analytic": 0.4898235290322408
+            },
+            "corrected": {
+              "absolute_rms": 0.00021718051569004796,
+              "sum_area_error2": 3.704517079321952e-08,
+              "rms_over_phase_max_analytic": 0.012066038564667429
+            },
+            "sum_area_exact2": 8.48230040355598e-05
+          },
+          {
+            "file": "field_000003675.npz",
+            "step": 3675,
+            "time_over_period": 5.25,
+            "pressure_gauge_shift": 5.427812611262949e-05,
+            "phase_max_analytic": 0.01499943515886052,
+            "pressure_band_cells": 7920,
+            "raw": {
+              "absolute_rms": 0.0033472235928656644,
+              "sum_area_error2": 8.799527022989985e-06,
+              "rms_over_phase_max_analytic": 0.22315664272786834
+            },
+            "corrected": {
+              "absolute_rms": 0.0002037615057124084,
+              "sum_area_error2": 3.260875094703712e-08,
+              "rms_over_phase_max_analytic": 0.013584611924005795
+            },
+            "sum_area_exact2": 5.890486391358295e-05
+          },
+          {
+            "file": "field_000003850.npz",
+            "step": 3850,
+            "time_over_period": 5.500000000000001,
+            "pressure_gauge_shift": 4.281813431875717e-06,
+            "phase_max_analytic": 0.01799932219063261,
+            "pressure_band_cells": 8020,
+            "raw": {
+              "absolute_rms": 0.00879653756621996,
+              "sum_area_error2": 6.077338194048477e-05,
+              "rms_over_phase_max_analytic": 0.4887149345433654
+            },
+            "corrected": {
+              "absolute_rms": 0.0002246710672065404,
+              "sum_area_error2": 3.9644612554211206e-08,
+              "rms_over_phase_max_analytic": 0.012482195986439201
+            },
+            "sum_area_exact2": 8.482300403555928e-05
+          },
+          {
+            "file": "field_000004025.npz",
+            "step": 4025,
+            "time_over_period": 5.750000000000001,
+            "pressure_gauge_shift": 5.460411189314563e-05,
+            "phase_max_analytic": 0.014999435158860458,
+            "pressure_band_cells": 7920,
+            "raw": {
+              "absolute_rms": 0.0033337632282645566,
+              "sum_area_error2": 8.728897329717054e-06,
+              "rms_over_phase_max_analytic": 0.22225925129555546
+            },
+            "corrected": {
+              "absolute_rms": 0.00020391737931203604,
+              "sum_area_error2": 3.265866015348904e-08,
+              "rms_over_phase_max_analytic": 0.01359500388863497
+            },
+            "sum_area_exact2": 5.890486391358246e-05
+          },
+          {
+            "file": "final_field.npz",
+            "step": 4200,
+            "time_over_period": 6.0,
+            "pressure_gauge_shift": 4.243809886530168e-06,
+            "phase_max_analytic": 0.017999322190632553,
+            "pressure_band_cells": 8020,
+            "raw": {
+              "absolute_rms": 0.0088149308654673,
+              "sum_area_error2": 6.1027798330855765e-05,
+              "rms_over_phase_max_analytic": 0.48973682298186116
+            },
+            "corrected": {
+              "absolute_rms": 0.00021864737709548595,
+              "sum_area_error2": 3.754727514426954e-08,
+              "rms_over_phase_max_analytic": 0.012147533933765425
+            },
+            "sum_area_exact2": 8.482300403555876e-05
+          }
+        ],
+        "pressure_raw_relative_area_time_L2": 0.6962575089018409,
+        "pressure_corrected_relative_area_time_L2": 0.022222515322761982,
+        "pressure_phases_used": 4
+      },
+      "metrics_floor_two_sided": {
+        "run": "cgfloor/D40_floor",
+        "steps": 4200,
+        "R_over_delta": 1.5,
+        "Re0": 0.2,
+        "body_force": {
+          "fit_window_periods": [
+            4.0,
+            6.0
+          ],
+          "samples": 280,
+          "cosine": -0.012136458763590808,
+          "sine": 0.00993449625936537,
+          "mean": 1.679406507635716e-05,
+          "amplitude_error_relative": 0.039570055901989365,
+          "phase_error_degrees": -0.6427921450233016,
+          "harmonic_vector_error_over_theory_amplitude": 0.041190177084717824,
+          "fit_residual_rms_over_theory_amplitude": 0.00019434201772348784
+        },
+        "cycle_waveform_repeat_rms_over_theory_amplitude": 0.00033815007171208604,
+        "phases": [
+          {
+            "file": "field_000003500.npz",
+            "step": 3500,
+            "time_over_period": 5.0,
+            "pressure_gauge_shift": 4.239469608171311e-06,
+            "phase_max_analytic": 0.017999322190632664,
+            "pressure_band_cells": 15112,
+            "raw": {
+              "absolute_rms": 0.00884305798621667,
+              "sum_area_error2": 6.141788076795572e-05,
+              "rms_over_phase_max_analytic": 0.49129949964553876
+            },
+            "corrected": {
+              "absolute_rms": 0.00021720251583839985,
+              "sum_area_error2": 3.7052676443805616e-08,
+              "rms_over_phase_max_analytic": 0.01206726084115756
+            },
+            "sum_area_exact2": 8.48230040355598e-05
+          },
+          {
+            "file": "field_000003675.npz",
+            "step": 3675,
+            "time_over_period": 5.25,
+            "pressure_gauge_shift": 5.427812611262949e-05,
+            "phase_max_analytic": 0.01499943515886052,
+            "pressure_band_cells": 15128,
+            "raw": {
+              "absolute_rms": 0.0033472235928656644,
+              "sum_area_error2": 8.799527022989985e-06,
+              "rms_over_phase_max_analytic": 0.22315664272786834
+            },
+            "corrected": {
+              "absolute_rms": 0.0002041364974381274,
+              "sum_area_error2": 3.272888417471703e-08,
+              "rms_over_phase_max_analytic": 0.01360961231380364
+            },
+            "sum_area_exact2": 5.890486391358295e-05
+          },
+          {
+            "file": "field_000003850.npz",
+            "step": 3850,
+            "time_over_period": 5.500000000000001,
+            "pressure_gauge_shift": 4.281813431875717e-06,
+            "phase_max_analytic": 0.01799932219063261,
+            "pressure_band_cells": 15110,
+            "raw": {
+              "absolute_rms": 0.008826044696201744,
+              "sum_area_error2": 6.118178256516073e-05,
+              "rms_over_phase_max_analytic": 0.49035428127371844
+            },
+            "corrected": {
+              "absolute_rms": 0.00022490911716944323,
+              "sum_area_error2": 3.972866786544866e-08,
+              "rms_over_phase_max_analytic": 0.012495421482398527
+            },
+            "sum_area_exact2": 8.482300403555928e-05
+          },
+          {
+            "file": "field_000004025.npz",
+            "step": 4025,
+            "time_over_period": 5.750000000000001,
+            "pressure_gauge_shift": 5.460411189314563e-05,
+            "phase_max_analytic": 0.014999435158860458,
+            "pressure_band_cells": 15128,
+            "raw": {
+              "absolute_rms": 0.0033337632282645566,
+              "sum_area_error2": 8.728897329717054e-06,
+              "rms_over_phase_max_analytic": 0.22225925129555546
+            },
+            "corrected": {
+              "absolute_rms": 0.00020421286252394149,
+              "sum_area_error2": 3.2753375743522437e-08,
+              "rms_over_phase_max_analytic": 0.013614703511239154
+            },
+            "sum_area_exact2": 5.890486391358246e-05
+          },
+          {
+            "file": "final_field.npz",
+            "step": 4200,
+            "time_over_period": 6.0,
+            "pressure_gauge_shift": 4.243809886530168e-06,
+            "phase_max_analytic": 0.017999322190632553,
+            "pressure_band_cells": 15112,
+            "raw": {
+              "absolute_rms": 0.008841492533761302,
+              "sum_area_error2": 6.139613755149025e-05,
+              "rms_over_phase_max_analytic": 0.4912125267896315
+            },
+            "corrected": {
+              "absolute_rms": 0.00021870194438163704,
+              "sum_area_error2": 3.756601864440014e-08,
+              "rms_over_phase_max_analytic": 0.012150565563821998
+            },
+            "sum_area_exact2": 8.482300403555876e-05
+          }
+        ],
+        "pressure_raw_relative_area_time_L2": 0.6981956009018735,
+        "pressure_corrected_relative_area_time_L2": 0.022246485666966315,
+        "pressure_phases_used": 4
+      },
+      "floor_vs_no_floor_sphere_exterior": {
+        "body_force_harmonic_vector_error_over_theory_amplitude_floor_minus_no_floor": 1.9708290569658837e-07,
+        "body_force_amplitude_error_relative_floor_minus_no_floor": 2.2338333249827258e-07,
+        "body_force_phase_error_degrees_floor_minus_no_floor": 3.613182634754075e-06,
+        "pressure_corrected_relative_area_time_L2_floor_minus_no_floor": -1.2909540813704767e-06,
+        "pressure_raw_relative_area_time_L2_floor_minus_no_floor": -2.652209161513319e-06,
+        "corrected_absolute_rms_relative_change_per_field": [
+          -7.316700702594704e-05,
+          -4.427051695908128e-05,
+          -6.597849638977855e-05,
+          -4.520411430723149e-05,
+          -7.29893764143493e-05
+        ]
+      },
+      "floor_vs_no_floor_two_sided": {
+        "body_force_harmonic_vector_error_over_theory_amplitude_floor_minus_no_floor": 1.9708290569658837e-07,
+        "body_force_amplitude_error_relative_floor_minus_no_floor": 2.2338333249827258e-07,
+        "body_force_phase_error_degrees_floor_minus_no_floor": 3.613182634754075e-06,
+        "pressure_corrected_relative_area_time_L2_floor_minus_no_floor": -1.2906242798996215e-06,
+        "pressure_raw_relative_area_time_L2_floor_minus_no_floor": -2.6614912856937067e-06,
+        "corrected_absolute_rms_relative_change_per_field": [
+          -7.19804922142095e-05,
+          -4.413419469621151e-05,
+          -6.710943895431425e-05,
+          -4.503882440551308e-05,
+          -7.180654036233708e-05
+        ]
+      },
+      "stepping_floor": {
+        "steps": 4200,
+        "stepping_seconds": 37441.8,
+        "seconds_per_step_mean": 8.9147,
+        "seconds_per_step_median_of_sample_intervals": 8.7937,
+        "seconds_first_10_steps": 100.6,
+        "seconds_per_period": [
+          6426.4,
+          6194.9,
+          6187.2,
+          6193.9,
+          6236.3,
+          6203.1
+        ]
+      },
+      "stepping_no_floor": {
+        "steps": 4200,
+        "stepping_seconds": 100142.1,
+        "seconds_per_step_mean": 23.8434,
+        "seconds_per_step_median_of_sample_intervals": 21.4557,
+        "seconds_first_10_steps": 631.7,
+        "seconds_per_period": [
+          15594.2,
+          16570.8,
+          15810.4,
+          17329.7,
+          17385.2,
+          17451.7
+        ]
+      },
+      "speed_up_stepping_seconds": 2.675,
+      "speed_up_median_rate": 2.44,
+      "speed_up_first_10_steps": 6.279,
+      "no_floor_note": "the no-floor run is the full rerun above; it ran in several legs on a workstation in other use and has slow stretches, so the median-rate ratio is the safer speed-up figure"
+    }
+  },
+  "source_commit": "046b6f5",
+  "source_sha256_recorded_by_every_run": {
+    "case_runner": "6a07260a1d74502b6770908b0cd53246fbe5875aee290e968f9e93ea94faf24f",
+    "backend": "37324b86b9841f1cba0fd9b051f11c60e0c48ad11b50514c8be04a5f589667fa",
+    "core": "a42eaed6ebb9c62780aed4d6941e5e84b6c741c6b6e439f802a3a099e5e16e6f",
+    "driver": "1355e34f40b2669f7d57d95cfcbbc997b5b2f5850e9def90c6ba5606a99db3a2",
+    "immersed_boundary": "fcb2f71e838dac5f6dc607d3ada74406e9f738b4b1aba4d2e91c40653c905415",
+    "interior_load": "367ec59a0826150fff6b58efaee466cfb216865eb58400843f0a450430089b77",
+    "kinematics": "5e7fbf094f5b07d31254280a421892dd38c6b1a19c66fe019284ade064f469f9",
+    "sparse_operator": "74466120e1c23e59bf984f0b458e24900e0d1a2688ed29b052257853bec2006a",
+    "cpu_sparse": "34aac2983ef039a5ce2d7ceb3978af3ef477f591992ca63df47d7721d960f463",
+    "cpu_sparse_kernel": "d277e3cc40254388cf300dcaea6310cf0481f59b2875db5479527c9cf194a8a9",
+    "constraint": "89f4b762b1cedf370f1d832d82f676d1159f626d14e8b34e34d8df3301ebf7de",
+    "constraint_patches": "239631e89410ad46b5e87c6600f8b64b6f51b4825dfe03b69b935ce5f08c17ca",
+    "mesh_builder": "64d241f3a826b908151e54dad9de355698dbf31b3a3613e5fd5a36740f4e0f50",
+    "sphere_wake_mesh": "bdb4178df0c10c44a8bc73a06fc8b5dd6b381b5e06231dcb3a332b84a2401e87",
+    "sphere_quiescent_mesh": "3796cc8c4294141ab462f3af1f940dc970cf7da3554fb0c48530a711ceb627b3"
+  }
+}
