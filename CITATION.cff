@@ -5,6 +5,7 @@ title: "PyIB: A Python Immersed Boundary Solver for CPUs and GPUs"
 authors:
   - family-names: Xu
     given-names: Zhaoyue
-version: "0.1.0rc2"
+version: "0.2.0"
+date-released: "2026-11-22"
 license: BSD-3-Clause
 repository-code: "https://github.com/XuZhaoyue1995/PyIB"

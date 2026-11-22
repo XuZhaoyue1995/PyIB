@@ -13,13 +13,13 @@ L₂ 误差为 **2.2224%**。核验包括解析解对照、周期收敛、网格
 
 **软件唯一作者：Zhaoyue Xu。** 见 [作者信息](AUTHORS.md) 和
 [软件引用信息](CITATION.cff)。Python 分发包和导入名为 `pyib`；
-当前研究预发布版本为 `0.1.0rc2`。
+当前发布版本为 `0.2.0`。
 
 PyIB 以 [BSD 3-Clause 许可证](LICENSE) 发布。`paper/` 中保留的论文稿不在该许可证
 范围内（[说明](paper/README.md)）。在发表的工作中使用 PyIB 时，请按
 [CITATION.cff](CITATION.cff) 引用。另见 [发布状态](RELEASE_STATUS.md)。
 
-**`0.1.0rc2` 之后的工作区改动（2026-11-17，尚未发布）：** Helmholtz 算子提速
+**`0.2.0`（2026-11-22）相对 `0.1.0rc2` 的新增内容：** Helmholtz 算子提速
 （D16 基准算例实测 CUDA 2.2 倍、CPU 3.6 倍）；从 IBFast 移植了可选的 K 矩阵
 修正力（默认关闭）和三角剖分面的两侧表面压力修正。D32/D40 六周期验证算例已用
 改动后的代码完整重跑，误差与存档一致。详见 [变更记录](CHANGELOG.md)。
@@ -78,7 +78,7 @@ pyib-run examples/cpu_fixed_sphere_smoke.json --outdir runs/fixed-threads --cpu-
 `threads` 后端把 SciPy 自己的 CSR 内核按行块放到线程池上执行，不需要扩展，
 任何平台可用，结果与 SciPy 逐位相同。
 
-## 0.1.0rc2 之后新增的求解器选项
+## 0.2.0 新增的求解器选项
 
 | 选项 | 默认 | 作用 |
 |---|---|---|
@@ -158,4 +158,4 @@ D32/D40 振荡球使用 CUDA、float64 完成六周期计算。两个分辨率�
 ## 保留的论文草稿
 
 仓库保留 [原版论文工作稿](paper/IB_GPU_Solver_Paper_CN_JCP.pdf)，
-其内容和原有作者信息均不作修改。
+其内容和原有作者信息均不作修改。发布包（源码分发包和各版本的源码压缩包）不含该 PDF。

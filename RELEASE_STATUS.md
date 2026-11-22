@@ -1,4 +1,4 @@
-# PyIB 0.1.0rc2
+# PyIB 0.2.0
 
 PyIB is a Python immersed-boundary solver with CPU and CUDA backends.
 Repository: <https://github.com/XuZhaoyue1995/PyIB>.
@@ -24,19 +24,20 @@ joint grid/time refinement and source identities are documented in
 [validation summary](checks/pressure-validation-20260925.json) and
 [evidence archive](checks/pressure-validation-20260925.zip) accompany the release.
 
-## Working tree after 0.1.0rc2 — 2026-11-17, not released
+## Changes in 0.2.0 — 2026-11-22
 
-The source tree contains changes that are not part of the `0.1.0rc2` release
-and have not been tagged or released: a factored Helmholtz operator
-and in-place CG (faster, smaller), an optional K-matrix force correction (off by
-default), a two-sided surface-pressure correction for triangulated surfaces, a
-`threads` CPU backend and an optional floor of the CG stopping test.  The
-version number is unchanged.  What was measured and what was not is in
+Version `0.2.0` (tag `v0.2.0`) adds to `0.1.0rc2`: a factored Helmholtz operator
+and in-place CG (faster, smaller; the new default), an optional K-matrix force
+correction (off by default), a two-sided surface-pressure correction for
+triangulated surfaces, a `threads` CPU backend, an optional floor of the CG
+stopping test and the BSD 3-Clause license.  What was measured and what was
+not is in
 [CHANGELOG.md](CHANGELOG.md), [docs/PERFORMANCE.md](docs/PERFORMANCE.md),
 [docs/K_MATRIX.md](docs/K_MATRIX.md) and [docs/VALIDATION.md](docs/VALIDATION.md).
-The D32/D40 results above were produced by the released code.  Both runs were
-repeated in full with the changed code between 2026-11-17 and 2026-11-21 (one
-8 GB workstation GPU, default factored operator) and reproduced the four error
+The D32/D40 results above were produced by `0.1.0rc2`.  Both runs were
+repeated in full with the solver source of `0.2.0` between 2026-11-17 and
+2026-11-21 (one 8 GB workstation GPU, default factored operator) and
+reproduced the four error
 figures to the digits shown; the six-period runs with the optional stopping
 floor changed them by at most 1.3e-4 percentage points
 ([record](checks/validation-reruns-20261122.json)).
@@ -51,10 +52,12 @@ identities. Installation and commands are described in
 [README.md](README.md).
 
 The original manuscript in `paper/IB_GPU_Solver_Paper_CN_JCP.pdf` remains
-unchanged, including its original author information. Software attribution is
-recorded in `AUTHORS.md` and `CITATION.cff`.
+unchanged, including its original author information.  It is kept in the
+repository only; the source distribution and the source archives of the
+release do not contain it. Software attribution is recorded in `AUTHORS.md`
+and `CITATION.cff`.
 
 The source tree is licensed under the BSD 3-Clause License ([LICENSE](LICENSE))
-since 2026-11-17. The `0.1.0rc2` release was published before the license was
-chosen and carried none. The license covers the software only; the manuscript in
-`paper/` is excluded ([note](paper/README.md)).
+since 2026-11-17; `0.2.0` is the first release under it. The `0.1.0rc2` release
+was published before the license was chosen and carried none. The license
+covers the software only; the manuscript in `paper/` is excluded ([note](paper/README.md)).

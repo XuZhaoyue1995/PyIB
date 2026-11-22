@@ -1,11 +1,13 @@
 # Changelog
 
-## Unreleased — working tree of 2026-11-17 (on top of `0.1.0rc2`, commit `a7003dd`)
+## 0.2.0 — 2026-11-22 (changes since `0.1.0rc2`, commit `a7003dd`)
 
-Nothing below has been tagged or released; the package version is still
-`0.1.0rc2`.  The same commit also carries the CPU backend work of 2026-10-05
-(optional OpenMP CSR product, result schema 6), which had not been committed
-before; the changes here are built on top of it.
+First release after `0.1.0rc2`, tagged `v0.2.0`.  It also carries the CPU
+backend work of 2026-10-05 (optional OpenMP CSR product, result schema 6),
+which had not been released before; the changes here are built on top of it.
+The solver source is that of commit `046b6f5`, with which the validation runs
+below were made; the release adds documentation, check records, the version
+number and the packaging change to it.
 
 Numbers quoted here were measured on 2026-11-17 on one shared workstation
 (i9-9900K, RTX 2080 8 GB, float64), single runs; the six-period validation
@@ -19,6 +21,13 @@ machine until 2026-11-22.  Conditions and tables are in
 - PyIB is licensed under the BSD 3-Clause License from 2026-11-17 (`LICENSE`,
   `pyproject.toml`, `CITATION.cff`). The retained manuscript in `paper/` is
   excluded. `0.1.0rc2` as released carried no license.
+
+### Packaging
+
+- Version `0.2.0` (`pyproject.toml`, `pyib.__version__`, `CITATION.cff`).
+- The manuscript PDF of `paper/` is no longer part of the source distribution
+  or of the source archives of a release (`MANIFEST.in`, `.gitattributes`); it
+  stays in the repository.
 
 ### Added
 

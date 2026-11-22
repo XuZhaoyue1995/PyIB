@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "release_candidate": "0.1.0rc2",
+  "release_candidate": "0.2.0",
   "captured_utc": "2026-09-22T14:04:56.344780+00:00",
   "source_origin": "Author-provided local IBZhaoyue tree; maintained distribution at https://github.com/XuZhaoyue1995/PyIB",
   "preservation": "Original hashes retained for modified files. Optional CPU CSR kernel/dispatch and execution identities added (2026-10-05). 2026-11-17: optional K-matrix force correction, two-sided surface-pressure correction, factored operator and in-place CG added; with solver.operator='assembled' and ib.k_matrix off the time stepping reproduces the previous results bit for bit on the bundled CPU examples.",

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyib"
-version = "0.1.0rc2"
+version = "0.2.0"
 description = "A Python Immersed Boundary Solver for CPUs and GPUs"
 authors = [{ name = "Zhaoyue Xu" }]
 license = "BSD-3-Clause"

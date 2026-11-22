@@ -17,14 +17,14 @@ provenance. See the [complete validation record](docs/VALIDATION.md).
 
 **Sole software author: Zhaoyue Xu.** Software attribution is recorded in
 [AUTHORS.md](AUTHORS.md) and [CITATION.cff](CITATION.cff). The Python distribution
-and import namespace are `pyib`; this research prerelease is `0.1.0rc2`.
+and import namespace are `pyib`; the current release is `0.2.0`.
 
 PyIB is licensed under the [BSD 3-Clause License](LICENSE). The retained
 manuscript in `paper/` is not covered by that license
 ([note](paper/README.md)). If you use PyIB in published work, please cite it
 using [CITATION.cff](CITATION.cff). See also [release status](RELEASE_STATUS.md).
 
-**Working tree after `0.1.0rc2` (2026-11-17, not released):** a faster
+**New in `0.2.0` (2026-11-22), since `0.1.0rc2`:** a faster
 Helmholtz operator (2.2 times on CUDA and 3.6 times on CPU on the D16 benchmark
 case, measured), an optional K-matrix force correction (off by default) and a
 two-sided surface-pressure correction for triangulated surfaces, both ported
@@ -93,7 +93,7 @@ The `threads` backend applies SciPy's CSR kernel to row blocks on a thread
 pool; it needs no extension, runs on any platform and reproduces the SciPy
 result bit for bit.
 
-## Solver options added after 0.1.0rc2
+## Solver options added in 0.2.0
 
 | Option | Default | Effect |
 |---|---|---|
@@ -184,4 +184,5 @@ the D32/D40 results provide the numerical benchmark evidence.
 
 The [original manuscript draft](paper/IB_GPU_Solver_Paper_CN_JCP.pdf) is kept
 unchanged from the existing repository, including its contents and original
-author information.
+author information. Release archives (the source distribution and the source
+archives of a release) do not contain the PDF.

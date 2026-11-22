@@ -85,7 +85,7 @@ For the distinction between unsteady-Stokes and finite-Re oscillating-sphere
 references, see Mei (1994), [Flow due to an oscillating sphere and an expression
 for unsteady drag on the sphere at finite Reynolds number](https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/flow-due-to-an-oscillating-sphere-and-an-expression-for-unsteady-drag-on-the-sphere-at-finite-reynolds-number/13386D6EC497ADA02ADDDD5A750B2609).
 
-## Checks of the changes after `0.1.0rc2` (2026-11-17 to 2026-11-22, not yet released)
+## Checks of the changes between `0.1.0rc2` and `0.2.0` (2026-11-17 to 2026-11-22)
 
 The results above were produced by the released `0.1.0rc2` code on a cluster
 GPU.  The source has since changed how the Helmholtz operator is applied (three
