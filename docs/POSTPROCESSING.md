@@ -95,9 +95,9 @@ pressure over them.
 
 Checks of this path are in [VALIDATION.md](VALIDATION.md): agreement with the
 IBFast tool on an IBFast dump of an impulsively started zero-thickness disc, and
-with the sphere-exterior path on the oscillating sphere.  The PyIB solver itself
-still runs sphere cases only; open surfaces reach this path through snapshots
-that carry their own markers and triangles.
+with the sphere-exterior path on the oscillating sphere.  The standard runner
+(`pyib-run`) is still set up for sphere cases only; open surfaces reach this
+path through snapshots that carry their own markers and triangles.
 
 ## Input geometry and saved fields
 

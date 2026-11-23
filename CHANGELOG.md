@@ -99,9 +99,13 @@ machine until 2026-11-22.  Conditions and tables are in
 
 ### Not done
 
-- The PyIB solver still runs sphere cases only; open surfaces reach the
-  two-sided pressure correction through snapshots that carry their own markers
-  and triangles (for example converted IBFast dumps).
+- The standard runner (`pyib-run`) and its load correction are still set up
+  for sphere cases only.  This is a limit of the bundled cases, not of the
+  method: the solver core takes any set of surface markers with a prescribed
+  motion, but no other geometry is bundled, tested or validated in this
+  release.  Open surfaces reach the two-sided pressure correction through
+  snapshots that carry their own markers and triangles (for example converted
+  IBFast dumps).
 - No smoothed kernel (`h3s`) in the solver; the pressure tool supports it for
   such snapshots.
 - No wall-shear recovery.

@@ -184,8 +184,8 @@ thousands.
   use patches.
 - Dependent constraints (markers much closer than one cell, two surfaces closer
   than the kernel width) make `K` singular; the run stops with an error.
-- Only sphere cases can be run by the PyIB solver, so the correction was
-  exercised on closed, smooth surfaces only.  The behaviour of patches on thin
-  plates, studied with IBFast, was not reproduced here.
+- The standard runner (`pyib-run`) is set up for sphere cases only, so the
+  correction was exercised on closed, smooth surfaces only.  The behaviour of
+  patches on thin plates, studied with IBFast, was not reproduced here.
 - The comparison with the analytic solution is in [VALIDATION.md](VALIDATION.md);
   the cost is in [PERFORMANCE.md](PERFORMANCE.md).
